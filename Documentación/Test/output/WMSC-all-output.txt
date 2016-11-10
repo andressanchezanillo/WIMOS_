@@ -1,0 +1,27 @@
+Hora del sistema: 12:23:53
+Acceleraciones [X,Y,Z]: 0.33012,0.4321,9.5464
+Giróscopo [X,Y,Z]: 0.002, 0.12, 0.43
+---
+Sensor1: 314,335,123
+---
+
+Hora del sistema: 12:23:54
+Acceleraciones [X,Y,Z]: 7.0876,3.4961,3.986
+Giróscopo [X,Y,Z]: 0.003, 3.765, 6.09
+---
+Sensor1: 467,445,23
+---
+
+Hora del sistema: 12:23:55
+Acceleraciones [X,Y,Z]: 4.33012,7.4321,3.5464
+Giróscopo [X,Y,Z]: 4.626, 15.736, 12.437
+---
+Sensor1: 601,459,233
+---
+
+Hora del sistema: 12:23:56
+Acceleraciones [X,Y,Z]: 45.332,0.234,9.35
+Giróscopo [X,Y,Z]: 15.542, 45.865, 1.453
+---
+Sensor1: 114,235,453
+---
