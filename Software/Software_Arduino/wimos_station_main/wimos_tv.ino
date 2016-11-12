@@ -30,6 +30,7 @@
 #include "_setting.h"
 #include "main_config.h"
 
+
 /**
  * @brief TV (RCA) Initialization.
  *
@@ -40,7 +41,32 @@
  */
 extern void initTV(void){
   #ifdef _EN_WIMOS_TV
+    coreWimosDisplay = displayTV;
+    coreWimosTVTimer = millis();
+    DEBUG_OK("TV output signal initialized.");
+  #else
   
+    DEBUG_INFO("TV output signal not initialized.");
+  #endif
+}
+
+
+/**
+ * @brief TV (RCA) destroy.
+ *
+ * This function destroyes the TV interface.
+ * @verbatim like this@endverbatim 
+ * @param none.
+ * @return none.
+ */
+extern void deleteTV(void){
+  #ifdef _EN_WIMOS_TV
+    coreWimosDisplay = communicationThread;
+    coreWimosTVTimer = 0;
+    DEBUG_OK("TV output signal destroyed.");
+  #else
+  
+    DEBUG_INFO("TV output signal not destroyed.");
   #endif
 }
 
@@ -53,7 +79,12 @@ extern void initTV(void){
  * @return none.
  */
 extern void displayTV(void){
-  #ifdef _EN_WIMOS_TV
+  #if defined(_EN_WIMOS_TV)
   
+    if(((millis() - coreWimosTVTimer)/1000) >=  _EN_WIMOS_TV_TIME_SEC )
+      deleteTV();
+  #else
+    coreWimosDisplay = communicationThread;
+    coreWimosTVTimer = 0;
   #endif
 }

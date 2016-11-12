@@ -18,7 +18,7 @@
  ****************************************************************************/
 
 /**
- * @file wimos_gps.ino
+ * @file wimos_debug.ino
  * @author Andres Sanchez Anillo
  * @date 09 Jun 2015
  * @brief File containing main function for Wimos Framework.
@@ -27,37 +27,66 @@
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 
+
 #include "_setting.h"
 #include "main_config.h"
 
+static uint8_t ucCurrentDebugMode = 4;
 
-/**
- * @brief GPS Initialization.
- *
- * This function initializes the GPS interface.
- * @verbatim like this@endverbatim 
- * @param none.
- * @return none.
- */
-extern void initGPS(void){
-  #ifdef _EN_WIMOS_GPS
-    SERIALGPS.begin(BAUDRATEGPS);  
-    DEBUG_OK("GPS initialized.");
-  #else
-    DEBUG_INFO("GPS not initialized.");
-  #endif
+extern void initDebug(void){
+  SERIALRF.begin(BAUDRATERF);
 }
 
-/**
- * @brief GPS updater.
- *
- * This function updates the GPS Position and DateTime value.
- * @verbatim like this@endverbatim 
- * @param none.
- * @return _stWimosInfo It returns GPS position and Datetime updated into stWimosInfo struct .
- */
-extern void updateGPS(stWimosInfo* _stWimosInfo){
-  #ifdef _EN_WIMOS_GPS
+extern void debug_print(const char* pFunction, const char* pLabel, const char* pData){
+  uint8_t i=0;
+  SERIAL_DEBUG.print(pFunction);
   
-  #endif
+  for(i=strlen(pFunction); i<12; i++)
+    SERIAL_DEBUG.print(" ");
+    
+  SERIAL_DEBUG.print(":\t");
+  SERIAL_DEBUG.print(pLabel);
+  
+  for(i=strlen(pLabel); i<12; i++)
+    SERIAL_DEBUG.print(" ");
+    
+  SERIAL_DEBUG.print("\t");
+  SERIAL_DEBUG.println(pData);
 }
+
+
+extern void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
+  if( eMode == eERROR || eMode == eOK ){
+    debug_print(pFunction,pLabel,pData);
+  }else{
+    if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
+      debug_print(pFunction,pLabel,pData);
+    }
+  }
+}
+
+extern void debugCommand(void){
+  uint8_t ucRecv = 0;
+  if(SERIAL_DEBUG.available() >= 2){
+    if(SERIAL_DEBUG.read() == 'C'){
+      
+      ucRecv = SERIAL_DEBUG.read();
+      DEBUG_DATA("CMD Debug parameter received (cmd = %c).", (char)ucRecv);
+      
+      if(ucRecv >= '0'  && ucRecv < '4'){
+        
+        ucCurrentDebugMode = ucRecv - '0';
+        DEBUG_OK("CMD Debug received.");
+        
+      }else{
+        DEBUG_ERROR("CMD Debug parameter error.");
+      }
+      while(SERIAL_DEBUG.available()){
+        SERIAL_DEBUG.read();
+      }
+    }else{
+      DEBUG_ERROR("CMD Debug unknown.");
+    }      
+  }
+}
+

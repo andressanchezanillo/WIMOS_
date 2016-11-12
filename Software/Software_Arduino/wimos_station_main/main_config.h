@@ -21,7 +21,7 @@
  * @file main_config.h
  * @author Andres Sanchez Anillo
  * @date 09 Jun 2015
- * @brief File containing main function for Wimos Framework.
+ * @brief File containing main configuration for Wimos Framework.
  *
  * Wimos is a Framework for easy IoT development.
  * @see https://github.com/andressanchezanillo/WIMOS_
@@ -134,6 +134,99 @@
  */
 #define BAUDRATEGPS (115200)
 
+/**
+ * @brief DEBUG Serial interface.
+ */
+#define SERIAL_DEBUG Serial
+/**
+ * @brief DEBUG Serial baudrate.
+ */
+#define BAUDRATE_DEBUG (115200)
+
+#ifdef DEBUG_COLOR
+/**
+ * @brief Info label displaying with colour.
+ */
+#define D_INFO "[\x1B[36mINFO\x1B[0m]  "
+/**
+ * @brief Error label displaying with colour.
+ */
+#define D_ERROR "[\x1B[31mERROR\x1B[0m] "
+/**
+ * @brief Data label displaying with colour.
+ */
+#define D_DATA "[\x1B[33mDATA\x1B[0m]  "
+/**
+ * @brief Data label displaying with colour.
+ */
+#define D_OK "[\x1B[32mOK\x1B[0m]  "
+
+#else
+/**
+ * @brief Info label displaying.
+ */
+#define D_INFO "[INFO]  "
+/**
+ * @brief Error label displaying.
+ */
+#define D_ERROR "[ERROR] "
+/**
+ * @brief Data label displaying.
+ */
+#define D_DATA "[DATA]  "
+/**
+ * @brief OK label displaying.
+ */
+#define D_OK "[OK]    "
+
+#endif
+
+enum eDebugMode{
+  eINFO = 1,
+  eDATA = 2,
+  eOK = 7,
+  eERROR = 7,
+};
+
+#ifdef WIMOS_DEBUG
+
+
+  char pDebug[150];
+  /**
+   * @brief Debug display function.
+   */
+  void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode);
+  /**
+   * @brief Debug Macro for ERROR displays.
+   */
+  #define DEBUG_ERROR(x) debug(__func__,D_ERROR,x,eERROR) 
+  /**
+   * @brief Debug Macro for ERROR displays.
+   */
+  #define DEBUG_OK(x) debug(__func__,D_OK,x,eOK) 
+  /**
+   * @brief Debug Macro for ERROR displays.
+   */
+  #define DEBUG_DATA(x,data) sprintf(pDebug,x,data); debug(__func__,D_DATA,pDebug,eDATA) 
+  /**
+   * @brief Debug Macro for ERROR displays.
+   */
+  #define DEBUG_INFO(x) debug(__func__,D_INFO,x,eINFO) 
+
+#else
+  /**
+   * @brief Debug Macro for ERROR displays.
+   */
+  #define DEBUG_ERROR(x) {}
+  /**
+   * @brief Debug Macro for ERROR displays.
+   */
+  #define DEBUG_DATA(x) {}
+  /**
+   * @brief Debug Macro for ERROR displays.
+   */
+  #define DEBUG_INFO(x) {}
+#endif
 
 /**
  * @brief System status data struct.
@@ -258,9 +351,9 @@ typedef struct _ackMessage{
 
 
 /**
- * @brief Core Wimos Thread pointer.
+ * @brief Core Wimos function.
  */
-void (*coreWimos)(void);
+void coreWimos(void);
 /**
  * @brief Initialize WIMOS.
  */
@@ -294,9 +387,13 @@ void updateStatusBattery(stWimosInfo* _stWimosInfo);
  */
 void (*communicationThread)(void);
 /**
+ * @brief Thread for wimos display (TV or RF).
+ */
+void (*coreWimosDisplay)(void);
+/**
  * @brief Initialize communication state.
  */
-void initCommunication(void);
+void initRF(void);
 /**
  * @brief Initialize IMU.
  */
@@ -337,6 +434,19 @@ void initPortI2C(void);
  * @brief Update I2C Ports values.
  */
 void readPortI2C(stWimosPortValues* stWimosPort);
+/**
+ * @brief No operation function.
+ */
+void noOperation(void);
+
+#ifdef WIMOS_DEBUG
+  void initDebug(void);
+  void debugCommand(void);
+#endif
+
+
+
+uint32_t coreWimosTVTimer;
 
 
 #endif

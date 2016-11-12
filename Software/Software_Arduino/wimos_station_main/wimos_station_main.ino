@@ -54,8 +54,8 @@ void setup(void) {
  * @return none.
  */
 void loop(void) {
-  
+  delay(1000);
+  //communicationThread();
   coreWimos();
-  communicationThread();
 
 }

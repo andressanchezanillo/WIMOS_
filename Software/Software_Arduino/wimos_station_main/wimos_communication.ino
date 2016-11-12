@@ -35,13 +35,11 @@ void sendACK(void);
 void waitACK(void);
 void sendResponse(void);
 void clearBuffer(void);
-void noOperation(void);
 void runFunction(void);
 void sendFrame(void* ptrData, uint8_t ucSize);
 
 extern void (*communicationThread)(void);
-void (*function)(void) = noOperation;
-uint8_t lastCMD;
+static uint8_t lastCMD = NONE;
 
 /**
  * @brief Communication initialization.
@@ -51,12 +49,13 @@ uint8_t lastCMD;
  * @param none.
  * @return none.
  */
-extern void initCommunication(void){
+extern void initRF(void){
   #ifdef _EN_WIMOS_RF
-    SERIALRF.begin(BAUDRATERF);
     communicationThread = waitCommand;
+    DEBUG_OK("Communication RF initialized.");
   #else
     communicationThread = noOperation;
+    DEBUG_INFO("Communication RF NOT initialized.");
   #endif
 }
 
@@ -81,10 +80,7 @@ void waitCommand(void){
   /** Process RF input **/
   if(COMMAND && IS_FOR_ME){
     /** Process RF command **/
-    /** Switch cases **/
-    function = noOperation;
-    function = noOperation;
-    function = noOperation;
+    /** cmd is valid **/
     if(QUERY_ID){
       communicationThread = runFunction;
       return;
@@ -182,7 +178,7 @@ void clearBuffer(void){
  * @return none.
  */
 void runFunction(void){
-  function();
+  /*TODO*/
   return;
 }
 

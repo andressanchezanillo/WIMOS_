@@ -39,10 +39,24 @@ void coreWimosTV(void);
  */
 void coreWimosRF(void);
 
+/**
+ * @brief General variable for Wimos Port values.
+ */
 stWimosPortValues stWimosPort;
+/**
+ * @brief General variable for Wimos System information.
+ */
 stWimosInfo stWimosInformation;
-extern void (*coreWimos)(void);
 
+/**
+ * @brief Thread for wimos display (TV or RF).
+ */
+extern void (*coreWimosDisplay)(void);
+
+/**
+ * @brief The Time of TV begin.
+ */
+extern uint32_t coreWimosTVTimer;
 
 
 /**
@@ -55,12 +69,23 @@ extern void (*coreWimos)(void);
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 extern void initWimos(void){
-  coreWimos = coreWimosRF;
-  initCommunication();
+  #ifdef WIMOS_DEBUG
+    initDebug();
+    while(!SERIAL_DEBUG);
+    delay(1000);
+  #endif
+  
   initGPS();
+  
+  initRF();
+  initTV();
+  
+  if(coreWimosDisplay == NULL){
+    coreWimosDisplay = noOperation;
+  }
+  
   initSD();
   initBattery();
-  initTV();
 
   initPortA();
   initPortD();
@@ -95,4 +120,13 @@ void coreWimosRF(void){
   updateGPS(&stWimosInformation);
   updateStatusSD(&stWimosInformation);
   updateStatusBattery(&stWimosInformation);
+}
+
+extern void coreWimos(){
+  #ifdef WIMOS_DEBUG
+    debugCommand();
+  #endif
+  
+  /** Timer Control **/
+  
 }

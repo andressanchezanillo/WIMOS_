@@ -21,7 +21,7 @@
  * @file _settinh.h
  * @author Andres Sanchez Anillo
  * @date 09 Jun 2015
- * @brief File containing main function for Wimos Framework.
+ * @brief File containing variable setting for Wimos Framework.
  *
  * Wimos is a Framework for easy IoT development.
  * @see https://github.com/andressanchezanillo/WIMOS_
@@ -30,6 +30,14 @@
 #ifndef _SETTING_H_
 #define _SETTING_H_
 
+/**
+ * @brief Label Debug traces activation.
+ */
+#define WIMOS_DEBUG
+/**
+ * @brief Label Debug for colour terminal activation.
+ */
+#define DEBUG_COLOR
 /**
  * @brief Label for GPS activation.
  */
@@ -54,6 +62,10 @@
  * @brief Label for TV activation.
  */
 #define _EN_WIMOS_TV
+/**
+ * @brief Time for TV display.
+ */
+#define _EN_WIMOS_TV_TIME_SEC ((uint16_t) 300)
 
 /**
  * @brief Label for Analog Port A1 activation.

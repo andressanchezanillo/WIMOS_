@@ -41,7 +41,9 @@
  */
 extern void initBattery(void){
   #ifdef _EN_WIMOS_BAT
-  
+    DEBUG_OK("Battery Reader initialized.");
+  #else
+    DEBUG_INFO("Battery Reader not initialized.");
   #endif
 }
 

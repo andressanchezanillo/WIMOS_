@@ -39,7 +39,13 @@
  * @return none.
  */
 extern void initPortI2C(void){
-  return;
+  #ifdef _EN_WIMOS_PORT_I2C
+  
+    DEBUG_OK("I2C port initialized.");
+  #else
+  
+    DEBUG_INFO("I2C port not initialized.");
+  #endif
 }
 
 /**

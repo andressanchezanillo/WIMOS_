@@ -40,7 +40,9 @@
  */
 extern void initSD(void){
   #ifdef _EN_WIMOS_SD
-  
+    DEBUG_OK("SD Memory initialized.");
+  #else
+    DEBUG_INFO("SD Memory not initialized.");
   #endif
 }
 

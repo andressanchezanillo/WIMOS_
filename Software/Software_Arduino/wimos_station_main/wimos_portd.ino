@@ -40,19 +40,39 @@
  */
 extern void initPortD(void){
   #ifdef _EN_WIMOS_PORT_D1
-  
+
+    DEBUG_OK("Digital port 1 initialized.");
+  #else
+
+    DEBUG_INFO("Digital port 1 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D2
-  
+
+    DEBUG_OK("Digital port 2 initialized.");
+  #else
+
+    DEBUG_INFO("Digital port 2 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D3
-  
+
+    DEBUG_OK("Digital port 3 initialized.");
+  #else
+
+    DEBUG_INFO("Digital port 3 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D4
-  
+
+    DEBUG_OK("Digital port 4 initialized.");
+  #else
+
+    DEBUG_INFO("Digital port 4 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D5
-  
+
+    DEBUG_OK("Digital port 5 initialized.");
+  #else
+
+    DEBUG_INFO("Digital port 5 not initialized.");
   #endif
 }
 

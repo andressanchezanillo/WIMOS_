@@ -40,19 +40,39 @@
  */
 extern void initPortA(void){
   #ifdef _EN_WIMOS_PORT_A1
-  
+
+    DEBUG_OK("Analog port 1 initialized.");
+  #else
+
+    DEBUG_INFO("Analog port 1 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_A2
-  
+
+    DEBUG_OK("Analog port 2 initialized.");
+  #else
+
+    DEBUG_INFO("Analog port 2 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_A3
-  
+
+    DEBUG_OK("Analog port 3 initialized.");
+  #else
+
+    DEBUG_INFO("Analog port 3 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_A4
-  
+
+    DEBUG_OK("Analog port 4 initialized.");
+  #else
+
+    DEBUG_INFO("Analog port 4 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_A5
-  
+
+    DEBUG_OK("Analog port 5 initialized.");
+  #else
+
+    DEBUG_INFO("Analog port 5 not initialized.");
   #endif
 }
 /**
