@@ -31,62 +31,65 @@
 #include "_setting.h"
 #include "main_config.h"
 
-static uint8_t ucCurrentDebugMode = 4;
+#ifdef WIMOS_DEBUG  //~(eINFO | eDATA);
+  static uint8_t ucCurrentDebugMode = eDATA;
 
-extern void initDebug(void){
-  SERIALRF.begin(BAUDRATERF);
-}
-
-extern void debug_print(const char* pFunction, const char* pLabel, const char* pData){
-  uint8_t i=0;
-  SERIAL_DEBUG.print(pFunction);
   
-  for(i=strlen(pFunction); i<12; i++)
-    SERIAL_DEBUG.print(" ");
-    
-  SERIAL_DEBUG.print(":\t");
-  SERIAL_DEBUG.print(pLabel);
+  extern void initDebug(void){
+    SERIAL_DEBUG.begin(BAUDRATE_DEBUG);
+  }
   
-  for(i=strlen(pLabel); i<12; i++)
-    SERIAL_DEBUG.print(" ");
+  extern void debug_print(const char* pFunction, const char* pLabel, const char* pData){
+    uint8_t i=0;
+    SERIAL_DEBUG.print(pFunction);
     
-  SERIAL_DEBUG.print("\t");
-  SERIAL_DEBUG.println(pData);
-}
-
-
-extern void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
-  if( eMode == eERROR || eMode == eOK ){
-    debug_print(pFunction,pLabel,pData);
-  }else{
-    if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
+    for(i=strlen(pFunction); i<12; i++)
+      SERIAL_DEBUG.print(" ");
+      
+    SERIAL_DEBUG.print(":\t");
+    SERIAL_DEBUG.print(pLabel);
+    
+    for(i=strlen(pLabel); i<12; i++)
+      SERIAL_DEBUG.print(" ");
+      
+    SERIAL_DEBUG.print("\t");
+    SERIAL_DEBUG.println(pData);
+  }
+  
+  
+  extern void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
+    if( eMode == eERROR || eMode == eOK ){
       debug_print(pFunction,pLabel,pData);
+    }else{
+      if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
+        debug_print(pFunction,pLabel,pData);
+      }
     }
   }
-}
-
-extern void debugCommand(void){
-  uint8_t ucRecv = 0;
-  if(SERIAL_DEBUG.available() >= 2){
-    if(SERIAL_DEBUG.read() == 'C'){
-      
-      ucRecv = SERIAL_DEBUG.read();
-      DEBUG_DATA("CMD Debug parameter received (cmd = %c).", (char)ucRecv);
-      
-      if(ucRecv >= '0'  && ucRecv < '4'){
+  
+  extern void debugCommand(void){
+    uint8_t ucRecv = 0;
+    if(SERIAL_DEBUG.available() >= 2){
+      if(SERIAL_DEBUG.read() == 'C'){
         
-        ucCurrentDebugMode = ucRecv - '0';
-        DEBUG_OK("CMD Debug received.");
+        ucRecv = SERIAL_DEBUG.read();
+        DEBUG_DATA("CMD Debug parameter received (cmd = %c).", (char)ucRecv);
         
+        if(ucRecv >= '0'  && ucRecv < '4'){
+          
+          ucCurrentDebugMode = ucRecv - '0';
+          DEBUG_OK("CMD Debug received.");
+          
+        }else{
+          DEBUG_ERROR("CMD Debug parameter error.");
+        }
+        while(SERIAL_DEBUG.available()){
+          SERIAL_DEBUG.read();
+        }
       }else{
-        DEBUG_ERROR("CMD Debug parameter error.");
-      }
-      while(SERIAL_DEBUG.available()){
-        SERIAL_DEBUG.read();
-      }
-    }else{
-      DEBUG_ERROR("CMD Debug unknown.");
-    }      
+        DEBUG_ERROR("CMD Debug unknown.");
+      }      
+    }
   }
-}
-
+  
+#endif

@@ -30,14 +30,6 @@
 #include "_setting.h"
 #include "main_config.h"
 
-/**
- * @brief Thread for TV displaying.
- */
-void coreWimosTV(void);
-/**
- * @brief Thread for RF communication.
- */
-void coreWimosRF(void);
 
 /**
  * @brief General variable for Wimos Port values.
@@ -94,20 +86,18 @@ extern void initWimos(void){
 
 }
 
-/**
- * @brief Wimos TV thread.
- *
- * This thread displays all values (max. 3) throw RCA signal.
- * @verbatim like this@endverbatim 
- * @param none.
- * @return none.
- */
-void coreWimosTV(void){
-  updateGPS(&stWimosInformation);
-  updateStatusBattery(&stWimosInformation);
+
+void updateWimos(){
+  #ifdef _EN_WIMOS_GPS
+    updateGPS(&stWimosInformation);
+  #endif
+  #ifdef _EN_WIMOS_SD
+    updateStatusSD(&stWimosInformation);
+  #endif
+  #ifdef _EN_WIMOS_BAT
+    updateStatusBattery(&stWimosInformation);
+  #endif
 }
-
-
 /**
  * @brief Wimos RF thread.
  *
@@ -116,16 +106,11 @@ void coreWimosTV(void){
  * @param none.
  * @return none.
  */
-void coreWimosRF(void){
-  updateGPS(&stWimosInformation);
-  updateStatusSD(&stWimosInformation);
-  updateStatusBattery(&stWimosInformation);
-}
-
 extern void coreWimos(){
   #ifdef WIMOS_DEBUG
     debugCommand();
   #endif
+  updateWimos();
   
   /** Timer Control **/
   

@@ -31,6 +31,8 @@
 #include "main_config.h"
 
 
+void displayTV(void);
+
 /**
  * @brief TV (RCA) Initialization.
  *
@@ -78,7 +80,7 @@ extern void deleteTV(void){
  * @param none.
  * @return none.
  */
-extern void displayTV(void){
+void displayTV(void){
   #if defined(_EN_WIMOS_TV)
   
     if(((millis() - coreWimosTVTimer)/1000) >=  _EN_WIMOS_TV_TIME_SEC )

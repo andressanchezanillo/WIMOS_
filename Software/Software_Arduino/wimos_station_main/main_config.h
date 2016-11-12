@@ -119,20 +119,20 @@
 /**
  * @brief RF Serial interface.
  */
-#define SERIALRF Serial1
+#define SERIAL_RF Serial1
 /**
  * @brief RF Serial baudrate.
  */
-#define BAUDRATERF (115200)
+#define BAUDRATE_RF (115200)
 
 /**
  * @brief GPS Serial interface.
  */
-#define SERIALGPS Serial
+#define SERIAL_GPS Serial3
 /**
  * @brief GPS Serial baudrate.
  */
-#define BAUDRATEGPS (115200)
+#define BAUDRATE_GPS (9600)
 
 /**
  * @brief DEBUG Serial interface.
@@ -159,7 +159,7 @@
 /**
  * @brief Data label displaying with colour.
  */
-#define D_OK "[\x1B[32mOK\x1B[0m]  "
+#define D_OK "[\x1B[32mOK\x1B[0m]    "
 
 #else
 /**
@@ -181,16 +181,19 @@
 
 #endif
 
-enum eDebugMode{
-  eINFO = 1,
-  eDATA = 2,
-  eOK = 7,
-  eERROR = 7,
-};
-
 #ifdef WIMOS_DEBUG
-
-
+  /**
+   * @brief Debug display enumeration.
+   */
+  enum eDebugMode{
+    eINFO = 1,
+    eDATA = 2,
+    eOK = 7,
+    eERROR = 7,
+  };
+  /**
+   * @brief Debug buffer.
+   */
   char pDebug[150];
   /**
    * @brief Debug display function.
@@ -207,7 +210,7 @@ enum eDebugMode{
   /**
    * @brief Debug Macro for ERROR displays.
    */
-  #define DEBUG_DATA(x,data) sprintf(pDebug,x,data); debug(__func__,D_DATA,pDebug,eDATA) 
+  #define DEBUG_DATA(x,data) sprintf(pDebug,x,data); debug(__func__,D_DATA,pDebug,eDATA);sprintf(pDebug,"") 
   /**
    * @brief Debug Macro for ERROR displays.
    */
@@ -406,10 +409,6 @@ void readIMU(stWimosPortValues* stWimosPort);
  * @brief Initialize TV (RCA) interface.
  */
 void initTV(void);
-/**
- * @brief Update TV display values.
- */
-void displayTV(void);
 /**
  * @brief Initialize Analog Ports.
  */

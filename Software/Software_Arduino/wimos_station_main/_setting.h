@@ -127,6 +127,21 @@
  */
 #define NONE 0x00
 
+/**
+ * @brief Label for ERROR response.
+ */
+#define _ERROR ((int8_t)-1)
+/**
+ * @brief Label for OK response.
+ */
+#define _OK ((int8_t)0)
+
+/**
+ * @brief Label for OK response.
+ */
+#define _NEXT_STEP ((int8_t)1)
+
+
 #ifdef _EN_WIMOS_TV
   /**
    * @brief Define to element 1 to display over TV signal.
