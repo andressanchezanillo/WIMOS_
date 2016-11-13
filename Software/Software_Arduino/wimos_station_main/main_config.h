@@ -270,7 +270,7 @@ typedef struct _dateTime{
  */
 typedef struct _gpsCoordenate{
   uint8_t ucDegree;  /**< Degree for Coordenate. */
-  int32_t ucSecond;  /**< Minute and Seconds (in seconds) for Coordenate. */
+  int32_t ucMinute;  /**< Minute (multiplicated by 1000). */
 }stWimosGpsCoordenate;
 
 /**

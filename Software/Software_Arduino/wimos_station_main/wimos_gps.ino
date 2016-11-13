@@ -163,9 +163,10 @@ int8_t processRMC(stWimosInfo* _stWimosInfo){
           return _ERROR;
         }
         /* IS FIXED GPS*/
-        if(strlen(pcGPSAuxBuffer) == 1 &&  pcGPSAuxBuffer[0] == 'V'){
+        /*************************************************************************************TODO Cambiar V por A******************************************************/
+        if(strlen(pcGPSAuxBuffer) == 1 &&  pcGPSAuxBuffer[0] == 'A'){
           DEBUG_INFO("GPS Fix.");
-          
+          /* Process Time Values */
           ucAuxBufferIndex = 0;
           ucRecv = splitByChar(pcGPSBuffer,pcGPSAuxBuffer,&ucAuxBufferIndex,0);
           
@@ -191,8 +192,119 @@ int8_t processRMC(stWimosInfo* _stWimosInfo){
             return _ERROR;
           }
           
-          /** process it **/
+          /* Process Latitude Values */
+          ucRecv = splitByChar(pcGPSBuffer,pcGPSAuxBuffer,&ucAuxBufferIndex,1);
           
+          if(ucRecv == _ERROR){
+            DEBUG_ERROR("GPS SPLITTER ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+          
+          ulData = atoi(pcGPSAuxBuffer);
+          stAuxGpsPosition.stLatitude.ucMinute = atoi(&pcGPSAuxBuffer[5]);
+          pcGPSAuxBuffer[4] = '\0';
+          stAuxGpsPosition.stLatitude.ucMinute += atoi(&pcGPSAuxBuffer[2])*1000;
+          pcGPSAuxBuffer[2] = '\0';
+          stAuxGpsPosition.stLatitude.ucDegree = atoi(pcGPSAuxBuffer);
+          
+          DEBUG_DATA("GPS Latitude Degree = %d .", stAuxGpsPosition.stLatitude.ucDegree);
+          DEBUG_DATA("GPS Latitude Minute = %d .", stAuxGpsPosition.stLatitude.ucMinute);
+
+          if(stAuxGpsPosition.stLatitude.ucDegree > 90){
+            DEBUG_ERROR("GPS Latitude ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+
+          ucRecv = splitByChar(pcGPSBuffer,pcGPSAuxBuffer,&ucAuxBufferIndex,0);
+          
+          if(ucRecv == _ERROR){
+            DEBUG_ERROR("GPS SPLITTER ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+          if(strlen(pcGPSAuxBuffer) == 1 &&  pcGPSAuxBuffer[0] == 'N'){
+            stAuxGpsPosition.stLatitude.ucMinute = abs(stAuxGpsPosition.stLatitude.ucMinute);
+          }else if(strlen(pcGPSAuxBuffer) == 1 &&  pcGPSAuxBuffer[0] == 'S'){
+            stAuxGpsPosition.stLatitude.ucMinute *= -1;
+          }else{
+            DEBUG_ERROR("GPS LATITUDE N/S ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+
+          
+          /* Process Longitude Values */
+          ucRecv = splitByChar(pcGPSBuffer,pcGPSAuxBuffer,&ucAuxBufferIndex,0);
+          
+          if(ucRecv == _ERROR){
+            DEBUG_ERROR("GPS SPLITTER ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+          
+          ulData = atoi(pcGPSAuxBuffer);
+          stAuxGpsPosition.stLongitude.ucMinute = atoi(&pcGPSAuxBuffer[6]);
+          pcGPSAuxBuffer[5] = '\0';
+          stAuxGpsPosition.stLongitude.ucMinute += atoi(&pcGPSAuxBuffer[3])*1000;
+          pcGPSAuxBuffer[3] = '\0';
+          stAuxGpsPosition.stLongitude.ucDegree = atoi(pcGPSAuxBuffer);
+          
+          DEBUG_DATA("GPS Longitude Degree = %d .", stAuxGpsPosition.stLongitude.ucDegree);
+          DEBUG_DATA("GPS Latitude Minute = %d .", stAuxGpsPosition.stLongitude.ucMinute);
+
+          if(stAuxGpsPosition.stLongitude.ucDegree > 180){
+            DEBUG_ERROR("GPS Longitude ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+
+          ucRecv = splitByChar(pcGPSBuffer,pcGPSAuxBuffer,&ucAuxBufferIndex,0);
+          
+          if(ucRecv == _ERROR){
+            DEBUG_ERROR("GPS SPLITTER ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+          if(strlen(pcGPSAuxBuffer) == 1 &&  pcGPSAuxBuffer[0] == 'E'){
+            stAuxGpsPosition.stLongitude.ucMinute = abs(stAuxGpsPosition.stLongitude.ucMinute);
+          }else if(strlen(pcGPSAuxBuffer) == 1 &&  pcGPSAuxBuffer[0] == 'W'){
+            stAuxGpsPosition.stLongitude.ucMinute *= -1;
+          }else{
+            DEBUG_ERROR("GPS LONGITUDE N/S ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+          /*Process Date value*/
+          ucRecv = splitByChar(pcGPSBuffer,pcGPSAuxBuffer,&ucAuxBufferIndex,2);
+          
+          if(ucRecv == _ERROR){
+            DEBUG_ERROR("GPS SPLITTER ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+          
+          ulData = atoi(pcGPSAuxBuffer);
+          stAuxDateTime.stDate.ucYear = atoi(&pcGPSAuxBuffer[4]);
+          pcGPSAuxBuffer[4] = '\0';
+          stAuxDateTime.stDate.ucMonth = atoi(&pcGPSAuxBuffer[2]);
+          pcGPSAuxBuffer[2] = '\0';
+          stAuxDateTime.stDate.ucDay = atoi(pcGPSAuxBuffer);
+          DEBUG_DATA("GPS Year = %d .",stAuxDateTime.stDate.ucYear);
+          DEBUG_DATA("GPS Month = %d .",stAuxDateTime.stDate.ucMonth);
+          DEBUG_DATA("GPS Day = %d .",stAuxDateTime.stDate.ucDay);
+
+          if(stAuxDateTime.stDate.ucYear < 16 || stAuxDateTime.stDate.ucMonth > 12 || stAuxDateTime.stDate.ucDay > 31 ){
+            DEBUG_ERROR("GPS Date ERROR.");
+            machineStateGPS = findTokenGPS;
+            return _ERROR;
+          }
+          
+          /*Update values*/
+          _stWimosInfo->stDateTime = stAuxDateTime;
+          _stWimosInfo->stGpsPosition = stAuxGpsPosition;
+                    
           machineStateGPS = findTokenGPS;
           return _OK;
           
@@ -228,10 +340,9 @@ int8_t processRMC(stWimosInfo* _stWimosInfo){
 int8_t splitByChar(const char* pcBufferIn, char* pcBufferOut, uint8_t* ucBufferInBegin, uint8_t index){
   uint8_t ucBufferIndex = 0;
   uint8_t i=0; 
-  uint8_t ucDebugIndex = *ucBufferInBegin;
   
   DEBUG_DATA("GPS Splitter BufferIN = %s .",pcBufferIn);
-  DEBUG_DATA("GPS Splitter BeginIndex = %d .",ucDebugIndex);
+  DEBUG_DATA("GPS Splitter BeginIndex = %d .",*ucBufferInBegin);
   DEBUG_DATA("GPS Splitter Index = %d .",index);
   
   for(i=0; i<index; i++){
@@ -247,6 +358,7 @@ int8_t splitByChar(const char* pcBufferIn, char* pcBufferOut, uint8_t* ucBufferI
     (*ucBufferInBegin)++;
   }
     
+  DEBUG_DATA("GPS Splitter Buffer Begin= %s .",&pcBufferIn[*ucBufferInBegin]);
   while(pcBufferIn[(*ucBufferInBegin)] != ',' && pcBufferIn[(*ucBufferInBegin)] != '\0'){
     pcBufferOut[ucBufferIndex++] = pcBufferIn[(*ucBufferInBegin)++];
   }
@@ -271,9 +383,6 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
     ret = machineStateGPS(_stWimosInfo);
     if(ret == _OK){
       DEBUG_OK("GPS updated.");
-      DEBUG_DATA("GPS updated Day = %d .",_stWimosInfo->stDateTime.stDate.ucDay);
-      DEBUG_DATA("GPS updated Month = %d .",_stWimosInfo->stDateTime.stDate.ucMonth);
-      DEBUG_DATA("GPS updated Year = %d .",_stWimosInfo->stDateTime.stDate.ucYear);
     }  
     return;  
   #endif
