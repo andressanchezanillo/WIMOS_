@@ -255,14 +255,14 @@ typedef struct _time{
   uint8_t ucSecond; /**< Second value. */
   uint8_t ucMinute; /**< Minute value. */
   uint8_t ucHour; /**< Year value. */
-}stTimeWimos;
+}stWimosTime;
 
 /**
  * @brief DateTime data struct.
  */
 typedef struct _dateTime{
   stWimosDate stDate; /**< Date value. */
-  stTimeWimos stTime; /**< Time value. */
+  stWimosTime stTime; /**< Time value. */
 }stWimosDateTime;
 
 /**
@@ -285,15 +285,27 @@ typedef struct _gpsPosition{
  * @brief Wimos information Frame
  */
 typedef struct _wimosInfo{
-  const uint8_t ucBegin = 0xFF; /**< Constant value for frame begin. */
-  const uint8_t ucFrameSize = 0x18; /**< Frame size value. */
   stWimosDateTime stDateTime; /**< Date Time value. */
   stWimosGpsPosition stGpsPosition; /**< GPS position value. */
   uint8_t ucPercentMemory;  /**< Percent memory used value. */
   uint8_t ucPercentBattery; /**< Percent battery available value. */
   stWimosStatus stStatus; /**< System status value. */
-  uint8_t checksum;  /**< checksum value. */
 } stWimosInfo;
+
+/**
+ * @brief Wimos information Frame
+ */
+typedef struct _wimosInfoMsg{
+  const uint8_t ucBegin = 0xFF; /**< Constant value for frame begin. */
+  const uint8_t ucFrameSize = 0x18; /**< Frame size value. */
+  
+  uint8_t ucMessageFrom;/**< Address of system what send the message . */
+  uint8_t ucMessageTo;/**< The message is for this address . */
+
+  stWimosInfo stInfo;/**< Wimos internal information. */
+  
+  uint8_t checksum;  /**< checksum value. */
+} stWimosInfoMessage;
 
 /**
  * @brief Wimos Ports values Frame
@@ -342,6 +354,22 @@ typedef struct _portStatus{
   #endif
   uint8_t checksum; /**< checksum value. */
 } stWimosPortValues;
+
+
+/**
+ * @brief Wimos Ports values Frame
+ */
+typedef struct _portStatusMsg{
+  const uint8_t ucBegin = 0xFF; /**< Constant value for . */
+  const uint8_t usFrameSize = sizeof(stWimosPortValues)+5; /**< Frame size value. */
+
+  uint8_t ucMessageFrom;/**< Address of system what send the message . */
+  uint8_t ucMessageTo;/**< The message is for this address . */
+
+  stWimosPortValues stPortValues; /**< Wimos sensors values . */
+  
+  uint8_t checksum; /**< checksum value. */
+} stWimosPortValuesMessage;
 
 /**
  * @brief ACK message frame.
