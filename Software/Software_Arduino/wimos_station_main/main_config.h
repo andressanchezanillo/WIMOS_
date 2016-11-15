@@ -232,14 +232,6 @@
 #endif
 
 /**
- * @brief System status data struct.
- */
-typedef struct _status{
-  uint16_t usPortStatus; /**< Status of System Ports. */
-  uint8_t usDeviceStatus;/**< Status of System Devices. */
-}stWimosStatus;
-
-/**
  * @brief Date data struct.
  */
 typedef struct _date{
@@ -280,6 +272,15 @@ typedef struct _gpsPosition{
   stWimosGpsCoordenate stLatitude; /**< Latitude position. */
   stWimosGpsCoordenate stLongitude;/**< Longitude position. */
 }stWimosGpsPosition;
+
+
+/**
+ * @brief System status data struct.
+ */
+typedef struct _status{
+  uint16_t usPortStatus; /**< Status of System Ports. */
+  uint8_t usDeviceStatus;/**< Status of System Devices. */
+}stWimosStatus;
 
 /**
  * @brief Wimos information Frame
@@ -352,7 +353,6 @@ typedef struct _portStatus{
   #if (_EN_WIMOS_PORT_I2C_SIZE > 0)
     uint8_t usPortI2C [ _EN_WIMOS_PORT_I2C_SIZE ]; /**< I2C devices values. */
   #endif
-  uint8_t checksum; /**< checksum value. */
 } stWimosPortValues;
 
 
