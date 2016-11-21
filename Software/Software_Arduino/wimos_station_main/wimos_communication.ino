@@ -51,6 +51,7 @@ static uint8_t lastCMD = NONE;
  */
 extern void initRF(void){
   #ifdef _EN_WIMOS_RF
+    /*TODO: Añadir inicialización del serial.*/
     communicationThread = waitCommand;
     DEBUG_OK("Communication RF initialized.");
   #else

@@ -312,8 +312,6 @@ typedef struct _wimosInfoMsg{
  * @brief Wimos Ports values Frame
  */
 typedef struct _portStatus{
-  const uint8_t ucBegin = 0xFF; /**< Constant value for . */
-  uint8_t usFrameSize; /**< Frame size value. */
   #ifdef _WIMOS_IMU
     uint8_t usInternalIMU; /**< Internal IMU module value. */
   #endif
@@ -471,7 +469,7 @@ void noOperation(void);
   void debugCommand(void);
 #endif
 
-
+void deleteTV(void);
 
 uint32_t coreWimosTVTimer;
 

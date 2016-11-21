@@ -55,6 +55,7 @@ void setup(void) {
  */
 void loop(void) {
   //coreWimosDisplay();
-  coreWimos();
-
+  //coreWimos();
+  DEBUG_DATA("Size Data RF = %d.",sizeof(stWimosPortValuesMessage));
+  DEBUG_DATA("Size Info RF = %d.",sizeof(stWimosInfoMessage));
 }

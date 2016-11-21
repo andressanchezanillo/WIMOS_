@@ -86,8 +86,14 @@ extern void initWimos(void){
 
 }
 
+extern void deleteWimos(void){
+  
+  deleteTV();
+  //deleteSD();
 
-void updateWimos(){
+}
+
+void updateInfoWimos(){
   #ifdef _EN_WIMOS_GPS
     updateGPS(&stWimosInformation);
   #endif
@@ -98,6 +104,12 @@ void updateWimos(){
     updateStatusBattery(&stWimosInformation);
   #endif
 }
+
+
+void readExternSensorsWimos(){
+  /* TODO: lectura de sensores */
+}
+
 /**
  * @brief Wimos RF thread.
  *
@@ -110,7 +122,7 @@ extern void coreWimos(){
   #ifdef WIMOS_DEBUG
     debugCommand();
   #endif
-  updateWimos();
+  updateInfoWimos();
   
   /** Timer Control **/
   

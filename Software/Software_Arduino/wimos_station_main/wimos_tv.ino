@@ -47,7 +47,7 @@ extern void initTV(void){
     coreWimosTVTimer = millis();
     DEBUG_OK("TV output signal initialized.");
   #else
-  
+    coreWimosDisplay = communicationThread;
     DEBUG_INFO("TV output signal not initialized.");
   #endif
 }
