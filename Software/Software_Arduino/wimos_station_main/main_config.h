@@ -105,7 +105,11 @@
 /**
  * @brief Internal Battery Reader mask.
  */
-#define WIMOS_PORT_BATT   ((uint16_t)0x08)
+#define WIMOS_PORT_BATT_MASK   ((uint16_t)0x08)
+/**
+ * @brief Internal Battery Reader mask.
+ */
+#define WIMOS_BATT_PORT   (A8)
 /**
  * @brief Internal TV mask.
  */
@@ -180,6 +184,14 @@
 #define D_OK "[OK]    "
 
 #endif
+
+
+enum PeriphericErrors{
+  OK_INITIALIZATION = 0,
+  ERROR_INITIALIZATION = 1,
+  UKNOWN_ERROR = 2,
+};
+
 
 #ifdef WIMOS_DEBUG
   /**

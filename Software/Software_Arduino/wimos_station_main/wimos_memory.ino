@@ -27,8 +27,19 @@
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 
+#include <SPI.h>
+#include <SD.h>
 #include "_setting.h"
 #include "main_config.h"
+
+
+Sd2Card card;
+SdVolume volume;
+SdFile root;
+
+PeriphericErrors errorSD = UKNOWN_ERROR;
+
+
 
 /**
  * @brief SD Initialization.
@@ -40,10 +51,22 @@
  */
 extern void initSD(void){
   #ifdef _EN_WIMOS_SD
-    DEBUG_OK("SD Memory initialized.");
+    if (card.init(SPI_HALF_SPEED, 10)) {
+      if (volume.init(card)) {
+        errorSD = OK_INITIALIZATION;
+        DEBUG_OK("SD Memory initialized.");
+        root.openRoot(volume);
+        updateStatusSD(&stWimosInfoMsg.stInfo);
+        return;
+      }
+    }    
+    errorSD = ERROR_INITIALIZATION;
+    DEBUG_ERROR("SD Memory initialization ERROR.");
   #else
+    errorSD = ERROR_INITIALIZATION;
     DEBUG_INFO("SD Memory not initialized.");
   #endif
+  return;
 }
 
 /**
@@ -56,6 +79,11 @@ extern void initSD(void){
  */
 extern void updateStatusSD(stWimosInfo* _stWimosInfo){
   #ifdef _EN_WIMOS_SD
-  
+    if( errorSD == OK_INITIALIZATION ){
+      uint32_t memoryUsed = 0;
+      
+      _stWimosInfo->ucPercentMemory = memoryUsed / ((uint32_t)volume.blocksPerCluster() * volume.clusterCount() * 512);
+      
+    }  
   #endif
 }

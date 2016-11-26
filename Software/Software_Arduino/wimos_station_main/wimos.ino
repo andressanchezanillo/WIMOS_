@@ -34,11 +34,11 @@
 /**
  * @brief General variable for Wimos Port values.
  */
-stWimosPortValues stWimosPort;
+extern stWimosPortValuesMessage stWimosPortMsg;
 /**
  * @brief General variable for Wimos System information.
  */
-stWimosInfo stWimosInformation;
+extern stWimosInfoMessage stWimosInfoMsg;
 
 /**
  * @brief Thread for wimos display (TV or RF).
@@ -95,13 +95,13 @@ extern void deleteWimos(void){
 
 void updateInfoWimos(){
   #ifdef _EN_WIMOS_GPS
-    updateGPS(&stWimosInformation);
+    updateGPS(&stWimosInfoMsg.stInfo);
   #endif
   #ifdef _EN_WIMOS_SD
-    updateStatusSD(&stWimosInformation);
+    updateStatusSD(&stWimosInfoMsg.stInfo);
   #endif
   #ifdef _EN_WIMOS_BAT
-    updateStatusBattery(&stWimosInformation);
+    updateStatusBattery(&stWimosInfoMsg.stInfo);
   #endif
 }
 

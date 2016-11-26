@@ -52,10 +52,11 @@ static uint8_t lastCMD = NONE;
 extern void initRF(void){
   #ifdef _EN_WIMOS_RF
     /*TODO: Añadir inicialización del serial.*/
-    communicationThread = waitCommand;
+    /*communicationThread = waitCommand;*/
+    SERIAL_RF.begin(BAUDRATE_RF);
     DEBUG_OK("Communication RF initialized.");
   #else
-    communicationThread = noOperation;
+    /*communicationThread = noOperation;*/
     DEBUG_INFO("Communication RF NOT initialized.");
   #endif
 }
@@ -194,7 +195,10 @@ void runFunction(void){
  */
 void sendFrame(void* pData, uint8_t ucSize){
   /** Send the frame over RF **/
-  
+  uint8_t i = 0;
+  for(i=0; i<ucSize; i++)
+    SERIAL_RF.write(((uint8_t*)pData)[i]);
+    
   return;
 }
 

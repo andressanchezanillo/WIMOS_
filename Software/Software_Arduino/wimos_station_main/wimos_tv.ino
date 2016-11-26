@@ -26,12 +26,15 @@
  * Wimos is a Framework for easy IoT development.
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
- 
+#include <VGA.h>
+#include "_image.h"
 #include "_setting.h"
 #include "main_config.h"
 
+uint32_t ulTimerTV = 0;
 
 void displayTV(void);
+void displayMainScreen(const uint8_t* ucImage, uint16_t usSize);
 
 /**
  * @brief TV (RCA) Initialization.
@@ -43,9 +46,12 @@ void displayTV(void);
  */
 extern void initTV(void){
   #ifdef _EN_WIMOS_TV
+    VGA.beginPAL();
     coreWimosDisplay = displayTV;
     coreWimosTVTimer = millis();
-    DEBUG_OK("TV output signal initialized.");
+    ulTimerTV = millis();
+    displayMainScreen(mainWindows,MAIN_WINDOWS_SIZE);
+    DEBUG_OK("TV output signal initialized.");    
   #else
     coreWimosDisplay = communicationThread;
     DEBUG_INFO("TV output signal not initialized.");
@@ -72,6 +78,27 @@ extern void deleteTV(void){
   #endif
 }
 
+
+/**
+ * @brief Displayer the main screen image.
+ *
+ * This function displays the main screen.
+ * @param ucImage: Pointer to image byte matrix.
+ * @param usSizeX: Size of image for X axi.
+ * @param usSizeY: Size of image for Y axi.
+ * @return none.
+ */
+void displayMainScreen(const uint8_t* ucImage, uint16_t usSize){
+  uint8_t i, b;
+  for( i=0; i<usSize ; i++ ){
+      for( b=0; b<8 ; b++ ){
+        VGA.drawPixel(((i*8)%SCREEN_SIZE_X)+b,((i*8)/SCREEN_SIZE_X),((uint8_t)0x80 & ((uint8_t)(ucImage[i]) << b)));
+      }
+  }
+  
+  return;
+}
+
 /**
  * @brief TV displayer.
  *
@@ -83,8 +110,12 @@ extern void deleteTV(void){
 void displayTV(void){
   #if defined(_EN_WIMOS_TV)
   
-    if(((millis() - coreWimosTVTimer)/1000) >=  _EN_WIMOS_TV_TIME_SEC )
+    /*Displaying sensor values.*/
+    
+    if(((millis() - coreWimosTVTimer)/1000) >=  _EN_WIMOS_TV_TIME_SEC ){
       deleteTV();
+    }
+    
   #else
     coreWimosDisplay = communicationThread;
     coreWimosTVTimer = 0;
