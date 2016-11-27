@@ -30,6 +30,9 @@
 #ifndef _SETTING_H_
 #define _SETTING_H_
 
+#define WIMOS_ID 0x10
+
+
 /**
  * @brief Label Debug traces activation.
  */

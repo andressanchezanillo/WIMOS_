@@ -28,8 +28,21 @@
  */
 #include "_setting.h"
 #include "main_config.h"
+#include <SD.h>
 
 
+/**
+ * @brief Global variable for Wimos Port Values.
+ */
+stWimosPortValuesMessage stGlobalWimosPortMsg;
+
+/**
+ * @brief Global variable for Wimos System Information.
+ */
+stWimosInfoMessage stGlobalWimosInfoMsg;
+
+char pDebug[150];
+int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFileNameFrom, const char* ptrDirNameTo, const char* ptrFileNameTo);
 /**
  * @brief Setup the system config.
  *
@@ -42,8 +55,22 @@ void setup(void) {
   
   initWimos();
 
-}
+  
+  File stVolatileFile;
+  char prtFileName[22];
+  
+  /*uint32_t timeTest = millis();
+  for(uint8_t i=0; i<100; i++){
+    stGlobalWimosPortMsg.stPortValues.usPortA1 = i;
+    storeVolatile(&stGlobalWimosPortMsg.stPortValues, sizeof(&stGlobalWimosPortMsg.stPortValues) );
+  }
+  DEBUG_DATA("TEST n1.TSF04, Time for a storage = %d ms",(millis()-timeTest)/100);
+  
+  timeTest = millis();
+  moveFileToDirectory(WIMOS_VOLATILE_DIR, "Wv1.log", WIMOS_NON_VOLATILE_DIR, "Wnv1.log");
+  DEBUG_DATA("TEST n1.TSF05, Time for moving a file = %d ms",(millis()-timeTest)/2);*/
 
+}
 
 /**
  * @brief The main thread execution.
@@ -55,7 +82,6 @@ void setup(void) {
  */
 void loop(void) {
   //coreWimosDisplay();
-  //coreWimos();
-  DEBUG_DATA("Size Data RF = %d.",sizeof(stWimosPortValuesMessage));
-  DEBUG_DATA("Size Info RF = %d.",sizeof(stWimosInfoMessage));
+  coreWimos();
+  delay(100);
 }

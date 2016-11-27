@@ -30,95 +30,167 @@
 #ifndef MAIN_CONFIG_H_
 #define MAIN_CONFIG_H_
 
+
+
+
+/***************************************************************
+ * Device Masks definition:
+ ***************************************************************/
+
 /**
  * @brief Analog Port 1 mask.
  */
-#define WIMOS_PORT_A1     ((uint16_t)0x01)
+#define WIMOS_PORT_A1_MASK     ((uint16_t)0x01)
+
 /**
  * @brief Analog Port 2 mask.
  */
-#define WIMOS_PORT_A2     ((uint16_t)0x02)
+#define WIMOS_PORT_A2_MASK     ((uint16_t)0x02)
+
 /**
  * @brief Analog Port 3 mask.
  */
-#define WIMOS_PORT_A3     ((uint16_t)0x04)
+#define WIMOS_PORT_A3_MASK     ((uint16_t)0x04)
+
 /**
  * @brief Analog Port 4 mask.
  */
-#define WIMOS_PORT_A4     ((uint16_t)0x08)
+#define WIMOS_PORT_A4_MASK     ((uint16_t)0x08)
+
 /**
  * @brief Analog Port 5 mask.
  */
-#define WIMOS_PORT_A5     ((uint16_t)0x10)
+#define WIMOS_PORT_A5_MASK     ((uint16_t)0x10)
+
 
 /**
  * @brief Digital Port 1 mask.
  */
-#define WIMOS_PORT_D1     ((uint16_t)0x20)
+#define WIMOS_PORT_D1_MASK     ((uint16_t)0x20)
+
 /**
  * @brief Digital Port 2 mask.
  */
-#define WIMOS_PORT_D2     ((uint16_t)0x40)
+#define WIMOS_PORT_D2_MASK     ((uint16_t)0x40)
+
 /**
  * @brief Digital Port 3 mask.
  */
-#define WIMOS_PORT_D3     ((uint16_t)0x80)
+#define WIMOS_PORT_D3_MASK     ((uint16_t)0x80)
+
 /**
  * @brief Digital Port 4 mask.
  */
-#define WIMOS_PORT_D4     ((uint16_t)0x100)
+#define WIMOS_PORT_D4_MASK     ((uint16_t)0x100)
+
 /**
  * @brief Digital Port 5 mask.
  */
-#define WIMOS_PORT_D5     ((uint16_t)0x200)
+#define WIMOS_PORT_D5_MASK     ((uint16_t)0x200)
 
 /**
  * @brief Digital To Analog Converter Port 1 mask.
  */
-#define WIMOS_PORT_DAC1   ((uint16_t)0x400)
+#define WIMOS_PORT_DAC1_MASK   ((uint16_t)0x400)
 /**
  * @brief Digital To Analog Converter Port 2 mask.
  */
-#define WIMOS_PORT_DAC2   ((uint16_t)0x800)
+#define WIMOS_PORT_DAC2_MASK   ((uint16_t)0x800)
 /**
  * @brief UART Port mask.
  */
-#define WIMOS_PORT_UART   ((uint16_t)0x1000)
+#define WIMOS_PORT_UART_MASK   ((uint16_t)0x1000)
 /**
  * @brief I2C Port mask.
  */
-#define WIMOS_PORT_I2C    ((uint16_t)0x2000)
-
+#define WIMOS_PORT_I2C_MASK    ((uint16_t)0x2000)
 
 /**
  * @brief Internal GPS mask.
  */
-#define WIMOS_DEVICE_GPS  ((uint16_t)0x01)
+#define WIMOS_DEVICE_GPS_MASK  ((uint8_t)0x01)
+
 /**
  * @brief Internal IMU mask.
  */
-#define WIMOS_DEVICE_IMU  ((uint16_t)0x02)
+#define WIMOS_DEVICE_IMU_MASK  ((uint8_t)0x02)
+
 /**
  * @brief Internal SD mask.
  */
-#define WIMOS_DEVICE_SD   ((uint16_t)0x04)
+#define WIMOS_DEVICE_SD_MASK   ((uint8_t)0x04)
+
 /**
  * @brief Internal Battery Reader mask.
  */
-#define WIMOS_PORT_BATT_MASK   ((uint16_t)0x08)
-/**
- * @brief Internal Battery Reader mask.
- */
-#define WIMOS_BATT_PORT   (A8)
+#define WIMOS_DEVICE_BATT_MASK  ((uint8_t)0x08)
+
 /**
  * @brief Internal TV mask.
  */
-#define WIMOS_PORT_TV     ((uint16_t)0x10)
+#define WIMOS_DEVICE_TV_MASK     ((uint8_t)0x10)
+
 /**
  * @brief Internal RF mask.
  */
-#define WIMOS_PORT_RF     ((uint16_t)0x20)
+#define WIMOS_DEVICE_RF_MASK     ((uint8_t)0x20)
 
+/**
+ * @brief Internal RF mask.
+ */
+#define WIMOS_DEVICE_DEBUG_MASK     ((uint8_t)0x40)
+
+
+
+/***************************************************************
+ * Pinouts definition:
+ ***************************************************************/
+
+
+/**
+ * @brief Internal Battery Reader mask.
+ */
+#define WIMOS_BATT_PIN   (A8)
+
+/**
+ * @brief Internal Battery Reader mask.
+ */
+#define WIMOS_SD_CS_PIN   (10)
+
+
+
+
+/***************************************************************
+ * Math Constants definition:
+ ***************************************************************/
+
+ #define VCC_LOGIC                          3300
+ #define ADC_MAX_VALUE                      1024
+ #define ADC_VOLTAGE_TO_BAT_VOLTAGE         4
+ #define VCC_MAX_BATTERY                    13000       
+ #define VCC_MIN_BATTERY                    7150
+
+
+/***************************************************************
+ * Memory definition:
+ ***************************************************************/
+
+ #define WIMOS_SIGN_FILE                    "Wms.dat"
+ #define WIMOS_NON_VOLATILE_DIR             "nvoltl"
+ #define WIMOS_NON_VOLATILE_FILE            "Wnv"
+ #define WIMOS_NON_VOLATILE_FILE_MAX        65535
+ #define WIMOS_VOLATILE_FILE_NUMBER_MAX     10
+ #define WIMOS_NON_VOLATILE_EXT             ".log\0"
+ #define WIMOS_VOLATILE_EXT                 ".log\0"
+ #define WIMOS_VOLATILE_DIR                 "voltl"
+ #define WIMOS_VOLATILE_FILE                "Wv"
+ #define WIMOS_MEM_BUFFER_SIZE              200
+
+
+
+/***************************************************************
+ * Serial interfaces definition:
+ ***************************************************************/
 
 /**
  * @brief RF Serial interface.
@@ -147,44 +219,11 @@
  */
 #define BAUDRATE_DEBUG (115200)
 
-#ifdef DEBUG_COLOR
-/**
- * @brief Info label displaying with colour.
- */
-#define D_INFO "[\x1B[36mINFO\x1B[0m]  "
-/**
- * @brief Error label displaying with colour.
- */
-#define D_ERROR "[\x1B[31mERROR\x1B[0m] "
-/**
- * @brief Data label displaying with colour.
- */
-#define D_DATA "[\x1B[33mDATA\x1B[0m]  "
-/**
- * @brief Data label displaying with colour.
- */
-#define D_OK "[\x1B[32mOK\x1B[0m]    "
 
-#else
-/**
- * @brief Info label displaying.
- */
-#define D_INFO "[INFO]  "
-/**
- * @brief Error label displaying.
- */
-#define D_ERROR "[ERROR] "
-/**
- * @brief Data label displaying.
- */
-#define D_DATA "[DATA]  "
-/**
- * @brief OK label displaying.
- */
-#define D_OK "[OK]    "
 
-#endif
-
+/***************************************************************
+ * Enums definition:
+ ***************************************************************/
 
 enum PeriphericErrors{
   OK_INITIALIZATION = 0,
@@ -193,7 +232,53 @@ enum PeriphericErrors{
 };
 
 
+
+
+/***************************************************************
+ * Debug interface definition:
+ ***************************************************************/
+
+
 #ifdef WIMOS_DEBUG
+
+  #ifdef DEBUG_COLOR
+  /**
+   * @brief Info label displaying with colour.
+   */
+  #define D_INFO "[\x1B[36mINFO\x1B[0m]  "
+  /**
+   * @brief Error label displaying with colour.
+   */
+  #define D_ERROR "[\x1B[31mERROR\x1B[0m] "
+  /**
+   * @brief Data label displaying with colour.
+   */
+  #define D_DATA "[\x1B[33mDATA\x1B[0m]  "
+  /**
+   * @brief Data label displaying with colour.
+   */
+  #define D_OK "[\x1B[32mOK\x1B[0m]    "
+  
+  #else
+  /**
+   * @brief Info label displaying.
+   */
+  #define D_INFO "[INFO]  "
+  /**
+   * @brief Error label displaying.
+   */
+  #define D_ERROR "[ERROR] "
+  /**
+   * @brief Data label displaying.
+   */
+  #define D_DATA "[DATA]  "
+  /**
+   * @brief OK label displaying.
+   */
+  #define D_OK "[OK]    "
+  
+  #endif
+
   /**
    * @brief Debug display enumeration.
    */
@@ -203,10 +288,7 @@ enum PeriphericErrors{
     eOK = 7,
     eERROR = 7,
   };
-  /**
-   * @brief Debug buffer.
-   */
-  char pDebug[150];
+
   /**
    * @brief Debug display function.
    */
@@ -227,6 +309,10 @@ enum PeriphericErrors{
    * @brief Debug Macro for ERROR displays.
    */
   #define DEBUG_INFO(x) debug(__func__,D_INFO,x,eINFO) 
+  /**
+   * @brief Debug Macro for Test.
+   */
+  #define DEBUG_VALID(x,data,cond) sprintf(pDebug,x,data); debug(__func__, (cond?D_OK:D_ERROR) ,pDebug,eDATA);sprintf(pDebug,"") 
 
 #else
   /**
@@ -242,6 +328,12 @@ enum PeriphericErrors{
    */
   #define DEBUG_INFO(x) {}
 #endif
+
+
+/***************************************************************
+ * Structs definition:
+ ***************************************************************/
+
 
 /**
  * @brief Date data struct.
@@ -287,12 +379,22 @@ typedef struct _gpsPosition{
 
 
 /**
- * @brief System status data struct.
+ * @brief System Status data struct.
  */
 typedef struct _status{
   uint16_t usPortStatus; /**< Status of System Ports. */
-  uint8_t usDeviceStatus;/**< Status of System Devices. */
+  uint8_t ucDeviceStatus;/**< Status of System Devices. */
 }stWimosStatus;
+
+
+/**
+ * @brief System Signature data struct.
+ */
+typedef struct _signature{
+  uint8_t ucWimosID; /**< Status of System Ports. */
+  stWimosStatus stStatus;/**< Status of System Devices. */  
+}stWimosSignature;
+
 
 /**
  * @brief Wimos information Frame
@@ -391,6 +493,13 @@ typedef struct _ackMessage{
 } stWimosACK;
 
 
+
+
+
+/***************************************************************
+ * Global Functions definition:
+ ***************************************************************/
+
 /**
  * @brief Core Wimos function.
  */
@@ -410,11 +519,7 @@ void updateGPS(stWimosInfo* _stWimosInfo);
 /**
  * @brief Initialize SD.
  */
-void initSD(void);
-/**
- * @brief Update SD status.
- */
-void updateStatusSD(stWimosInfo* _stWimosInfo);
+int32_t initSD(void);
 /**
  * @brief Initialize Battery Reader.
  */
@@ -485,5 +590,6 @@ void deleteTV(void);
 
 uint32_t coreWimosTVTimer;
 
+int8_t storeVolatile(void* ptrBuffer, uint8_t ucBufferSize);
 
 #endif

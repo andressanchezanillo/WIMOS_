@@ -31,11 +31,21 @@
 #include "_setting.h"
 #include "main_config.h"
 
+
 #ifdef WIMOS_DEBUG  //~(eINFO | eDATA);
-  static uint8_t ucCurrentDebugMode = eDATA;
+
+  
+  /**
+   * @brief Debug buffer.
+   */
+  extern char pDebug[150];
+  
+  
+  static uint8_t ucCurrentDebugMode = (eINFO | eDATA);
 
   
   extern void initDebug(void){
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_DEBUG_MASK;
     SERIAL_DEBUG.begin(BAUDRATE_DEBUG);
   }
   

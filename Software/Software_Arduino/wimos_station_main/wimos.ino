@@ -31,14 +31,6 @@
 #include "main_config.h"
 
 
-/**
- * @brief General variable for Wimos Port values.
- */
-extern stWimosPortValuesMessage stWimosPortMsg;
-/**
- * @brief General variable for Wimos System information.
- */
-extern stWimosInfoMessage stWimosInfoMsg;
 
 /**
  * @brief Thread for wimos display (TV or RF).
@@ -61,10 +53,13 @@ extern uint32_t coreWimosTVTimer;
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 extern void initWimos(void){
+  
   #ifdef WIMOS_DEBUG
     initDebug();
     while(!SERIAL_DEBUG);
     delay(1000);
+  #else
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_DEBUG_MASK;
   #endif
   
   initGPS();
@@ -76,13 +71,14 @@ extern void initWimos(void){
     coreWimosDisplay = noOperation;
   }
   
-  initSD();
   initBattery();
 
   initPortA();
   initPortD();
   initPortI2C();
   initIMU();
+  
+  stGlobalWimosInfoMsg.stInfo.ucPercentMemory = initSD();
 
 }
 
@@ -95,13 +91,13 @@ extern void deleteWimos(void){
 
 void updateInfoWimos(){
   #ifdef _EN_WIMOS_GPS
-    updateGPS(&stWimosInfoMsg.stInfo);
+    updateGPS(&stGlobalWimosInfoMsg.stInfo);
   #endif
   #ifdef _EN_WIMOS_SD
-    updateStatusSD(&stWimosInfoMsg.stInfo);
+    //updateStatusSD(&stGlobalWimosInfoMsg.stInfo);
   #endif
   #ifdef _EN_WIMOS_BAT
-    updateStatusBattery(&stWimosInfoMsg.stInfo);
+    updateStatusBattery(&stGlobalWimosInfoMsg.stInfo);
   #endif
 }
 
@@ -122,7 +118,7 @@ extern void coreWimos(){
   #ifdef WIMOS_DEBUG
     debugCommand();
   #endif
-  updateInfoWimos();
+  //updateInfoWimos();
   
   /** Timer Control **/
   

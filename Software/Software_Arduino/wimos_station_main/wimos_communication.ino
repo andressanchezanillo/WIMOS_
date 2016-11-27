@@ -30,6 +30,7 @@
 #include "_setting.h"
 #include "main_config.h"
 
+
 void waitCommand(void);
 void sendACK(void);
 void waitACK(void);
@@ -51,12 +52,13 @@ static uint8_t lastCMD = NONE;
  */
 extern void initRF(void){
   #ifdef _EN_WIMOS_RF
-    /*TODO: Añadir inicialización del serial.*/
     /*communicationThread = waitCommand;*/
     SERIAL_RF.begin(BAUDRATE_RF);
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_RF_MASK;
     DEBUG_OK("Communication RF initialized.");
   #else
     /*communicationThread = noOperation;*/
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_RF_MASK;
     DEBUG_INFO("Communication RF NOT initialized.");
   #endif
 }

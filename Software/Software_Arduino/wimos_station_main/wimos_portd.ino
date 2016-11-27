@@ -30,6 +30,9 @@
 #include "_setting.h"
 #include "main_config.h"
 
+
+
+
 /**
  * @brief Digital Port Initialization.
  *
@@ -41,37 +44,47 @@
 extern void initPortD(void){
   #ifdef _EN_WIMOS_PORT_D1
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D1_MASK;
     DEBUG_OK("Digital port 1 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_D1_MASK;
     DEBUG_INFO("Digital port 1 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D2
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D2_MASK;
     DEBUG_OK("Digital port 2 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_D2_MASK;
     DEBUG_INFO("Digital port 2 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D3
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D3_MASK;
     DEBUG_OK("Digital port 3 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_D3_MASK;
     DEBUG_INFO("Digital port 3 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D4
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D4_MASK;
     DEBUG_OK("Digital port 4 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_D4_MASK;
     DEBUG_INFO("Digital port 4 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D5
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D5_MASK;
     DEBUG_OK("Digital port 5 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_D5_MASK;
     DEBUG_INFO("Digital port 5 not initialized.");
   #endif
 }

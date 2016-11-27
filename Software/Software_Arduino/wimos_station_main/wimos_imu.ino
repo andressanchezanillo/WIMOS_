@@ -31,6 +31,7 @@
 #include "main_config.h"
 
 
+
 /**
  * @brief IMU Initialization.
  *
@@ -41,7 +42,11 @@
  */
 extern void initIMU(void){
   #ifdef _EN_WIMOS_IMU
-  
+
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_IMU_MASK;
+  #else
+    
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_IMU_MASK;
   #endif
 }
 

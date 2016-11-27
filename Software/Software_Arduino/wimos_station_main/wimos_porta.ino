@@ -30,6 +30,8 @@
 #include "_setting.h"
 #include "main_config.h"
 
+
+
 /**
  * @brief Analog Port Initialization.
  *
@@ -40,38 +42,48 @@
  */
 extern void initPortA(void){
   #ifdef _EN_WIMOS_PORT_A1
-
+      
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_A1_MASK;
     DEBUG_OK("Analog port 1 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_A1_MASK;
     DEBUG_INFO("Analog port 1 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_A2
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_A2_MASK;
     DEBUG_OK("Analog port 2 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_A2_MASK;
     DEBUG_INFO("Analog port 2 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_A3
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_A3_MASK;
     DEBUG_OK("Analog port 3 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_A3_MASK;
     DEBUG_INFO("Analog port 3 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_A4
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_A4_MASK;
     DEBUG_OK("Analog port 4 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_A4_MASK;
     DEBUG_INFO("Analog port 4 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_A5
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_A5_MASK;
     DEBUG_OK("Analog port 5 initialized.");
   #else
 
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_A5_MASK;
     DEBUG_INFO("Analog port 5 not initialized.");
   #endif
 }

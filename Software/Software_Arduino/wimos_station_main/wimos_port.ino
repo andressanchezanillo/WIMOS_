@@ -30,6 +30,8 @@
 #include "_setting.h"
 #include "main_config.h"
 
+
+
 /**
  * @brief I2C port Initialization.
  *
@@ -40,10 +42,12 @@
  */
 extern void initPortI2C(void){
   #ifdef _EN_WIMOS_PORT_I2C
-  
+    
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_I2C_MASK;
     DEBUG_OK("I2C port initialized.");
   #else
   
+    stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_I2C_MASK;
     DEBUG_INFO("I2C port not initialized.");
   #endif
 }

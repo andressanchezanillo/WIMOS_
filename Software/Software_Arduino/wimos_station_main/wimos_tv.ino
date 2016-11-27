@@ -31,8 +31,8 @@
 #include "_setting.h"
 #include "main_config.h"
 
-uint32_t ulTimerTV = 0;
 
+uint32_t ulTimerTV = 0;
 void displayTV(void);
 void displayMainScreen(const uint8_t* ucImage, uint16_t usSize);
 
@@ -51,9 +51,11 @@ extern void initTV(void){
     coreWimosTVTimer = millis();
     ulTimerTV = millis();
     displayMainScreen(mainWindows,MAIN_WINDOWS_SIZE);
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_TV_MASK;
     DEBUG_OK("TV output signal initialized.");    
   #else
     coreWimosDisplay = communicationThread;
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_TV_MASK;
     DEBUG_INFO("TV output signal not initialized.");
   #endif
 }
@@ -89,7 +91,7 @@ extern void deleteTV(void){
  * @return none.
  */
 void displayMainScreen(const uint8_t* ucImage, uint16_t usSize){
-  uint8_t i, b;
+  uint16_t i, b;
   for( i=0; i<usSize ; i++ ){
       for( b=0; b<8 ; b++ ){
         VGA.drawPixel(((i*8)%SCREEN_SIZE_X)+b,((i*8)/SCREEN_SIZE_X),((uint8_t)0x80 & ((uint8_t)(ucImage[i]) << b)));

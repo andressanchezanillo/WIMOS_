@@ -41,8 +41,10 @@
  */
 extern void initBattery(void){
   #ifdef _EN_WIMOS_BAT
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_BATT_MASK;
     DEBUG_OK("Battery Reader initialized.");
   #else
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_BATT_MASK;
     DEBUG_INFO("Battery Reader not initialized.");
   #endif
 }
@@ -55,18 +57,18 @@ extern void initBattery(void){
  * @param none.
  * @return _stWimosInfo It returns battery status updated into stWimosInfo struct.
  */
- #define VCC_LOGIC        3300
- #define ADC_MAX_VALUE    1024
- #define ADC_VOLTAGE_TO_BAT_VOLTAGE    4
- #define VCC_MAX_BATTERY  13000       
- #define VCC_MIN_BATTERY  7150
+ 
 extern void updateStatusBattery(stWimosInfo* _stWimosInfo){
   #ifdef _EN_WIMOS_BAT
-    uint32_t ulVoltage = 0;
-    ulVoltage  = (analogRead(WIMOS_BATT_PORT) * VCC_LOGIC)/ADC_MAX_VALUE;
-    ulVoltage  *= ADC_VOLTAGE_TO_BAT_VOLTAGE;
-    ulVoltage = ((VCC_MAX_BATTERY - VCC_MIN_BATTERY) / (ulVoltage - VCC_MIN_BATTERY))*100;
-    _stWimosInfo->ucPercentBattery = (uint8_t) ulVoltage;
+    int32_t slVoltage = 0;
+    slVoltage  = (analogRead(WIMOS_BATT_PIN) * VCC_LOGIC)/ADC_MAX_VALUE;
+    slVoltage  *= ADC_VOLTAGE_TO_BAT_VOLTAGE;
+    slVoltage = ((VCC_MAX_BATTERY - VCC_MIN_BATTERY) / (slVoltage - VCC_MIN_BATTERY))*100;
+    _stWimosInfo->ucPercentBattery = slVoltage;
+    if(slVoltage < 0)
+      _stWimosInfo->ucPercentBattery = 0;
+    if(slVoltage > 100)
+      _stWimosInfo->ucPercentBattery = 100;
   #endif
   return;
 }

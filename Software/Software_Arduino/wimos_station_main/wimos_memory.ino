@@ -32,14 +32,19 @@
 #include "_setting.h"
 #include "main_config.h"
 
-
-Sd2Card card;
-SdVolume volume;
-SdFile root;
-
+uint16_t usLastNonVolatileFile = 0;
+uint16_t usLastVolatileFile = 1;
+uint32_t ulTimerSD = 0;
 PeriphericErrors errorSD = UKNOWN_ERROR;
+File stVolatileFile;
+char ptrVolatileFileName[22];
+File stNonVolatileFile;
 
 
+
+void writeFrameToFile(File* stFileToWrite, const void* ptrBuffer, uint16_t usBufferSize);
+int8_t initSystemSD(void);
+uint32_t getLastFile(const char* ptrDir, const char* prtFileName, const char* prtExtension );
 
 /**
  * @brief SD Initialization.
@@ -49,24 +54,49 @@ PeriphericErrors errorSD = UKNOWN_ERROR;
  * @param none.
  * @return none.
  */
-extern void initSD(void){
+extern int32_t initSD(void){
   #ifdef _EN_WIMOS_SD
-    if (card.init(SPI_HALF_SPEED, 10)) {
-      if (volume.init(card)) {
-        errorSD = OK_INITIALIZATION;
-        DEBUG_OK("SD Memory initialized.");
-        root.openRoot(volume);
-        updateStatusSD(&stWimosInfoMsg.stInfo);
-        return;
-      }
-    }    
-    errorSD = ERROR_INITIALIZATION;
-    DEBUG_ERROR("SD Memory initialization ERROR.");
+    int32_t slRetValue = 0;
+    if(SD.begin(WIMOS_SD_CS_PIN)){
+      
+      /* Initialization is properly*/
+      errorSD = OK_INITIALIZATION;
+      
+      /* Set the status devices SD as enabled*/
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_SD_MASK;
+      
+      /* Set SystemFile */
+      initSystemSD();
+      
+      /* Get the last non volatile file wroten*/
+      usLastNonVolatileFile =  getLastFile(WIMOS_NON_VOLATILE_DIR, WIMOS_NON_VOLATILE_FILE, WIMOS_NON_VOLATILE_EXT );
+      DEBUG_DATA("First non volatil file = %d ",usLastNonVolatileFile);
+      
+      /* Get percent of memory used*/
+      slRetValue = ( (usLastNonVolatileFile-1) / WIMOS_NON_VOLATILE_FILE_MAX) * 100;
+      DEBUG_DATA("Memory status = %d /100",slRetValue);
+      
+      /* Set the non volatile file*/
+      sprintf(ptrVolatileFileName, "%s/%s%d%s", WIMOS_VOLATILE_DIR, WIMOS_VOLATILE_FILE, usLastVolatileFile, WIMOS_VOLATILE_EXT);
+      stVolatileFile = SD.open(ptrVolatileFileName, FILE_READ);  
+      ulTimerSD= millis();
+      
+      DEBUG_OK("SD Memory initialized.");
+    }else{
+      slRetValue = -1;
+      errorSD = ERROR_INITIALIZATION;
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_SD_MASK;
+      DEBUG_ERROR("SD Memory initialization ERROR.");
+    }
+    
   #else
+    slRetValue = -1;
+    /* Initialization is wrong*/
     errorSD = ERROR_INITIALIZATION;
-    DEBUG_INFO("SD Memory not initialized.");
+    DEBUG_INFO("SD Memory not available.");
+  
   #endif
-  return;
+  return slRetValue;
 }
 
 /**
@@ -77,13 +107,223 @@ extern void initSD(void){
  * @param none.
  * @return _stWimosInfo It returns GPS position and Datetime updated into stWimosInfo struct .
  */
-extern void updateStatusSD(stWimosInfo* _stWimosInfo){
+
+ 
+int8_t initSystemSD(void){
   #ifdef _EN_WIMOS_SD
     if( errorSD == OK_INITIALIZATION ){
-      uint32_t memoryUsed = 0;
+      File stAuxFile;
+      uint32_t ulRetValue = 0;
       
-      _stWimosInfo->ucPercentMemory = memoryUsed / ((uint32_t)volume.blocksPerCluster() * volume.clusterCount() * 512);
+      /*If the non volatile directory folder*/
+      if(SD.exists(WIMOS_VOLATILE_DIR)){
+        DEBUG_INFO(WIMOS_VOLATILE_DIR" exist.");  
+
+        /*Clear the non volatile folder*/
+        SD.rmdir(WIMOS_VOLATILE_DIR);
+      }else{
+        DEBUG_INFO(WIMOS_VOLATILE_DIR" does NOT exist.");    
+      }
+      /*Create the non volatile folder*/
+      SD.mkdir(WIMOS_VOLATILE_DIR);
+
       
-    }  
+      /*If the non volatile directory folder*/
+      if(!SD.exists(WIMOS_NON_VOLATILE_DIR)){
+        DEBUG_INFO(WIMOS_NON_VOLATILE_DIR" does NOT exist.");  
+        
+        /*Create the non volatile folder*/
+        SD.mkdir(WIMOS_NON_VOLATILE_DIR);
+      }else{
+        DEBUG_INFO(WIMOS_NON_VOLATILE_DIR" exist.");  
+      }
+      
+      /*Set the current system signature.*/
+      stWimosSignature _stCurrentSignature;
+      _stCurrentSignature.ucWimosID = WIMOS_ID;
+      _stCurrentSignature.stStatus = stGlobalWimosInfoMsg.stInfo.stStatus;
+      
+      /*If the WIMOS Signature in SD exists*/
+      if(SD.exists(WIMOS_SIGN_FILE)){      
+        DEBUG_INFO(WIMOS_SIGN_FILE" exist.");  
+        stWimosSignature _stFileSignature;
+        
+        /*Open the current signature file*/
+        stAuxFile = SD.open(WIMOS_SIGN_FILE,FILE_READ); 
+           
+        /*If the file size is equal with the current signature (see the last EOF char)*/
+        if(stAuxFile.size() == sizeof(_stCurrentSignature)){
+          DEBUG_INFO("Signature size match");            
+          
+          /*Read the current signature*/
+          stAuxFile.read((uint8_t*) &_stFileSignature, sizeof(_stFileSignature));
+          stAuxFile.close(); 
+          
+          DEBUG_DATA("Current Signature ucWimosID = %d",_stCurrentSignature.ucWimosID);   
+          DEBUG_DATA("Current Signature DeviceStatus = %d", _stCurrentSignature.stStatus.ucDeviceStatus);   
+          DEBUG_DATA("Current Signature DeviceStatus = %d", _stCurrentSignature.stStatus.usPortStatus);  
+          
+          DEBUG_DATA("File Signature ucWimosID = %d",_stFileSignature.ucWimosID);   
+          DEBUG_DATA("File Signature DeviceStatus = %d", _stFileSignature.stStatus.ucDeviceStatus);   
+          DEBUG_DATA("File Signature DeviceStatus = %d", _stFileSignature.stStatus.usPortStatus);   
+          
+          /*The signature is not equal*/
+          if(_stCurrentSignature.ucWimosID != _stFileSignature.ucWimosID ||
+             _stCurrentSignature.stStatus.ucDeviceStatus != _stFileSignature.stStatus.ucDeviceStatus ||
+              _stCurrentSignature.stStatus.usPortStatus !=  _stFileSignature.stStatus.usPortStatus){
+            
+            DEBUG_INFO("Signature is not equal, restoring Storage...");   
+            
+            /*Remove the current signature*/
+            SD.remove(WIMOS_SIGN_FILE);
+            
+            /*Write the current signature*/
+            stAuxFile = SD.open(WIMOS_SIGN_FILE,FILE_WRITE); 
+            stAuxFile.write((uint8_t*) &_stCurrentSignature, sizeof(_stCurrentSignature));
+            stAuxFile.close(); 
+          
+          }else{
+            /*The current signature and the signature stored in SD match*/
+            DEBUG_INFO("Signature match");  
+          }
+          
+        }else{
+          
+          /*Clear the non volatile folder*/
+          SD.rmdir(WIMOS_NON_VOLATILE_DIR);
+          
+          /*Create the non volatile folder*/
+          SD.mkdir(WIMOS_NON_VOLATILE_DIR);
+          
+          /*The Current Signature Size and File Signature Size match.*/
+          DEBUG_INFO("Signature size does NOT match,  restoring Storage...");          
+          stAuxFile.close(); 
+          
+          /*Remove the current signature*/
+          SD.remove(WIMOS_SIGN_FILE);
+          
+          /*Write the current signature*/
+          stAuxFile = SD.open(WIMOS_SIGN_FILE,FILE_WRITE); 
+          stAuxFile.write((uint8_t*) &_stCurrentSignature, sizeof(_stCurrentSignature));
+          stAuxFile.close(); 
+        }
+        
+          
+        
+      }else{
+        
+        /*The File Signature does not exist.*/
+        DEBUG_INFO(WIMOS_SIGN_FILE" does NOT exist.");        
+        
+        /*Write the current signature*/
+        stAuxFile = SD.open(WIMOS_SIGN_FILE,FILE_WRITE); 
+        stAuxFile.write((uint8_t*) &_stCurrentSignature, sizeof( _stCurrentSignature ));
+        stAuxFile.close(); 
+        
+        /*Clear the non volatile folder*/
+        SD.rmdir(WIMOS_NON_VOLATILE_DIR);
+        
+        /*Create the non volatile folder*/
+        SD.mkdir(WIMOS_NON_VOLATILE_DIR);
+      
+      }
+        
+      return _OK;
+      
+    }else{
+      /*SD updater error*/
+      DEBUG_INFO("SD updater no available.");   
+      return _ERROR;
+    }
   #endif
+  return _ERROR;
+}
+
+
+
+uint32_t getLastFile(const char* ptrDir, const char* prtFileName, const char* prtExtension ){
+  
+      uint32_t ulRetValue = 0;
+      char ptrNameBuffer[22];
+      bool bFound = false;
+      uint16_t usIndexMax = WIMOS_NON_VOLATILE_FILE_MAX;
+      uint16_t usIndexMin = 1;
+      /*Logarism seach for find the last file wrotten (it is sorted)*/
+      while(!bFound){
+             
+        DEBUG_DATA("Index = %d",usIndexMin+((usIndexMax-usIndexMin)/2));
+        if(usIndexMax - usIndexMin < 2){
+          bFound = true; 
+          sprintf(ptrNameBuffer, "%s/%s%d%s",ptrDir,prtFileName,usIndexMin,prtExtension);
+          if(SD.exists(ptrNameBuffer))
+            ulRetValue = usIndexMax;
+          else
+            ulRetValue = usIndexMin;
+          
+        }else{
+          sprintf(ptrNameBuffer, "%s/%s%d%s",ptrDir,prtFileName,usIndexMin+((usIndexMax-usIndexMin)/2),prtExtension);
+          if(SD.exists(ptrNameBuffer)){
+             usIndexMin = usIndexMin+((usIndexMax-usIndexMin)/2);
+          }else{
+             usIndexMax = usIndexMin+((usIndexMax-usIndexMin)/2);
+          }
+        }  
+      }
+  /*Return the last file wrotten.*/
+  return ulRetValue;
+}
+
+extern int8_t storeVolatile(void* ptrBuffer, uint8_t ucBufferSize){
+  stVolatileFile.write((uint8_t*)ptrBuffer,ucBufferSize);
+  DEBUG_DATA("File size = %d", stVolatileFile.size());
+  stVolatileFile.close();
+  return _OK;
+}
+
+extern int8_t nextVolatileFile(void){
+  if((millis() - ulTimerSD) > 60000){
+    usLastVolatileFile++;
+    stVolatileFile.close();
+    
+    sprintf(ptrVolatileFileName, "%s/%s%d%s", WIMOS_VOLATILE_DIR, WIMOS_VOLATILE_FILE, usLastVolatileFile, WIMOS_VOLATILE_EXT);
+    stVolatileFile = SD.open(ptrVolatileFileName, FILE_WRITE);
+    ulTimerSD = millis();
+    
+  }else{    
+    stVolatileFile.close();
+    stVolatileFile = SD.open(ptrVolatileFileName, FILE_WRITE);
+  }
+  return _OK;
+}
+
+extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFileNameFrom, const char* ptrDirNameTo, const char* ptrFileNameTo){
+  char ptrBuffer[WIMOS_MEM_BUFFER_SIZE];
+  File stFrom, stTo;
+  sprintf(ptrBuffer, "%s/%s", ptrDirNameFrom, ptrFileNameFrom);
+  stFrom = SD.open(ptrBuffer, FILE_READ);
+  DEBUG_DATA("FROM = %s",ptrBuffer);
+  sprintf(ptrBuffer, "%s/%s", ptrDirNameTo, ptrFileNameTo);
+  SD.remove(ptrBuffer);
+  stTo = SD.open(ptrBuffer, FILE_WRITE);
+  DEBUG_DATA("To = %s",ptrBuffer);
+  
+  
+  DEBUG_DATA("Numbers of iterations = %d",(stFrom.size()/WIMOS_MEM_BUFFER_SIZE));
+  for(uint32_t i = 0; i < (stFrom.size()/WIMOS_MEM_BUFFER_SIZE) ; i+=WIMOS_MEM_BUFFER_SIZE){
+    stFrom.read(ptrBuffer,WIMOS_MEM_BUFFER_SIZE);
+    stTo.write(ptrBuffer,WIMOS_MEM_BUFFER_SIZE);
+  }
+  DEBUG_DATA("Numbers of iterations = %d",(stFrom.size() % WIMOS_MEM_BUFFER_SIZE));
+  if((stFrom.size() % WIMOS_MEM_BUFFER_SIZE) > 0){
+    stFrom.read(ptrBuffer,stFrom.size() % WIMOS_MEM_BUFFER_SIZE);
+    stTo.write(ptrBuffer,stFrom.size() % WIMOS_MEM_BUFFER_SIZE);
+  }
+  
+  DEBUG_DATA("FileTo size = %d",stTo.size());
+  DEBUG_DATA("FileFrom size = %d",stFrom.size());
+  
+  stTo.close();
+  stFrom.close();
+  
+  return _OK;
 }

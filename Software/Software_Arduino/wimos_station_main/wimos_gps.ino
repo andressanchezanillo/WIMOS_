@@ -30,12 +30,12 @@
 #include "_setting.h"
 #include "main_config.h"
 
+
+
 int8_t findTokenGPS(stWimosInfo* _stWimosInfo);
 int8_t findCMDGPS(stWimosInfo* _stWimosInfo);
 int8_t processRMC(stWimosInfo* _stWimosInfo);
-
 int8_t splitByChar(const char* pcBufferIn, char* pcBufferOut, uint8_t* ucBufferInBegin, uint8_t index);
-
 int8_t (*machineStateGPS)(stWimosInfo* _stWimosInfo) = findTokenGPS;
 
 /**
@@ -48,9 +48,11 @@ int8_t (*machineStateGPS)(stWimosInfo* _stWimosInfo) = findTokenGPS;
  */
 extern void initGPS(void){
   #ifdef _EN_WIMOS_GPS
-    SERIAL_GPS.begin(BAUDRATE_GPS);  
+    SERIAL_GPS.begin(BAUDRATE_GPS);      
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_GPS_MASK;
     DEBUG_OK("GPS initialized.");
-  #else
+  #else  
+    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_GPS_MASK;
     DEBUG_INFO("GPS not initialized.");
   #endif
 }
