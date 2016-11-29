@@ -45,8 +45,14 @@
 
   
   extern void initDebug(void){
-    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_DEBUG_MASK;
-    SERIAL_DEBUG.begin(BAUDRATE_DEBUG);
+    #ifdef WIMOS_DEBUG
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_DEBUG_MASK;
+      SERIAL_DEBUG.begin(BAUDRATE_DEBUG);
+      while(!SERIAL_DEBUG);
+      delay(1000);
+    #else
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_DEBUG_MASK;
+    #endif
   }
   
   extern void debug_print(const char* pFunction, const char* pLabel, const char* pData){

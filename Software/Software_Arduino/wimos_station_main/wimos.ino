@@ -31,12 +31,10 @@
 #include "main_config.h"
 
 
-
 /**
  * @brief Thread for wimos display (TV or RF).
  */
 extern void (*coreWimosDisplay)(void);
-
 /**
  * @brief The Time of TV begin.
  */
@@ -53,14 +51,7 @@ extern uint32_t coreWimosTVTimer;
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 extern void initWimos(void){
-  
-  #ifdef WIMOS_DEBUG
-    initDebug();
-    while(!SERIAL_DEBUG);
-    delay(1000);
-  #else
-    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_DEBUG_MASK;
-  #endif
+  initDebug();
   
   initGPS();
   
@@ -123,3 +114,80 @@ extern void coreWimos(){
   /** Timer Control **/
   
 }
+
+
+#ifdef WIMOS_DEBUG
+  #ifdef WIMOS_UNIT_TEST
+    
+    /**
+     * @brief Wimos test n1.UT01.
+     *
+     * Unit test n1.UT01 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     void _test_n1UT01 (void){
+      const char* testName = "n1.UT01";
+      /*Body_TEST:*/
+      
+      /*End_Body_TEST:*/
+      
+    } 
+
+    /**
+     * @brief Wimos test n1.UT01.
+     *
+     * Unit test n1.UT01 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     void _test_n1UT02 (void){
+      const char* testName = "n1.UT02";
+      /*Body_TEST:*/
+      
+      /*End_Body_TEST:*/
+      
+    } 
+    
+  #endif
+
+  #ifdef WIMOS_VALIDATION_TEST
+  
+    
+    /**
+     * @brief Wimos test n1.UT01.
+     *
+     * Unit test n1.UT01 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     void _test_n1VT01 (void){
+      const char* testName = "n1.VT01";
+      /*Body_TEST:*/
+      
+      /*End_Body_TEST:*/
+      
+    } 
+    
+    
+    /**
+     * @brief Wimos test n1.UT01.
+     *
+     * Unit test n1.UT01 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     void _test_n1VT02 (void){
+      const char* testName = "n1.VT02";
+      /*Body_TEST:*/
+      
+      /*End_Body_TEST:*/
+      
+    } 
+    
+  #endif
+#endif

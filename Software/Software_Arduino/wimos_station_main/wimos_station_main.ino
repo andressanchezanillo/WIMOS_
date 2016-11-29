@@ -43,6 +43,12 @@ stWimosInfoMessage stGlobalWimosInfoMsg;
 
 char pDebug[150];
 int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFileNameFrom, const char* ptrDirNameTo, const char* ptrFileNameTo);
+void _test_n1UT03 (void);
+void _test_n1UT04 (void);
+void _test_n1UT05 (void);
+void _test_n1UT06 (void);
+void _test_n1VT03 (void);
+
 /**
  * @brief Setup the system config.
  *
@@ -52,14 +58,26 @@ int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFileNameFr
  * @return none.
  */
 void setup(void) {
-  
-  initWimos();
 
+  #ifdef WIMOS_UNIT_TEST
+    initDebug();
+    _test_n1UT03();
+    _test_n1UT04();
+    _test_n1UT05();
+    _test_n1UT06();
+  #else 
+    #ifdef WIMOS_VALIDATION_TEST
+      initDebug();
+      _test_n1VT03();
+    #else
+      initWimos();
+    #endif
+  #endif
   
-  File stVolatileFile;
+  /*File stVolatileFile;
   char prtFileName[22];
   
-  /*uint32_t timeTest = millis();
+  uint32_t timeTest = millis();
   for(uint8_t i=0; i<100; i++){
     stGlobalWimosPortMsg.stPortValues.usPortA1 = i;
     storeVolatile(&stGlobalWimosPortMsg.stPortValues, sizeof(&stGlobalWimosPortMsg.stPortValues) );

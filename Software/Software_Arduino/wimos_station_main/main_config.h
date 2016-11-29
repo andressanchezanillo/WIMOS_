@@ -524,26 +524,32 @@ int32_t initSD(void);
  * @brief Initialize Battery Reader.
  */
 void initBattery(void);
+
 /**
  * @brief Update battery status.
  */
 void updateStatusBattery(stWimosInfo* _stWimosInfo);
+
 /**
  * @brief Communication thread pointer.
  */
 void (*communicationThread)(void);
+
 /**
  * @brief Thread for wimos display (TV or RF).
  */
 void (*coreWimosDisplay)(void);
+
 /**
  * @brief Initialize communication state.
  */
 void initRF(void);
+
 /**
  * @brief Initialize IMU.
  */
 void initIMU(void);
+
 /**
  * @brief Update IMU value.
  */

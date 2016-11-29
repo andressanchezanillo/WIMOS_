@@ -37,6 +37,9 @@
  * @brief Label Debug traces activation.
  */
 #define WIMOS_DEBUG
+//#define WIMOS_UNIT_TEST
+#define WIMOS_VALIDATION_TEST
+
 /**
  * @brief Label Debug for colour terminal activation.
  */
