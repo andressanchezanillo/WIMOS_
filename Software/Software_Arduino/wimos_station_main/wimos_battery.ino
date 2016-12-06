@@ -223,7 +223,7 @@ extern void initBattery(void){
      * @return none.
      */
     extern void _test_n1VT03 (void){
-      const char* testName = "n1.VT03 = %d";
+      const char* testName = "n1.VT03 = %ld";
       
       /*Body_TEST:*/     
       uint32_t ulTimerVT = micros();

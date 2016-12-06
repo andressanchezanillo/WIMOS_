@@ -47,7 +47,27 @@ void _test_n1UT03 (void);
 void _test_n1UT04 (void);
 void _test_n1UT05 (void);
 void _test_n1UT06 (void);
+void _test_n1UT07 (void);
+void _test_n1UT08 (void);
+void _test_n1UT09 (void);
+void _test_n1UT10 (void);
+void _test_n1UT11 (void);
+void _test_n1UT12 (void);
+void _test_n1UT13 (void);
+void _test_n1UT14 (void);
+void _test_n1UT15 (void);
+void _test_n1UT16 (void);
+void _test_n1UT17 (void);
+void _test_n1UT18 (void);
+void _test_n1UT19 (void);
+void _test_n1UT20 (void);
+void _test_n1UT21 (void);
+void _test_n1UT22 (void);
+void _test_n1UT23 (void);
+void _test_n1UT24 (void);
 void _test_n1VT03 (void);
+void _test_n1VT04 (void);
+void _test_n1VT05 (void);
 
 /**
  * @brief Setup the system config.
@@ -65,10 +85,30 @@ void setup(void) {
     _test_n1UT04();
     _test_n1UT05();
     _test_n1UT06();
+    _test_n1UT07();
+    _test_n1UT08();
+    _test_n1UT09();
+    _test_n1UT10();
+    _test_n1UT11();
+    _test_n1UT12();
+    _test_n1UT13();
+    _test_n1UT14();
+    _test_n1UT15();
+    _test_n1UT16();
+    _test_n1UT17();
+    _test_n1UT18();
+    _test_n1UT19();
+    _test_n1UT20();
+    _test_n1UT21();
+    _test_n1UT22();
+    _test_n1UT23();
+    _test_n1UT24();
   #else 
     #ifdef WIMOS_VALIDATION_TEST
       initDebug();
       _test_n1VT03();
+      _test_n1VT04();
+      _test_n1VT05();
     #else
       initWimos();
     #endif

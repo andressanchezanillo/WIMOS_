@@ -42,6 +42,9 @@ void sendFrame(void* ptrData, uint8_t ucSize);
 extern void (*communicationThread)(void);
 static uint8_t lastCMD = NONE;
 
+#ifdef WIMOS_UNIT_TEST
+  uint8_t ucUnitTestOutput[70];
+#endif
 /**
  * @brief Communication initialization.
  *
@@ -196,11 +199,18 @@ void runFunction(void){
  * @return none.
  */
 void sendFrame(void* pData, uint8_t ucSize){
-  /** Send the frame over RF **/
-  uint8_t i = 0;
-  for(i=0; i<ucSize; i++)
-    SERIAL_RF.write(((uint8_t*)pData)[i]);
-    
+  #ifdef _EN_WIMOS_RF
+    /** Send the frame over RF **/
+    uint8_t i = 0;
+    for(i=0; i<ucSize; i++){
+      #ifdef WIMOS_UNIT_TEST
+        ucUnitTestOutput[i] = ((uint8_t*)pData)[i];
+      #else
+        SERIAL_RF.write(((uint8_t*)pData)[i]);
+      #endif    
+    }
+  #endif
+  
   return;
 }
 
@@ -218,3 +228,149 @@ void sendFrame(void* pData, uint8_t ucSize){
 extern void noOperation(void){
   return;
 }
+
+
+
+
+#ifdef WIMOS_DEBUG
+  #ifdef WIMOS_UNIT_TEST
+    
+    /**
+     * @brief Wimos test n1.UT10.
+     *
+     * Unit test n1.UT07 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n1UT07 (void){
+      const char* testName = "n1.UT07 = %d";
+      /*Body_TEST:*/
+      
+      #ifdef _EN_WIMOS_RF
+        stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus = 0;
+        initRF();
+        DEBUG_VALID(testName , 
+                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK), 
+                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK) == WIMOS_DEVICE_RF_MASK);
+      #else
+        stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus = WIMOS_DEVICE_RF_MASK;
+        initRF();
+        DEBUG_VALID(testName , 
+                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK), 
+                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK) == 0x00);
+      #endif
+      
+      /*End_Body_TEST:*/
+    } 
+
+    /**
+     * @brief Wimos test n1.UT08.
+     *
+     * Unit test n1.UT08 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n1UT08 (void){
+      const char* testName = "n1.UT08 = %d";
+      /*Body_TEST:*/     
+      uint8_t i = 0;
+      for(i = 0; i<70; i++)
+        ucUnitTestOutput[i] = 0;
+        
+      stGlobalWimosPortMsg.ucMessageFrom = 1;
+      stGlobalWimosPortMsg.ucMessageTo = 2;
+      stGlobalWimosPortMsg.checksum = 3;
+      
+      #ifdef _EN_WIMOS_RF
+        
+        sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
+        
+        stWimosPortValuesMessage* stUTest = (stWimosPortValuesMessage*) ucUnitTestOutput ;
+        
+        DEBUG_VALID(testName , 
+                   (memcmp(&stGlobalWimosPortMsg, stUTest, sizeof(stGlobalWimosPortMsg))), 
+                   (memcmp(&stGlobalWimosPortMsg, stUTest, sizeof(stGlobalWimosPortMsg)) == 0));
+      #else      
+        
+        sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
+        
+        stWimosPortValuesMessage* stUTest = (stWimosPortValuesMessage*) ucUnitTestOutput ;
+        
+        DEBUG_VALID(testName , 
+                   (stUTest->ucBegin), 
+                   (stUTest->ucBegin == 0));
+      #endif
+      /*End_Body_TEST:*/
+    } 
+
+
+    /**
+     * @brief Wimos test n1.UT09.
+     *
+     * Unit test n1.UT09 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n1UT09 (void){
+      const char* testName = "n1.UT09 = %d";
+      /*Body_TEST:*/     
+      uint8_t i = 0;
+      for(i = 0; i<70; i++)
+        ucUnitTestOutput[i] = 0;
+        
+      stGlobalWimosInfoMsg.ucMessageFrom = 1;
+      stGlobalWimosInfoMsg.ucMessageTo = 2;
+      stGlobalWimosInfoMsg.checksum = 3;
+      
+      #ifdef _EN_WIMOS_RF
+        
+        sendFrame(&stGlobalWimosInfoMsg, sizeof(stGlobalWimosInfoMsg));
+        
+        stWimosInfoMessage* stUTest = (stWimosInfoMessage*) ucUnitTestOutput ;
+        
+        DEBUG_VALID(testName , 
+                   (memcmp(&stGlobalWimosInfoMsg, stUTest, sizeof(stGlobalWimosInfoMsg))), 
+                   (memcmp(&stGlobalWimosInfoMsg, stUTest, sizeof(stGlobalWimosInfoMsg)) == 0));
+      #else      
+        
+        sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
+        
+        stWimosPortValuesMessage* stUTest = (stWimosPortValuesMessage*) ucUnitTestOutput ;
+        
+        DEBUG_VALID(testName , 
+                   (stUTest->ucBegin), 
+                   (stUTest->ucBegin == 0));
+      #endif
+      /*End_Body_TEST:*/
+    } 
+  #endif
+  
+  #ifdef WIMOS_VALIDATION_TEST
+  
+    
+    /**
+     * @brief Wimos test n1.VT04.
+     *
+     * Unit test n1.VT04 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+    extern void _test_n1VT04 (void){
+      const char* testName = "n1.VT04 = %ld";
+      
+      /*Body_TEST:*/     
+      initRF();
+      uint32_t ulTimerVT = micros();
+      sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
+      DEBUG_VALID(testName , 
+                 (micros() - ulTimerVT), 
+                 (micros() - ulTimerVT < 100));
+      /*End_Body_TEST:*/
+    } 
+    
+  #endif
+#endif

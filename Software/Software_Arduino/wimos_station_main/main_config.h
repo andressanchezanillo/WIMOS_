@@ -225,6 +225,26 @@
  * Enums definition:
  ***************************************************************/
 
+
+/**
+ * @brief Label for none elements.
+ */
+#define NONE 0x00
+
+/**
+ * @brief Label for ERROR response.
+ */
+#define _ERROR ((int8_t)-1)
+/**
+ * @brief Label for OK response.
+ */
+#define _OK ((int8_t)0)
+
+/**
+ * @brief Label for OK response.
+ */
+#define _NEXT_STEP ((int8_t)1)
+
 enum PeriphericErrors{
   OK_INITIALIZATION = 0,
   ERROR_INITIALIZATION = 1,
@@ -288,31 +308,41 @@ enum PeriphericErrors{
     eOK = 7,
     eERROR = 7,
   };
-
+  
   /**
    * @brief Debug display function.
    */
-  void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode);
+  void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode);
+  
+  /**
+   * @brief Debug display function.
+   */
+  void debugUTest(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode);
+  
   /**
    * @brief Debug Macro for ERROR displays.
    */
   #define DEBUG_ERROR(x) debug(__func__,D_ERROR,x,eERROR) 
+  
   /**
    * @brief Debug Macro for ERROR displays.
    */
   #define DEBUG_OK(x) debug(__func__,D_OK,x,eOK) 
+  
   /**
    * @brief Debug Macro for ERROR displays.
    */
   #define DEBUG_DATA(x,data) sprintf(pDebug,x,data); debug(__func__,D_DATA,pDebug,eDATA);sprintf(pDebug,"") 
+  
   /**
    * @brief Debug Macro for ERROR displays.
    */
   #define DEBUG_INFO(x) debug(__func__,D_INFO,x,eINFO) 
+  
   /**
    * @brief Debug Macro for Test.
    */
-  #define DEBUG_VALID(x,data,cond) sprintf(pDebug,x,data); debug(__func__, (cond?D_OK:D_ERROR) ,pDebug,eDATA);sprintf(pDebug,"") 
+  #define DEBUG_VALID(x,data,cond) sprintf(pDebug,x,data); debugUTest(__func__, (cond?D_OK:D_ERROR) ,pDebug,(cond?eOK:eERROR));sprintf(pDebug,"") 
 
 #else
   /**
@@ -366,7 +396,7 @@ typedef struct _dateTime{
  */
 typedef struct _gpsCoordenate{
   uint8_t ucDegree;  /**< Degree for Coordenate. */
-  int32_t ucMinute;  /**< Minute (multiplicated by 1000). */
+  int32_t slMinute;  /**< Minute (multiplicated by 1000). */
 }stWimosGpsCoordenate;
 
 /**

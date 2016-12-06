@@ -41,7 +41,7 @@
   extern char pDebug[150];
   
   
-  static uint8_t ucCurrentDebugMode = (eINFO | eDATA);
+  static uint8_t ucCurrentDebugMode = ~(eINFO | eDATA);
 
   
   extern void initDebug(void){
@@ -74,13 +74,28 @@
   
   
   extern void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
-    if( eMode == eERROR || eMode == eOK ){
-      debug_print(pFunction,pLabel,pData);
-    }else{
-      if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
+    //#if !defined(WIMOS_UNIT_TEST) and !defined(WIMOS_VALIDATION_TEST)
+      if( eMode == eERROR || eMode == eOK ){
         debug_print(pFunction,pLabel,pData);
+      }else{
+        if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
+          debug_print(pFunction,pLabel,pData);
+        }
       }
-    }
+    //#endif
+  }
+  
+  
+  extern void debugUTest(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
+    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+      if( eMode == eERROR || eMode == eOK ){
+        debug_print(pFunction,pLabel,pData);
+      }else{
+        if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
+          debug_print(pFunction,pLabel,pData);
+        }
+      }
+    #endif
   }
   
   extern void debugCommand(void){
