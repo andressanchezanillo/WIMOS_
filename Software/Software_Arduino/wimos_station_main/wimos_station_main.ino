@@ -65,9 +65,14 @@ void _test_n1UT21 (void);
 void _test_n1UT22 (void);
 void _test_n1UT23 (void);
 void _test_n1UT24 (void);
+void _test_n1UT25 (void);
+void _test_n1UT26 (void);
+void _test_n1UT27 (void);
+void _test_n1UT28 (void);
 void _test_n1VT03 (void);
 void _test_n1VT04 (void);
 void _test_n1VT05 (void);
+void _test_n1VT06 (void);
 
 /**
  * @brief Setup the system config.
@@ -103,31 +108,27 @@ void setup(void) {
     _test_n1UT22();
     _test_n1UT23();
     _test_n1UT24();
+    _test_n1UT25();
+    _test_n1UT26();
+    _test_n1UT27();
+    _test_n1UT28();
+    while(true);
   #else 
     #ifdef WIMOS_VALIDATION_TEST
       initDebug();
       _test_n1VT03();
       _test_n1VT04();
       _test_n1VT05();
+      _test_n1VT06();
+      while(true);
     #else
       initWimos();
     #endif
   #endif
   
-  /*File stVolatileFile;
-  char prtFileName[22];
-  
-  uint32_t timeTest = millis();
-  for(uint8_t i=0; i<100; i++){
-    stGlobalWimosPortMsg.stPortValues.usPortA1 = i;
-    storeVolatile(&stGlobalWimosPortMsg.stPortValues, sizeof(&stGlobalWimosPortMsg.stPortValues) );
-  }
-  DEBUG_DATA("TEST n1.TSF04, Time for a storage = %d ms",(millis()-timeTest)/100);
-  
-  timeTest = millis();
-  moveFileToDirectory(WIMOS_VOLATILE_DIR, "Wv1.log", WIMOS_NON_VOLATILE_DIR, "Wnv1.log");
-  DEBUG_DATA("TEST n1.TSF05, Time for moving a file = %d ms",(millis()-timeTest)/2);*/
-
+  //initDebug();
+  //initIMU();
+  //initWimos();
 }
 
 /**
@@ -139,7 +140,5 @@ void setup(void) {
  * @return none.
  */
 void loop(void) {
-  //coreWimosDisplay();
   coreWimos();
-  delay(100);
 }
