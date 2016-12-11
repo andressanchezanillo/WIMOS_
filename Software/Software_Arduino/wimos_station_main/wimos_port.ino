@@ -30,6 +30,12 @@
 #include "_setting.h"
 #include "main_config.h"
 
+stWimosI2CRegister stWimosI2CConfig[_WIMOS_PORT_I2C_CONFIG_SIZE] = _WIMOS_I2C_CONFIG;
+
+stWimosI2CRegister stWimosI2CData[_WIMOS_PORT_I2C_DATA_SIZE] = _WIMOS_I2C_DATA;
+
+void I2CWrite(uint8_t ucDeviceAddress, uint8_t ucRegisterAddress, uint8_t ucValue);
+uint8_t I2CRead(uint8_t ucDeviceAddress, uint8_t ucRegisterAddress);
 
 
 /**
@@ -42,7 +48,12 @@
  */
 extern void initPortI2C(void){
   #ifdef _EN_WIMOS_PORT_I2C
-    
+    if(stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_IMU_MASK == 0x00){
+      Wire.begin();
+      for(uint8_t i=0; i<_WIMOS_PORT_I2C_CONFIG_SIZE ; i++){        
+        I2CWrite(stWimosI2CData[i].ucDeviceAddress, stWimosI2CData[i].ucRegisterAddress, stWimosI2CData[i].ucRegisterValue);
+      }  
+    }
     stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_I2C_MASK;
     DEBUG_OK("I2C port initialized.");
   #else
@@ -61,5 +72,26 @@ extern void initPortI2C(void){
  * @return _stWimosInfo It returns the I2C devices values updated into stWimosInfo struct .
  */
 extern void readPortI2C(stWimosPortValues* stWimosPort){
+  for(uint8_t i=0; i<_WIMOS_PORT_I2C_DATA_SIZE; i++){
+    stWimosPort->ucPortI2C[i] = I2CRead(stWimosI2CData[i].ucDeviceAddress, stWimosI2CData[i].ucRegisterAddress);
+  }
   return;
+}
+
+
+void I2CWrite(uint8_t ucDeviceAddress, uint16_t ucRegisterAddress, uint8_t ucValue){  
+    Wire.beginTransmission((int)ucDeviceAddress);
+    Wire.write((int)ucRegisterAddress);
+    Wire.write(ucValue);
+    Wire.endTransmission();  
+}
+
+
+uint8_t I2CRead(uint8_t ucDeviceAddress, uint16_t ucRegisterAddress){
+    Wire.beginTransmission((int)ucDeviceAddress);   
+    Wire.write((int)ucRegisterAddress);                              
+    Wire.requestFrom((int)ucDeviceAddress,1);         
+    uint8_t ucRetValue = Wire.read();      
+    Wire.endTransmission();   
+    return ucRetValue;  
 }

@@ -43,16 +43,23 @@
  */
 extern void initPortD(void){
   #ifdef _EN_WIMOS_PORT_D1
-
+    pinMode(WIMOS_D1_1_PORT,_WIMOS_PORT_MODE_D1_1);
+    pinMode(WIMOS_D1_2_PORT,_WIMOS_PORT_MODE_D1_2);
+    pinMode(WIMOS_D1_3_PORT,_WIMOS_PORT_MODE_D1_3);
+    pinMode(WIMOS_D1_4_PORT,_WIMOS_PORT_MODE_D1_4);
+    
     stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D1_MASK;
     DEBUG_OK("Digital port 1 initialized.");
   #else
-
+  
     stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_D1_MASK;
     DEBUG_INFO("Digital port 1 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D2
-
+    pinMode(WIMOS_D2_1_PORT,_WIMOS_PORT_MODE_D2_1);
+    pinMode(WIMOS_D2_2_PORT,_WIMOS_PORT_MODE_D2_2);
+    pinMode(WIMOS_D2_3_PORT,_WIMOS_PORT_MODE_D2_3);
+    
     stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D2_MASK;
     DEBUG_OK("Digital port 2 initialized.");
   #else
@@ -61,6 +68,8 @@ extern void initPortD(void){
     DEBUG_INFO("Digital port 2 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D3
+    pinMode(WIMOS_D3_1_PORT,_WIMOS_PORT_MODE_D3_1);
+    pinMode(WIMOS_D3_2_PORT,_WIMOS_PORT_MODE_D3_2);
 
     stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D3_MASK;
     DEBUG_OK("Digital port 3 initialized.");
@@ -70,6 +79,8 @@ extern void initPortD(void){
     DEBUG_INFO("Digital port 3 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D4
+    pinMode(WIMOS_D4_1_PORT,_WIMOS_PORT_MODE_D4_1);
+    pinMode(WIMOS_D4_2_PORT,_WIMOS_PORT_MODE_D4_2);
 
     stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D4_MASK;
     DEBUG_OK("Digital port 4 initialized.");
@@ -79,6 +90,7 @@ extern void initPortD(void){
     DEBUG_INFO("Digital port 4 not initialized.");
   #endif
   #ifdef _EN_WIMOS_PORT_D5
+    pinMode(WIMOS_D5_1_PORT,_WIMOS_PORT_MODE_D5_1);
 
     stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_D5_MASK;
     DEBUG_OK("Digital port 5 initialized.");
@@ -100,18 +112,22 @@ extern void initPortD(void){
  */
 extern void readPortD(stWimosPortValues* stWimosPort){
   #ifdef _EN_WIMOS_PORT_D1
-  
+  stWimosPort->usPortD1 = (digitalRead(WIMOS_D1_1_PORT) | digitalRead(WIMOS_D1_2_PORT) << 1 | digitalRead(WIMOS_D1_3_PORT) << 2 | digitalRead(WIMOS_D1_4_PORT) << 3);
   #endif
   #ifdef _EN_WIMOS_PORT_D2
+  stWimosPort->usPortD2 = (digitalRead(WIMOS_D2_1_PORT) | digitalRead(WIMOS_D2_2_PORT) << 1 | digitalRead(WIMOS_D2_3_PORT) << 2 );
   
   #endif
   #ifdef _EN_WIMOS_PORT_D3
+  stWimosPort->usPortD3 = (digitalRead(WIMOS_D3_1_PORT) | digitalRead(WIMOS_D3_2_PORT) << 1 );
   
   #endif
   #ifdef _EN_WIMOS_PORT_D4
+  stWimosPort->usPortD4 = (digitalRead(WIMOS_D4_1_PORT) | digitalRead(WIMOS_D4_2_PORT) << 1 );
   
   #endif
   #ifdef _EN_WIMOS_PORT_D5
+  stWimosPort->usPortD5 = (digitalRead(WIMOS_D4_1_PORT) );
   
   #endif
 }

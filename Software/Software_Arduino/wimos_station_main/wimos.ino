@@ -31,6 +31,7 @@
 #include "main_config.h"
 
 
+void initExterPeriph(void);
 /**
  * @brief Thread for wimos display (TV or RF).
  */
@@ -38,7 +39,11 @@ extern void (*coreWimosDisplay)(void);
 /**
  * @brief The Time of TV begin.
  */
-extern uint32_t coreWimosTVTimer;
+extern uint32_t coreWimosTimer100ms = 0;
+/**
+ * @brief The Time of TV begin.
+ */
+extern uint32_t coreWimosTimer1000ms = 0;
 
 
 /**
@@ -52,32 +57,31 @@ extern uint32_t coreWimosTVTimer;
  */
 extern void initWimos(void){
   initDebug();
-  
-  initGPS();
-  
-  initRF();
-  initTV();
-  
-  if(coreWimosDisplay == NULL){
-    coreWimosDisplay = noOperation;
-  }
-  
-  initBattery();
-
-  initPortA();
-  initPortD();
-  initPortI2C();
-  initIMU();
-  
-  stGlobalWimosInfoMsg.stInfo.ucPercentMemory = initSD();
-
+  initInterPeriph();
+  initExterPeriph();  
+  coreWimosTimer1000ms = coreWimosTimer100ms = millis();
 }
 
-extern void deleteWimos(void){
-  
-  deleteTV();
-  //deleteSD();
+extern void initInterPeriph(void){
+  DEBUG_INFO("Starting internal peripherals.");
+  initBattery();
+  initGPS();  
+  initIMU();  
+  initRF();
+  stGlobalWimosInfoMsg.stInfo.ucPercentMemory = initSD();
+}
 
+extern void initExterPeriph(void){
+  //DEBUG_INFO("Starting external peripherals.");
+  //initPortA();
+  //initPortD();
+  //initPortI2C();
+}
+
+extern void stopWimos(void){  
+  DEBUG_INFO("Stoping peripherals.");
+  //stopRF();
+  //stopSD();
 }
 
 void updateInfoWimos(){
@@ -93,8 +97,11 @@ void updateInfoWimos(){
 }
 
 
-void readExternSensorsWimos(){
-  /* TODO: lectura de sensores */
+void readSensorsWimos(){
+  readIMU(&stGlobalWimosPortMsg.stPortValues);
+  readPortI2C(&stGlobalWimosPortMsg.stPortValues);
+  readPortA(&stGlobalWimosPortMsg.stPortValues);
+  readPortD(&stGlobalWimosPortMsg.stPortValues);
 }
 
 /**
@@ -105,11 +112,19 @@ void readExternSensorsWimos(){
  * @param none.
  * @return none.
  */
-extern void coreWimos(){
+extern void coreWimos(void){
   #ifdef WIMOS_DEBUG
     debugCommand();
   #endif
-  //updateInfoWimos();
+  if((millis() - coreWimosTimer100ms) > 100){
+    coreWimosTimer100ms = millis();
+    readSensorsWimos();
+    /*sendFrame(void* pData, uint8_t ucSize);*/
+  }
+  if((millis() - coreWimosTimer1000ms) > 1000){
+    coreWimosTimer1000ms = millis();
+    updateInfoWimos();
+  }
   
   /** Timer Control **/
   

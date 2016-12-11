@@ -151,11 +151,99 @@
  * @brief Internal Battery Reader mask.
  */
 #define WIMOS_BATT_PIN   (A8)
+/**
+ * @brief External analog port A1.
+ */
+#define WIMOS_A1_PORT   (A0)
+/**
+ * @brief External analog port A2.
+ */
+#define WIMOS_A2_PORT   (A1)
+/**
+ * @brief External analog port A3.
+ */
+#define WIMOS_A3_PORT   (A2)
+/**
+ * @brief External analog port A4.
+ */
+#define WIMOS_A4_PORT   (A3)
+/**
+ * @brief External analog port A5_1.
+ */
+#define WIMOS_A5_1_PORT   (A4)
+/**
+ * @brief External analog port A5_2.
+ */
+#define WIMOS_A5_2_PORT   (A5)
+/**
+ * @brief External analog port A5_3.
+ */
+#define WIMOS_A5_3_PORT   (A6)
+
+/**
+ * @brief Pin enable SD.
+ */
+#define WIMOS_SD_CS_PIN   (10)
+
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D1_1_PORT   (47)
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D1_2_PORT   (49)
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D1_3_PORT   (51)
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D1_4_PORT   (53)
+
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D2_1_PORT   (43)
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D2_2_PORT   (42)
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D2_3_PORT   (45)
+
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D3_1_PORT   (3)
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D3_2_PORT   (2)
+
+
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D4_1_PORT   (5)
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D4_2_PORT   (4)
+
+/**
+ * @brief External digital port.
+ */
+#define WIMOS_D5_1_PORT   (6)
+
 
 /**
  * @brief Internal Battery Reader mask.
  */
-#define WIMOS_SD_CS_PIN   (10)
+#define WIMOS_INTERNAL_IMU_ADDRESS   (0x68)
 
 
 
@@ -364,6 +452,21 @@ enum PeriphericErrors{
  * Structs definition:
  ***************************************************************/
 
+/**
+ * @brief Debug display enumeration.
+ */
+enum eRegisterI2C{
+  eConfigWrite = 1,
+  eConfigRead= 2,
+  eDataRead= 3,
+};
+
+typedef struct _i2cConfig{
+  eRegisterI2C eRegisterType;
+  uint8_t ucDeviceAddress;
+  uint16_t ucRegisterAddress;
+  uint8_t ucRegisterValue;
+}stWimosI2CRegister;
 
 /**
  * @brief Date data struct.
@@ -457,24 +560,26 @@ typedef struct _wimosInfoMsg{
  */
 typedef struct _portStatus{
   #ifdef _WIMOS_IMU
-    uint8_t usInternalIMU; /**< Internal IMU module value. */
+    uint32_t usInternalIMUAcc; /**< Internal IMU module value. */
+    int8_t usInternalIMUGyrosX; /**< Internal IMU module value. */
+    int8_t usInternalIMUGyrosY; /**< Internal IMU module value. */
   #endif
   #ifdef _EN_WIMOS_PORT_A1
-    uint8_t usPortA1; /**< Analog port 1 value. */
+    int16_t usPortA1; /**< Analog port 1 value. */
   #endif
   #ifdef _EN_WIMOS_PORT_A2
-    uint8_t usPortA2; /**< Analog port 2 value. */
+    int16_t usPortA2; /**< Analog port 2 value. */
   #endif
   #ifdef _EN_WIMOS_PORT_A3
-    uint8_t usPortA3; /**< Analog port 3 value. */
+    int16_t usPortA3; /**< Analog port 3 value. */
   #endif
   #ifdef _EN_WIMOS_PORT_A4
-    uint8_t usPortA4; /**< Analog port 4 value. */
+    int16_t usPortA4; /**< Analog port 4 value. */
   #endif
   #ifdef _EN_WIMOS_PORT_A5
-    uint8_t usPort5A1; /**< Analog port 5 pin 1 value. */
-    uint8_t usPort5A2; /**< Analog port 5 pin 2 value. */
-    uint8_t usPort5A3; /**< Analog port 5 pin 3 value. */
+    int16_t usPort5A1; /**< Analog port 5 pin 1 value. */
+    int16_t usPort5A2; /**< Analog port 5 pin 2 value. */
+    int16_t usPort5A3; /**< Analog port 5 pin 3 value. */
   #endif
   
   #ifdef _EN_WIMOS_PORT_D1
@@ -492,8 +597,8 @@ typedef struct _portStatus{
   #ifdef _EN_WIMOS_PORT_D5
     uint8_t usPortD5; /**< Digital port 5 value. */
   #endif  
-  #if (_EN_WIMOS_PORT_I2C_SIZE > 0)
-    uint8_t usPortI2C [ _EN_WIMOS_PORT_I2C_SIZE ]; /**< I2C devices values. */
+  #if (_WIMOS_PORT_I2C_DATA_SIZE > 0)
+    uint8_t ucPortI2C [ _WIMOS_PORT_I2C_DATA_SIZE ]; /**< I2C devices values. */
   #endif
 } stWimosPortValues;
 
@@ -585,10 +690,6 @@ void initIMU(void);
  */
 void readIMU(stWimosPortValues* stWimosPort);
 /**
- * @brief Initialize TV (RCA) interface.
- */
-void initTV(void);
-/**
  * @brief Initialize Analog Ports.
  */
 void initPortA(void);
@@ -596,6 +697,11 @@ void initPortA(void);
  * @brief Update Analog Ports values.
  */
 void readPortA(stWimosPortValues* stWimosPort);
+
+/**
+ * @brief Initialize the internal peripherals.
+ */
+void initInterPeriph(void);
 /**
  * @brief Initialize Digital Port.
  */
@@ -622,7 +728,7 @@ void noOperation(void);
   void debugCommand(void);
 #endif
 
-void deleteTV(void);
+void stopTV(void);
 
 uint32_t coreWimosTVTimer;
 

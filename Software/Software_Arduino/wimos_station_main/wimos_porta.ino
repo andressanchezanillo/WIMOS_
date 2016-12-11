@@ -41,6 +41,7 @@
  * @return none.
  */
 extern void initPortA(void){
+  analogReadResolution(16);
   #ifdef _EN_WIMOS_PORT_A1
       
     stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus |= WIMOS_PORT_A1_MASK;
@@ -97,18 +98,21 @@ extern void initPortA(void){
  */
 extern void readPortA(stWimosPortValues* stWimosPort){
   #ifdef _EN_WIMOS_PORT_A1
-  
+    stWimosPort->usPortA1 = analogRead(WIMOS_A1_PORT);
   #endif
   #ifdef _EN_WIMOS_PORT_A2
-  
+    stWimosPort->usPortA2 = analogRead(WIMOS_A2_PORT);  
   #endif
   #ifdef _EN_WIMOS_PORT_A3
-  
+    stWimosPort->usPortA3 = analogRead(WIMOS_A3_PORT);   
   #endif
   #ifdef _EN_WIMOS_PORT_A4
-  
+    stWimosPort->usPortA4 = analogRead(WIMOS_A4_PORT);   
   #endif
   #ifdef _EN_WIMOS_PORT_A5
+    stWimosPort->usPort5A1 = analogRead(WIMOS_A5_1_PORT); 
+    stWimosPort->usPort5A2 = analogRead(WIMOS_A5_2_PORT); 
+    stWimosPort->usPort5A3 = analogRead(WIMOS_A5_3_PORT); 
   
   #endif
 }
