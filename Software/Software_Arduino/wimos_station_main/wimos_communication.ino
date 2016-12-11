@@ -360,7 +360,7 @@ extern void noOperation(void){
      * @return none.
      */
     extern void _test_n1VT04 (void){
-      const char* testName = "n1.VT04 = %ld";
+      const char* testName = "n1.VT04 = %ld microseconds";
       
       /*Body_TEST:*/     
       initRF();

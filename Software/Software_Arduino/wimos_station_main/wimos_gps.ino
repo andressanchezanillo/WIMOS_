@@ -1269,7 +1269,7 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
      * @return none.
      */
     extern void _test_n1VT05 (void){
-      const char* testName = "n1.VT05 = %s";
+      const char* testName = "n1.VT05 = %s microseconds";
       char ucOutputBuffer[30];
       uint8_t ucSuccessStatus = -1;
       uint32_t ulMaxTimeMicroSeconds = 0;

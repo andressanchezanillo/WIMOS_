@@ -72,7 +72,7 @@
 /**
  * @brief Time for TV display.
  */
-#define _EN_WIMOS_TV_TIME_SEC ((uint16_t) 300)
+#define _EN_WIMOS_TV_TIME_SEC ((uint16_t) 10)
 
 /**
  * @brief Label for Analog Port A1 activation.
@@ -100,21 +100,73 @@
  */
 #define _EN_WIMOS_PORT_D1
 /**
+ * @brief Label for Digital Port D1.1 Mode.
+ */
+#define _WIMOS_PORT_MODE_D1_1 INPUT
+/**
+ * @brief Label for Digital Port D1.2 Mode.
+ */
+#define _WIMOS_PORT_MODE_D1_2 INPUT
+/**
+ * @brief Label for Digital Port D1.3 Mode.
+ */
+#define _WIMOS_PORT_MODE_D1_3 INPUT
+/**
+ * @brief Label for Digital Port D1.4 Mode.
+ */
+#define _WIMOS_PORT_MODE_D1_4 INPUT
+
+/**
  * @brief Label for Digital Port D2 activation.
  */
 #define _EN_WIMOS_PORT_D2
+/**
+ * @brief Label for Digital Port D2.1 Mode.
+ */
+#define _WIMOS_PORT_MODE_D2_1 INPUT
+/**
+ * @brief Label for Digital Port D2.2 Mode.
+ */
+#define _WIMOS_PORT_MODE_D2_2 INPUT
+/**
+ * @brief Label for Digital Port D2.3 Mode.
+ */
+#define _WIMOS_PORT_MODE_D2_3 INPUT
+
 /**
  * @brief Label for Digital Port D3 activation.
  */
 #define _EN_WIMOS_PORT_D3
 /**
+ * @brief Label for Digital Port D3.1 Mode.
+ */
+#define _WIMOS_PORT_MODE_D3_1 INPUT
+/**
+ * @brief Label for Digital Port D3.2 Mode.
+ */
+#define _WIMOS_PORT_MODE_D3_2 INPUT
+
+/**
  * @brief Label for Digital Port D4 activation.
  */
 #define _EN_WIMOS_PORT_D4
 /**
+ * @brief Label for Digital Port D4.1 Mode.
+ */
+#define _WIMOS_PORT_MODE_D4_1 INPUT
+/**
+ * @brief Label for Digital Port D4.2 Mode.
+ */
+#define _WIMOS_PORT_MODE_D4_2 INPUT
+
+/**
  * @brief Label for Digital Port D5 activation.
  */
 #define _EN_WIMOS_PORT_D5
+/**
+ * @brief Label for Digital Port D5.1 Mode.
+ */
+#define _WIMOS_PORT_MODE_D5_1 INPUT
 
 /**
  * @brief Label for UART Port activation.
@@ -125,10 +177,24 @@
  */
 #define _EN_WIMOS_PORT_I2C
 /**
+ * @brief Size of I2C config address devices.
+ */
+#define _WIMOS_PORT_I2C_CONFIG_SIZE 0x02
+/**
  * @brief Size of I2C list devices.
  */
-#define _EN_WIMOS_PORT_I2C_SIZE 0x01
+#define _WIMOS_PORT_I2C_DATA_SIZE 0x02
 
+#define _WIMOS_I2C_CONFIG { \
+                            (stWimosI2CRegister) { .eRegisterType = eConfigWrite, .ucDeviceAddress = 0x68, .ucRegisterAddress = 0x00, .ucRegisterValue = 0x01 }, \
+                            (stWimosI2CRegister) { .eRegisterType = eConfigWrite, .ucDeviceAddress = 0x68,  .ucRegisterAddress = 0x00, .ucRegisterValue = 0x01 }  \                                                                   
+                          }
+                          
+
+#define _WIMOS_I2C_DATA { \
+                          (stWimosI2CRegister) { .eRegisterType = eDataRead, .ucDeviceAddress = 0x68,  .ucRegisterAddress = 0x00, .ucRegisterValue = 0x01 }, \
+                          (stWimosI2CRegister) { .eRegisterType = eDataRead, .ucDeviceAddress = 0x68,  .ucRegisterAddress = 0x01, .ucRegisterValue = 0x02 }  \                                                                   
+                        }
 
 
 

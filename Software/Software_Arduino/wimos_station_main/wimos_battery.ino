@@ -21,7 +21,7 @@
  * @file wimos_battery.ino
  * @author Andres Sanchez Anillo
  * @date 09 Jun 2015
- * @brief File containing main function for Wimos Framework.
+ * @brief File containing main function for Wimos battery reader.
  *
  * Wimos is a Framework for easy IoT development.
  * @see https://github.com/andressanchezanillo/WIMOS_

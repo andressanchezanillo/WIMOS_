@@ -46,18 +46,31 @@ void displayMainScreen(const uint8_t* ucImage, uint16_t usSize);
  */
 extern void initTV(void){
   #ifdef _EN_WIMOS_TV
-    VGA.beginPAL();
-    coreWimosDisplay = displayTV;
-    coreWimosTVTimer = millis();
-    ulTimerTV = millis();
-    displayMainScreen(mainWindows,MAIN_WINDOWS_SIZE);
-    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_TV_MASK;
-    DEBUG_OK("TV output signal initialized.");    
+    if(_EN_WIMOS_TV_TIME_SEC != 0){
+      VGA.beginPAL();
+      coreWimosDisplay = displayTV;
+      coreWimosTVTimer = millis();
+      ulTimerTV = millis();
+      displayMainScreen(mainWindows,MAIN_WINDOWS_SIZE);
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_TV_MASK;
+      DEBUG_DATA("TV Time Counter for %d Seconds",_EN_WIMOS_TV_TIME_SEC);
+      DEBUG_OK("TV output signal initialized.");
+    }else{
+      coreWimosDisplay = communicationThread;
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_TV_MASK;
+      DEBUG_INFO("TV output signal not initialized.");
+      initInterPeriph();
+    }
   #else
     coreWimosDisplay = communicationThread;
     stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_TV_MASK;
     DEBUG_INFO("TV output signal not initialized.");
+    initInterPeriph();
   #endif
+  
+  if(coreWimosDisplay == NULL){
+    coreWimosDisplay = noOperation;
+  }
 }
 
 
@@ -69,15 +82,18 @@ extern void initTV(void){
  * @param none.
  * @return none.
  */
-extern void deleteTV(void){
+extern void stopTV(void){
   #ifdef _EN_WIMOS_TV
+    if ( stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_TV_MASK == WIMOS_DEVICE_TV_MASK){
+      VGA.end();    
+    }
     coreWimosDisplay = communicationThread;
     coreWimosTVTimer = 0;
     DEBUG_OK("TV output signal destroyed.");
   #else
-  
     DEBUG_INFO("TV output signal not destroyed.");
   #endif
+  initInterPeriph();
 }
 
 
@@ -115,7 +131,11 @@ void displayTV(void){
     /*Displaying sensor values.*/
     
     if(((millis() - coreWimosTVTimer)/1000) >=  _EN_WIMOS_TV_TIME_SEC ){
-      deleteTV();
+      DEBUG_INFO("TV DISPLAY STOPPED.");
+      stopTV();
+    }
+    else{      
+      DEBUG_DATA("TV TIMER COUNTER = %d seconds.",( _EN_WIMOS_TV_TIME_SEC - ((millis() - coreWimosTVTimer)/1000)) );
     }
     
   #else
