@@ -38,7 +38,18 @@ uint32_t ulTimerSD = 0;
 PeriphericErrors errorSD = UKNOWN_ERROR;
 File stVolatileFile;
 char ptrVolatileFileName[22];
+char ptrNonVolatileFileName[22];
 File stNonVolatileFile;
+
+
+#if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+  char ptrUnitTestSDInput[25];
+  uint8_t ucUnitTestSDInput;
+  uint8_t ucUnitTestSDOutput;
+  uint32_t ulUnitTestSDOutput;
+  bool bUnitTestSDInput;
+  int8_t scUnitTestSDOutput;
+#endif
 
 
 
@@ -242,7 +253,7 @@ int8_t initSystemSD(void){
 
 
 uint32_t getLastFile(const char* ptrDir, const char* prtFileName, const char* prtExtension ){
-  
+  #ifdef _EN_WIMOS_SD
       uint32_t ulRetValue = 0;
       char ptrNameBuffer[22];
       bool bFound = false;
@@ -269,64 +280,364 @@ uint32_t getLastFile(const char* ptrDir, const char* prtFileName, const char* pr
           }
         }  
       }
-  /*Return the last file wrotten.*/
-  return ulRetValue;
+      /*Return the last file wrotten.*/
+      return ulRetValue;
+  #endif
+  return 0;
 }
 
+extern int8_t restoreVolatileStatus(uint32_t* prtStatusMemory, uint16_t usBufferSize){
+  #ifdef _EN_WIMOS_SD
+    uint8_t i=0;
+    #ifdef WIMOS_UNIT_TEST
+      for(i=0; i<ucUnitTestSDInput; i++){      
+    #else
+      for(i=0; i<60; i++){
+    #endif
+    sprintf(ptrVolatileFileName, "%s/%s%d%s", WIMOS_VOLATILE_DIR, WIMOS_VOLATILE_FILE, i, WIMOS_VOLATILE_EXT);
+      if(SD.exists(ptrVolatileFileName)){
+        stVolatileFile = SD.open(ptrVolatileFileName, FILE_WRITE);
+        prtStatusMemory[i] = stVolatileFile.size();
+      }else{
+        prtStatusMemory[i] = 0;
+      }
+    }
+    return _OK;
+  #endif
+  return _ERROR;
+}
+
+
 extern int8_t storeVolatile(void* ptrBuffer, uint8_t ucBufferSize){
-  stVolatileFile.write((uint8_t*)ptrBuffer,ucBufferSize);
-  DEBUG_DATA("File size = %d", stVolatileFile.size());
-  stVolatileFile.close();
-  return _OK;
+  #ifdef _EN_WIMOS_SD
+    stVolatileFile.write((uint8_t*)ptrBuffer,ucBufferSize);
+    DEBUG_DATA("File size = %d", stVolatileFile.size());
+    return _OK;
+  #endif
+  return _ERROR;
 }
 
 extern int8_t nextVolatileFile(void){
-  if((millis() - ulTimerSD) > 60000){
-    usLastVolatileFile++;
-    stVolatileFile.close();
-    
-    sprintf(ptrVolatileFileName, "%s/%s%d%s", WIMOS_VOLATILE_DIR, WIMOS_VOLATILE_FILE, usLastVolatileFile, WIMOS_VOLATILE_EXT);
-    stVolatileFile = SD.open(ptrVolatileFileName, FILE_WRITE);
-    ulTimerSD = millis();
-    
-  }else{    
-    stVolatileFile.close();
-    stVolatileFile = SD.open(ptrVolatileFileName, FILE_WRITE);
-  }
-  return _OK;
+  #ifdef _EN_WIMOS_SD
+      
+    #ifdef WIMOS_UNIT_TEST
+      if(bUnitTestSDInput || (millis() - ulTimerSD) > 60000){
+    #else
+      if((millis() - ulTimerSD) > 60000){
+    #endif
+      
+    #ifdef WIMOS_UNIT_TEST
+      if(ucUnitTestSDInput > 0){
+        usLastVolatileFile = (usLastVolatileFile + 1) % ucUnitTestSDInput;
+      }else{        
+        usLastVolatileFile = (usLastVolatileFile + 1) % 60;
+      }
+    #else
+      usLastVolatileFile = (usLastVolatileFile + 1) % 60;
+    #endif
+      stVolatileFile.close();
+      
+      sprintf(ptrVolatileFileName, "%s/%s%d%s", WIMOS_VOLATILE_DIR, WIMOS_VOLATILE_FILE, usLastVolatileFile, WIMOS_VOLATILE_EXT);
+      
+      if( SD.exists(ptrVolatileFileName) ){
+        SD.remove(ptrVolatileFileName);
+      }
+      
+      stVolatileFile = SD.open(ptrVolatileFileName, FILE_WRITE);
+      ulTimerSD = millis();
+      
+    }else{    
+      stVolatileFile.close();
+      stVolatileFile = SD.open(ptrVolatileFileName, FILE_WRITE);
+    }
+    return _OK;
+  #endif
+  return _ERROR;
 }
 
 extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFileNameFrom, const char* ptrDirNameTo, const char* ptrFileNameTo){
-  char ptrBuffer[WIMOS_MEM_BUFFER_SIZE];
-  File stFrom, stTo;
-  sprintf(ptrBuffer, "%s/%s", ptrDirNameFrom, ptrFileNameFrom);
-  stFrom = SD.open(ptrBuffer, FILE_READ);
-  DEBUG_DATA("FROM = %s",ptrBuffer);
-  sprintf(ptrBuffer, "%s/%s", ptrDirNameTo, ptrFileNameTo);
-  SD.remove(ptrBuffer);
-  stTo = SD.open(ptrBuffer, FILE_WRITE);
-  DEBUG_DATA("To = %s",ptrBuffer);
-  
-  
-  DEBUG_DATA("Numbers of iterations = %d",(stFrom.size()/WIMOS_MEM_BUFFER_SIZE));
-  for(uint32_t i = 0; i < (stFrom.size()/WIMOS_MEM_BUFFER_SIZE) ; i+=WIMOS_MEM_BUFFER_SIZE){
-    stFrom.read(ptrBuffer,WIMOS_MEM_BUFFER_SIZE);
-    stTo.write(ptrBuffer,WIMOS_MEM_BUFFER_SIZE);
-  }
-  DEBUG_DATA("Numbers of iterations = %d",(stFrom.size() % WIMOS_MEM_BUFFER_SIZE));
-  if((stFrom.size() % WIMOS_MEM_BUFFER_SIZE) > 0){
-    stFrom.read(ptrBuffer,stFrom.size() % WIMOS_MEM_BUFFER_SIZE);
-    stTo.write(ptrBuffer,stFrom.size() % WIMOS_MEM_BUFFER_SIZE);
-  }
-  
-  DEBUG_DATA("FileTo size = %d",stTo.size());
-  DEBUG_DATA("FileFrom size = %d",stFrom.size());
-  
-  stTo.close();
-  stFrom.close();
-  
-  return _OK;
+  #ifdef _EN_WIMOS_SD
+    char ptrBuffer[WIMOS_MEM_BUFFER_SIZE];
+    File stFrom, stTo;
+    sprintf(ptrBuffer, "%s/%s", ptrDirNameFrom, ptrFileNameFrom);
+    stFrom = SD.open(ptrBuffer, FILE_READ);
+    DEBUG_DATA("FROM = %s",ptrBuffer);
+    sprintf(ptrBuffer, "%s/%s", ptrDirNameTo, ptrFileNameTo);
+    SD.remove(ptrBuffer);
+    stTo = SD.open(ptrBuffer, FILE_WRITE);
+    DEBUG_DATA("To = %s",ptrBuffer);
+    
+    
+    DEBUG_DATA("Numbers of iterations = %d",(stFrom.size()/WIMOS_MEM_BUFFER_SIZE));
+    for(uint32_t i = 0; i < (stFrom.size()/WIMOS_MEM_BUFFER_SIZE) ; i+=WIMOS_MEM_BUFFER_SIZE){
+      stFrom.read(ptrBuffer,WIMOS_MEM_BUFFER_SIZE);
+      stTo.write(ptrBuffer,WIMOS_MEM_BUFFER_SIZE);
+    }
+    DEBUG_DATA("Numbers of iterations = %d",(stFrom.size() % WIMOS_MEM_BUFFER_SIZE));
+    if((stFrom.size() % WIMOS_MEM_BUFFER_SIZE) > 0){
+      stFrom.read(ptrBuffer,stFrom.size() % WIMOS_MEM_BUFFER_SIZE);
+      stTo.write(ptrBuffer,stFrom.size() % WIMOS_MEM_BUFFER_SIZE);
+    }
+    
+    DEBUG_DATA("FileTo size = %d",stTo.size());
+    DEBUG_DATA("FileFrom size = %d",stFrom.size());
+    
+    stTo.close();
+    stFrom.close();
+    
+    return _OK;
+  #endif
+  return _ERROR;
 }
 
+
+
+
+#ifdef WIMOS_DEBUG
+  #ifdef WIMOS_UNIT_TEST
+    
+    /**
+     * @brief Wimos test n1.UT29.
+     *
+     * Unit test n1.UT29 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n1UT29 (void){
+      const char* testName = "n1.UT29 = %d";
+      /*Body_TEST:*/
+      
+      #ifdef _EN_WIMOS_SD
+        stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus = 0;
+        initSD();
+        DEBUG_VALID(testName , 
+                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_SD_MASK), 
+                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_SD_MASK) == WIMOS_DEVICE_SD_MASK);
+      #else
+        stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus = WIMOS_DEVICE_SD_MASK;
+        initSD();
+        DEBUG_VALID(testName , 
+                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_SD_MASK), 
+                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_SD_MASK) == 0x00);
+      #endif
+      /*End_Body_TEST:*/
+    } 
+
+    /**
+     * @brief Wimos test n1.UT30.
+     *
+     * Unit test n1.UT30 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n1UT30 (void){
+      const char* testName = "n1.UT30 = %d";
+      uint8_t i=0, j=0, h=0;
+      bool bTest = true;
+      
+      /*Body_TEST:*/     
+      initSystemSD();
+      bUnitTestSDInput = true;
+      ucUnitTestSDInput = 5;
+      uint32_t ulOutput[10] = {0};
+      
+      for(i=0; i<10; i++){
+        nextVolatileFile();
+        for(j=0; j<5; j++){
+          storeVolatile(&h, 1);
+          h = (h+1) % 256;
+        }
+      }
+      ucUnitTestSDInput = 10;
+      restoreVolatileStatus(ulOutput, 10);
+
+      #ifdef _EN_WIMOS_SD
+      
+        for(i=0; i<5; i++)
+          bTest &= (ulOutput[i] == 5);
+          
+        for(i=5; i<10; i++)
+          bTest &= (ulOutput[i] == 0);
+        
+        DEBUG_VALID(testName , 
+                   (bTest), 
+                   (bTest));
+      #else      
+      
+        for(i=0; i<10; i++)
+          bTest &= (ulOutput[i] == 0);
+                
+        DEBUG_VALID(testName , 
+                   (bTest), 
+                   (bTest));
+      #endif
+      delay(10);
+      /*End_Body_TEST:*/
+    } 
+
+    /**
+     * @brief Wimos test n1.UT31.
+     *
+     * Unit test n1.UT31 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n1UT31 (void){
+      
+      const char* testName = "n1.UT31 = %d";
+      uint8_t i=0, j=0, h=0;
+      bool bTest = true;
+      
+      /*Body_TEST:*/     
+      initSystemSD();
+      bUnitTestSDInput = true;
+      ucUnitTestSDInput = 10;
+      uint32_t ulOutput[10] = {0};
+      
+      for(i=0; i<10; i++){
+        nextVolatileFile();
+        for(j=0; j<5; j++){
+          storeVolatile(&h, 1);
+          h = (h+1) % 256;
+        }
+      }
+      restoreVolatileStatus(ulOutput, 10);
+      #ifdef _EN_WIMOS_SD
+      
+        for(i=0; i<10; i++)
+          bTest &= (ulOutput[i] == 5);
+        
+        DEBUG_VALID(testName , 
+                   (bTest), 
+                   (bTest));
+      #else      
+      
+        for(i=0; i<10; i++)
+          bTest &= (ulOutput[i] == 0);
+                
+        DEBUG_VALID(testName , 
+                   (bTest), 
+                   (bTest));
+      #endif
+      delay(10);
+      /*End_Body_TEST:*/
+    } 
+
+    /**
+     * @brief Wimos test n1.UT32.
+     *
+     * Unit test n1.UT32 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n1UT32 (void){
+      const char* testName = "n1.UT32 = %d";
+      uint8_t i, j, h;
+      /*Body_TEST:*/         
+      initSystemSD();
+      bUnitTestSDInput = true;
+      ucUnitTestSDInput = 5;
+      ucUnitTestSDOutput = 0;
+      
+      for(i=0; i<5; i++){
+        nextVolatileFile();
+        for(j=0; j<5; j++){
+          storeVolatile(&h, 1);
+          h = (h+1) % 256;
+        }
+      }
+      
+      for(i=0; i<5; i++){ 
+        sprintf(ptrVolatileFileName, "%s/%s%d%s", WIMOS_VOLATILE_DIR, WIMOS_VOLATILE_FILE, i, WIMOS_VOLATILE_EXT);
+        if( SD.exists(ptrVolatileFileName) ){
+          sprintf(ptrNonVolatileFileName, "%s%d%s", WIMOS_NON_VOLATILE_FILE, i, WIMOS_NON_VOLATILE_EXT);
+          sprintf(ptrVolatileFileName, "%s%d%s", WIMOS_VOLATILE_FILE, i, WIMOS_VOLATILE_EXT);          
+          moveFileToDirectory(WIMOS_VOLATILE_DIR,ptrVolatileFileName,WIMOS_NON_VOLATILE_DIR,ptrNonVolatileFileName);
+        }
+      }
+      
+      ucUnitTestSDOutput = getLastFile(WIMOS_NON_VOLATILE_DIR, WIMOS_NON_VOLATILE_FILE, WIMOS_NON_VOLATILE_EXT);
+      
+      #ifdef _EN_WIMOS_SD
+      
+        
+        DEBUG_VALID(testName , 
+                   (ucUnitTestSDOutput), 
+                   (ucUnitTestSDOutput == 5));
+      #else      
+      
+        DEBUG_VALID(testName , 
+                   (ucUnitTestSDOutput), 
+                   (ucUnitTestSDOutput == 0));
+      #endif
+      delay(10);
+      /*End_Body_TEST:*/
+    } 
+
+    
+  #endif
+  
+  #ifdef WIMOS_VALIDATION_TEST
+  
+    
+    /**
+     * @brief Wimos test n1.VT07.
+     *
+     * Unit test n1.VT07 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+    extern void _test_n1VT07 (void){
+      const char* testName = "n1.VT07 = %ld microseconds";
+      uint8_t i, j, h;
+      /*Body_TEST:*/         
+      initSystemSD();
+      bUnitTestSDInput = true;
+      ucUnitTestSDInput = 5;
+      ucUnitTestSDOutput = 0;
+      
+      for(i=0; i<5; i++){
+        nextVolatileFile();
+        for(j=0; j<5; j++){
+          storeVolatile(&h, 1);
+          h = (h+1) % 256;
+        }
+      }
+      
+      ulUnitTestSDOutput = micros();
+      for(i=0; i<5; i++){ 
+        sprintf(ptrVolatileFileName, "%s/%s%d%s", WIMOS_VOLATILE_DIR, WIMOS_VOLATILE_FILE, i, WIMOS_VOLATILE_EXT);
+        if( SD.exists(ptrVolatileFileName) ){
+          sprintf(ptrNonVolatileFileName, "%s%d%s", WIMOS_NON_VOLATILE_FILE, i, WIMOS_NON_VOLATILE_EXT);
+          sprintf(ptrVolatileFileName, "%s%d%s", WIMOS_VOLATILE_FILE, i, WIMOS_VOLATILE_EXT);          
+          moveFileToDirectory(WIMOS_VOLATILE_DIR,ptrVolatileFileName,WIMOS_NON_VOLATILE_DIR,ptrNonVolatileFileName);
+        }
+      }      
+      ulUnitTestSDOutput = micros() - ulUnitTestSDOutput;
+      ulUnitTestSDOutput /= 5;
+      
+      #ifdef _EN_WIMOS_SD
+      
+        
+        DEBUG_VALID(testName , 
+                   (ulUnitTestSDOutput), 
+                   (ucUnitTestSDOutput == 10000));
+      #else      
+      
+        DEBUG_VALID(testName , 
+                   (ulUnitTestSDOutput), 
+                   (ucUnitTestSDOutput < 10000));
+      #endif
+      delay(10);
+      /*End_Body_TEST:*/
+    } 
+    
+  #endif
+#endif
 
 

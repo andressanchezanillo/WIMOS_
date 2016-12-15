@@ -69,10 +69,15 @@ void _test_n1UT25 (void);
 void _test_n1UT26 (void);
 void _test_n1UT27 (void);
 void _test_n1UT28 (void);
+void _test_n1UT29 (void);
+void _test_n1UT30 (void);
+void _test_n1UT31 (void);
+void _test_n1UT32 (void);
 void _test_n1VT03 (void);
 void _test_n1VT04 (void);
 void _test_n1VT05 (void);
 void _test_n1VT06 (void);
+void _test_n1VT07 (void);
 
 /**
  * @brief Setup the system config.

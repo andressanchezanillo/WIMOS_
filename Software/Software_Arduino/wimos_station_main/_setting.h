@@ -38,7 +38,7 @@
  */
 #define WIMOS_DEBUG
 //#define WIMOS_UNIT_TEST
-#define WIMOS_VALIDATION_TEST
+//#define WIMOS_VALIDATION_TEST
 
 #define _WIMOS_IMU
 /**

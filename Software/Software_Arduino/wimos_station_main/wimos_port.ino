@@ -35,7 +35,7 @@ stWimosI2CRegister stWimosI2CConfig[_WIMOS_PORT_I2C_CONFIG_SIZE] = _WIMOS_I2C_CO
 stWimosI2CRegister stWimosI2CData[_WIMOS_PORT_I2C_DATA_SIZE] = _WIMOS_I2C_DATA;
 
 void I2CWrite(uint8_t ucDeviceAddress, uint8_t ucRegisterAddress, uint8_t ucValue);
-uint8_t I2CRead(uint8_t ucDeviceAddress, uint8_t ucRegisterAddress);
+uint8_t I2CRead(uint8_t ucDeviceAddress, uint16_t ucRegisterAddress);
 
 
 /**
