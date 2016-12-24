@@ -90,25 +90,40 @@ bool ACK_RECEIVED = true;
 void waitCommand(void){
   uint8_t ucValueRF = 0x00;
   uint8_t i=0;
+  DEBUG_INFO("Waiting Command over RF.");
   
   while(SERIAL_RF.available() >= sizeof(stCommand) && ucValueRF != 0xFF){
     ucValueRF = SERIAL_RF.read();
   }
   if(ucValueRF == 0xFF){
+    DEBUG_INFO("Command token 0xFF found.");
     ucBufferRF[0] = 0xFF;
     for(i=1; i<sizeof(stCommand); i++)
       ucBufferRF[i] = SERIAL_RF.read();
     if(ucBufferRF[1] == 0x03){
+      DEBUG_INFO("Command size match.");
       memcpy(&stCommand,ucBufferRF,sizeof(stCommand));
       
       /** Process RF input **/
       if(stCommand.ucMessageTo == WIMOS_ID || stCommand.ucMessageTo == 0xFF ){
+        DEBUG_DATA("Command for me = %d.",stCommand.ucMessageTo);
         if(stCommand.ucCommand != 0x05){
+          DEBUG_INFO("Command with ACK found");
           communicationThread = sendACK;
           return;
+        }else{
+          DEBUG_INFO("Command without ACK found");
+          communicationThread = runFunction;
+          return;          
         }
+      }else{
+          DEBUG_INFO("Command for another ID.");
       }  
+    }else{
+      DEBUG_INFO("Command size not match");  
     }
+  }else{
+    DEBUG_INFO("Command token not found");
   }  
 }
 
@@ -127,12 +142,19 @@ void waitACK(void){
   
   static bool bACKReceived = true;
   static uint32_t ulTimeoutACK = 0;
+  
+  DEBUG_INFO("Waiting ACK.");
 
   if(bACKReceived){
+    DEBUG_INFO("The last ACK was received.");
+    DEBUG_INFO("Waiting a new ACK.");
     bACKReceived =  false;
     ulTimeoutACK = millis();    
   }else{
+    DEBUG_INFO("The last ACK was not received.");
     if(millis() - ulTimeoutACK > TIMEOUT_ACK){
+        DEBUG_INFO("The timeout was excedded.");
+        communicationThread = runFunction; 
         bACKReceived =  true;
         ulTimeoutACK = 0;  
     }else{
@@ -140,27 +162,39 @@ void waitACK(void){
         ucValueRF = SERIAL_RF.read();
       }
       if(ucValueRF == 0xFF){
+        DEBUG_INFO("The ACK token was found.");
         ucBufferRF[0] = 0xFF;
         for(i=1; i<sizeof(stWimosACK); i++)
           ucBufferRF[i] = SERIAL_RF.read();
         if(ucBufferRF[1] == 0x03){
+          DEBUG_INFO("The ACK size match.");
           memcpy(&stACK,ucBufferRF,sizeof(stACK));
           
           /** Process RF input **/
           if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageFrom){
+            DEBUG_DATA("The ACK is for me = %d.",stACK.ucMessageTo);
+            DEBUG_DATA("The ACK is from = %d.",stACK.ucMessageFrom);
             if(stACK.ucACK == (~ucLastChecksum)){
+              DEBUG_INFO("The ACK checksum matched.");
               bACKReceived =  true;
               ulTimeoutACK = 0;
               communicationThread = waitCommand; 
               return;
             }else{
+              DEBUG_INFO("The ACK checksum not matched.");
               communicationThread = runFunction; 
               bACKReceived =  true;
               ulTimeoutACK = 0;
               return;
             }
+          }else{
+            DEBUG_INFO("The message is not for me.");
           }  
+        }else{
+          DEBUG_INFO("The ACK checksum not matched.");
         }
+      }else{
+        DEBUG_INFO("The ACK token not found.");
       } 
     }
   }
@@ -182,8 +216,10 @@ void sendACK(void){
   static bool bACKSent = false;
   static uint32_t ulTimeoutACK = 0;
   static uint8_t ucACKTries = 0;
+  DEBUG_INFO("Sending the ACK.");
   
   if(bACKSent == false){
+    DEBUG_INFO("The ACK was not sent.");
     
     stACK.ucMessageFrom = WIMOS_ID;
     stACK.ucMessageTo = stCommand.ucMessageFrom;
@@ -195,11 +231,14 @@ void sendACK(void){
     bACKSent = true;
     return;
   }else{
-    if(ucACKTries >= 3){        
+    DEBUG_INFO("The ACK was sent.");
+    if(ucACKTries >= 3){
+      DEBUG_INFO("The number of tries was excedded.");        
       communicationThread = waitCommand; 
       return;
     }else{
       if( millis() - ulTimeoutACK > TIMEOUT_ACK ){
+        DEBUG_INFO("The timeout was excedded.");     
         ulTimeoutACK = 0;
         bACKSent = false;
         return;
@@ -208,21 +247,27 @@ void sendACK(void){
           ucValueRF = SERIAL_RF.read();
         }
         if(ucValueRF == 0xFF){
+          DEBUG_INFO("The ACK response token was found.");     
           ucBufferRF[0] = 0xFF;
           for(i=1; i<sizeof(stWimosACK); i++)
             ucBufferRF[i] = SERIAL_RF.read();
           if(ucBufferRF[1] == 0x03){
+            DEBUG_INFO("The ACK response size match.");     
             memcpy(&stACK,ucBufferRF,sizeof(stACK));
             
             /** Process RF input **/
             if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageFrom){
+              DEBUG_DATA("The ACK response is for me = %d.", stACK.ucMessageTo); 
+              DEBUG_DATA("The ACK response is from = %d.", stACK.ucMessageFrom);                   
               if(stACK.ucACK == stCommand.ucChecksum){
+                DEBUG_INFO("The ACK response checksum match.");     
                 bACKSent = false;
                 ucACKTries = 0;
                 ulTimeoutACK = 0;
                 communicationThread = runFunction; 
                 return;
               }else{
+                DEBUG_INFO("The ACK response checksum not match.");     
                 bACKSent = false;
                 ucACKTries = 0;
                 ulTimeoutACK = 0;

@@ -183,6 +183,7 @@ extern void coreWimos(void){
   #ifdef WIMOS_DEBUG
     debugCommand();
   #endif
+  communicationThread();
   if((millis() - coreWimosTimer100ms) > 100){
     coreWimosTimer100ms = millis();
     readSensorsWimos();
