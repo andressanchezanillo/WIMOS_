@@ -176,15 +176,15 @@ extern void readIMU(stWimosPortValues* stWimosPort){
   #ifdef WIMOS_UNIT_TEST
     
     /**
-     * @brief Wimos test n1.UT25.
+     * @brief Wimos test n3.UT25.
      *
-     * Unit test n1.UT25 function.
+     * Unit test n3.UT25 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT25 (void){
-      const char* testName = "n1.UT25 = %d";
+     extern void _test_n3UT25 (void){
+      const char* testName = "n3.UT25 = %d";
       /*Body_TEST:*/
       
       #ifdef _EN_WIMOS_IMU
@@ -205,15 +205,15 @@ extern void readIMU(stWimosPortValues* stWimosPort){
     } 
 
     /**
-     * @brief Wimos test n1.UT26.
+     * @brief Wimos test n3.UT26.
      *
-     * Unit test n1.UT26 function.
+     * Unit test n3.UT26 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT26 (void){
-      const char* testName = "n1.UT26 = %d";
+     extern void _test_n3UT26 (void){
+      const char* testName = "n3.UT26 = %d";
       /*Body_TEST:*/     
         
       stGlobalWimosPortMsg.stPortValues.usInternalIMUAcc = 0;
@@ -234,15 +234,15 @@ extern void readIMU(stWimosPortValues* stWimosPort){
     } 
 
     /**
-     * @brief Wimos test n1.UT27.
+     * @brief Wimos test n3.UT27.
      *
-     * Unit test n1.UT27 function.
+     * Unit test n3.UT27 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT27 (void){
-      const char* testName = "n1.UT27 = %d";
+     extern void _test_n3UT27 (void){
+      const char* testName = "n3.UT27 = %d";
       /*Body_TEST:*/     
       
       stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosX = 0;
@@ -263,15 +263,15 @@ extern void readIMU(stWimosPortValues* stWimosPort){
     } 
 
     /**
-     * @brief Wimos test n1.UT28.
+     * @brief Wimos test n3.UT28.
      *
-     * Unit test n1.UT28 function.
+     * Unit test n3.UT28 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT28 (void){
-      const char* testName = "n1.UT28 = %d";
+     extern void _test_n3UT28 (void){
+      const char* testName = "n3.UT28 = %d";
       /*Body_TEST:*/     
       
       stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosY = 0;
@@ -298,15 +298,15 @@ extern void readIMU(stWimosPortValues* stWimosPort){
   
     
     /**
-     * @brief Wimos test n1.VT05.
+     * @brief Wimos test n3.VT05.
      *
-     * Unit test n1.VT05 function.
+     * Unit test n3.VT05 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-    extern void _test_n1VT06 (void){
-      const char* testName = "n1.VT06 = %ld microseconds";
+    extern void _test_n3VT06 (void){
+      const char* testName = "n3.VT06 = %ld microseconds";
       
       /*Body_TEST:*/     
       initIMU();

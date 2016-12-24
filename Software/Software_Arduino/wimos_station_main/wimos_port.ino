@@ -95,3 +95,86 @@ uint8_t I2CRead(uint8_t ucDeviceAddress, uint16_t ucRegisterAddress){
     Wire.endTransmission();   
     return ucRetValue;  
 }
+
+
+
+
+#ifdef WIMOS_DEBUG
+  #ifdef WIMOS_UNIT_TEST
+
+    /**
+     * @brief Wimos test n3.UT33.
+     *
+     * Unit test n3.UT33 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT33 (void){
+      const char* testName = "n3.UT33 = %d";
+      /*TODO: do a Port I2C initializer.*/
+        DEBUG_VALID(testName , 
+                   (true), 
+                   (true));
+    } 
+
+
+    /**
+     * @brief Wimos test n3.UT34.
+     *
+     * Unit test n3.UT34 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT34 (void){
+      const char* testName = "n3.UT34 = %d";
+      /*TODO: I2C writer.*/
+        DEBUG_VALID(testName , 
+                   (true), 
+                   (true));
+    } 
+
+
+    /**
+     * @brief Wimos test n3.UT35.
+     *
+     * Unit test n3.UT35 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT35 (void){
+      const char* testName = "n3.UT35 = %d";
+      /*TODO: I2C reader.*/
+        DEBUG_VALID(testName , 
+                   (true), 
+                   (true));
+    } 
+
+    
+  #endif
+  
+  #ifdef WIMOS_VALIDATION_TEST
+  
+    
+    /**
+     * @brief Wimos test n3.VT08.
+     *
+     * Unit test n3.VT08 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+    extern void _test_n3VT08 (void){
+      const char* testName = "n3.VT08 = %ld microseconds";
+      /*TODO: do a general validation.*/            
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+    }
+  #endif
+#endif
+
+
+

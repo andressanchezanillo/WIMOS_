@@ -116,3 +116,65 @@ extern void readPortA(stWimosPortValues* stWimosPort){
   
   #endif
 }
+
+
+
+#ifdef WIMOS_DEBUG
+  #ifdef WIMOS_UNIT_TEST
+
+    /**
+     * @brief Wimos test n3.UT36.
+     *
+     * Unit test n3.UT36 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT36 (void){
+      const char* testName = "n3.UT36 = %d";
+      /*TODO: do a Analog Port initializer.*/
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+    } 
+
+
+    /**
+     * @brief Wimos test n3.UT37.
+     *
+     * Unit test n3.UT37 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT37 (void){
+      const char* testName = "n3.UT37 = %d";
+      /*TODO: Analog reader.*/
+        DEBUG_VALID(testName , 
+                   (true), 
+                   (true));
+    } 
+
+    
+  #endif
+  
+  #ifdef WIMOS_VALIDATION_TEST
+  
+    
+    /**
+     * @brief Wimos test n3.VT09.
+     *
+     * Unit test n3.VT09 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+    extern void _test_n3VT09 (void){
+      const char* testName = "n3.VT09 = %ld microseconds";
+      /*TODO: do a general validation.*/            
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+    }
+  #endif
+#endif

@@ -37,10 +37,14 @@ void waitACK(void);
 void sendResponse(void);
 void clearBuffer(void);
 void runFunction(void);
-void sendFrame(void* ptrData, uint8_t ucSize);
+void sendFrame(const void* ptrData, uint8_t ucSize);
 
 extern void (*communicationThread)(void);
 static uint8_t lastCMD = NONE;
+
+uint8_t ucBufferRF[20] = {0};
+stCommandMessage stCommand;
+uint8_t ucLastChecksum = 0;
 
 #ifdef WIMOS_UNIT_TEST
   uint8_t ucUnitTestOutput[70];
@@ -84,22 +88,27 @@ bool ACK_RECEIVED = true;
  * @return none.
  */
 void waitCommand(void){
-  /** Process RF input **/
-  if(COMMAND && IS_FOR_ME){
-    /** Process RF command **/
-    /** cmd is valid **/
-    if(QUERY_ID){
-      communicationThread = runFunction;
-      return;
-    }else{
-      communicationThread = sendACK;
-      return;
-    }
+  uint8_t ucValueRF = 0x00;
+  uint8_t i=0;
+  
+  while(SERIAL_RF.available() >= sizeof(stCommand) && ucValueRF != 0xFF){
+    ucValueRF = SERIAL_RF.read();
   }
-  if(BUFFER_FULL){
+  if(ucValueRF == 0xFF){
+    ucBufferRF[0] = 0xFF;
+    for(i=1; i<sizeof(stCommand); i++)
+      ucBufferRF[i] = SERIAL_RF.read();
+    if(ucBufferRF[1] == 0x03){
+      memcpy(&stCommand,ucBufferRF,sizeof(stCommand));
       
-    communicationThread = clearBuffer;
-    return;
+      /** Process RF input **/
+      if(stCommand.ucMessageTo == WIMOS_ID || stCommand.ucMessageTo == 0xFF ){
+        if(stCommand.ucCommand != 0x05){
+          communicationThread = sendACK;
+          return;
+        }
+      }  
+    }
   }  
 }
 
@@ -112,19 +121,47 @@ void waitCommand(void){
  * @return none.
  */
 void waitACK(void){
+  uint8_t i = 0;
+  uint8_t ucValueRF = 0;  
+  stWimosACK stACK;
   
-  if(ACK_RECEIVED){
-    /*Send ACK confirmation.*/
-    ACK_SENT = false;
-    ACK_ATTEMPTS = 0;
-    ACK_RECEIVED = false;
-    communicationThread = waitCommand;
+  static bool bACKReceived = true;
+  static uint32_t ulTimeoutACK = 0;
+
+  if(bACKReceived){
+    bACKReceived =  false;
+    ulTimeoutACK = millis();    
   }else{
-    if(TIMEOUT){
-      ACK_SENT = false;
-      ACK_ATTEMPTS = 0;
-      ACK_RECEIVED = false;
-      communicationThread = runFunction;
+    if(millis() - ulTimeoutACK > TIMEOUT_ACK){
+        bACKReceived =  true;
+        ulTimeoutACK = 0;  
+    }else{
+      while(SERIAL_RF.available() >= sizeof(stACK) && ucValueRF != 0xFF){
+        ucValueRF = SERIAL_RF.read();
+      }
+      if(ucValueRF == 0xFF){
+        ucBufferRF[0] = 0xFF;
+        for(i=1; i<sizeof(stWimosACK); i++)
+          ucBufferRF[i] = SERIAL_RF.read();
+        if(ucBufferRF[1] == 0x03){
+          memcpy(&stACK,ucBufferRF,sizeof(stACK));
+          
+          /** Process RF input **/
+          if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageFrom){
+            if(stACK.ucACK == (~ucLastChecksum)){
+              bACKReceived =  true;
+              ulTimeoutACK = 0;
+              communicationThread = waitCommand; 
+              return;
+            }else{
+              communicationThread = runFunction; 
+              bACKReceived =  true;
+              ulTimeoutACK = 0;
+              return;
+            }
+          }  
+        }
+      } 
     }
   }
 }
@@ -138,42 +175,65 @@ void waitACK(void){
  * @return none.
  */
 void sendACK(void){
-  if(! ACK_SENT){
-    ACK_SENT = !ACK_SENT;
-    ACK_ATTEMPTS = 0;
-    sendFrame(&ACK_SENT,1);
+  uint8_t i = 0;
+  uint8_t ucValueRF = 0;  
+  stWimosACK stACK;
+  
+  static bool bACKSent = false;
+  static uint32_t ulTimeoutACK = 0;
+  static uint8_t ucACKTries = 0;
+  
+  if(bACKSent == false){
+    
+    stACK.ucMessageFrom = WIMOS_ID;
+    stACK.ucMessageTo = stCommand.ucMessageFrom;
+    stACK.ucACK = ~(stCommand.ucChecksum);
+
+    sendFrame(&stACK, sizeof(stACK));
+    ulTimeoutACK = millis();
+    ucACKTries++;
+    bACKSent = true;
+    return;
   }else{
-    if(ACK_RECEIVED){
-      ACK_SENT = false;
-      ACK_ATTEMPTS = 0;
-      ACK_RECEIVED = false;
-      communicationThread = runFunction;
+    if(ucACKTries >= 3){        
+      communicationThread = waitCommand; 
+      return;
     }else{
-      if(ACK_ATTEMPTS < 3){
-        ACK_ATTEMPTS++;
+      if( millis() - ulTimeoutACK > TIMEOUT_ACK ){
+        ulTimeoutACK = 0;
+        bACKSent = false;
+        return;
       }else{
-        ACK_SENT = false;
-        ACK_ATTEMPTS = 0;
-        ACK_RECEIVED = false;
-        communicationThread = waitCommand;
-      }       
+        while(SERIAL_RF.available() >= sizeof(stACK) && ucValueRF != 0xFF){
+          ucValueRF = SERIAL_RF.read();
+        }
+        if(ucValueRF == 0xFF){
+          ucBufferRF[0] = 0xFF;
+          for(i=1; i<sizeof(stWimosACK); i++)
+            ucBufferRF[i] = SERIAL_RF.read();
+          if(ucBufferRF[1] == 0x03){
+            memcpy(&stACK,ucBufferRF,sizeof(stACK));
+            
+            /** Process RF input **/
+            if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageFrom){
+              if(stACK.ucACK == stCommand.ucChecksum){
+                bACKSent = false;
+                ucACKTries = 0;
+                ulTimeoutACK = 0;
+                communicationThread = runFunction; 
+                return;
+              }else{
+                bACKSent = false;
+                ucACKTries = 0;
+                ulTimeoutACK = 0;
+                return;
+              }
+            }  
+          }
+        }
+      }
     }
   }
-  return;
-}
-
-/**
- * @brief Clear buffer State.
- *
- * This is a state of communication state machine, it clears the buffer.
- * @verbatim like this@endverbatim 
- * @param none.
- * @return none.
- */
-void clearBuffer(void){
-  /* Clear Buffer */
-  communicationThread = waitCommand;
-  return;
 }
 
 /**
@@ -185,8 +245,14 @@ void clearBuffer(void){
  * @return none.
  */
 void runFunction(void){
-  /*TODO*/
-  return;
+  switch(stCommand.ucCommand){
+    case 0x01:
+      sendFrame("Hola",5);
+    break;
+    default:
+    
+    break; 
+  }
 }
 
 /**
@@ -198,7 +264,7 @@ void runFunction(void){
  * @param ucSize Data length for sending.
  * @return none.
  */
-void sendFrame(void* pData, uint8_t ucSize){
+void sendFrame(const void* pData, uint8_t ucSize){
   #ifdef _EN_WIMOS_RF
     /** Send the frame over RF **/
     uint8_t i = 0;
@@ -236,15 +302,15 @@ extern void noOperation(void){
   #ifdef WIMOS_UNIT_TEST
     
     /**
-     * @brief Wimos test n1.UT10.
+     * @brief Wimos test n3.UT10.
      *
-     * Unit test n1.UT07 function.
+     * Unit test n3.UT07 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT07 (void){
-      const char* testName = "n1.UT07 = %d";
+     extern void _test_n3UT07 (void){
+      const char* testName = "n3.UT07 = %d";
       /*Body_TEST:*/
       
       #ifdef _EN_WIMOS_RF
@@ -265,15 +331,15 @@ extern void noOperation(void){
     } 
 
     /**
-     * @brief Wimos test n1.UT08.
+     * @brief Wimos test n3.UT08.
      *
-     * Unit test n1.UT08 function.
+     * Unit test n3.UT08 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT08 (void){
-      const char* testName = "n1.UT08 = %d";
+     extern void _test_n3UT08 (void){
+      const char* testName = "n3.UT08 = %d";
       /*Body_TEST:*/     
       uint8_t i = 0;
       for(i = 0; i<70; i++)
@@ -307,43 +373,17 @@ extern void noOperation(void){
 
 
     /**
-     * @brief Wimos test n1.UT09.
+     * @brief Wimos test n3.UT09.
      *
-     * Unit test n1.UT09 function.
+     * Unit test n3.UT09 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT09 (void){
-      const char* testName = "n1.UT09 = %d";
+     extern void _test_n3UT09 (void){
+      const char* testName = "n3.UT09 = %d";
       /*Body_TEST:*/     
-      uint8_t i = 0;
-      for(i = 0; i<70; i++)
-        ucUnitTestOutput[i] = 0;
-        
-      stGlobalWimosInfoMsg.ucMessageFrom = 1;
-      stGlobalWimosInfoMsg.ucMessageTo = 2;
-      stGlobalWimosInfoMsg.checksum = 3;
-      
-      #ifdef _EN_WIMOS_RF
-        
-        sendFrame(&stGlobalWimosInfoMsg, sizeof(stGlobalWimosInfoMsg));
-        
-        stWimosInfoMessage* stUTest = (stWimosInfoMessage*) ucUnitTestOutput ;
-        
-        DEBUG_VALID(testName , 
-                   (memcmp(&stGlobalWimosInfoMsg, stUTest, sizeof(stGlobalWimosInfoMsg))), 
-                   (memcmp(&stGlobalWimosInfoMsg, stUTest, sizeof(stGlobalWimosInfoMsg)) == 0));
-      #else      
-        
-        sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
-        
-        stWimosPortValuesMessage* stUTest = (stWimosPortValuesMessage*) ucUnitTestOutput ;
-        
-        DEBUG_VALID(testName , 
-                   (stUTest->ucBegin), 
-                   (stUTest->ucBegin == 0));
-      #endif
+      /*TODO: make a reader testing.*/
       /*End_Body_TEST:*/
     } 
   #endif
@@ -352,15 +392,15 @@ extern void noOperation(void){
   
     
     /**
-     * @brief Wimos test n1.VT04.
+     * @brief Wimos test n3.VT04.
      *
-     * Unit test n1.VT04 function.
+     * Unit test n3.VT04 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-    extern void _test_n1VT04 (void){
-      const char* testName = "n1.VT04 = %ld microseconds";
+    extern void _test_n3VT04 (void){
+      const char* testName = "n3.VT04 = %ld microseconds";
       
       /*Body_TEST:*/     
       initRF();

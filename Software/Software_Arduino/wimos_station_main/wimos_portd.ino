@@ -131,3 +131,66 @@ extern void readPortD(stWimosPortValues* stWimosPort){
   
   #endif
 }
+
+
+
+
+#ifdef WIMOS_DEBUG
+  #ifdef WIMOS_UNIT_TEST
+
+    /**
+     * @brief Wimos test n3.UT36.
+     *
+     * Unit test n3.UT36 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT38 (void){
+      const char* testName = "n3.UT38 = %d";
+      /*TODO: do a Digital Port initializer.*/
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+    } 
+
+
+    /**
+     * @brief Wimos test n3.UT37.
+     *
+     * Unit test n3.UT37 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT39 (void){
+      const char* testName = "n3.UT39 = %d";
+      /*TODO: Digital reader.*/
+        DEBUG_VALID(testName , 
+                   (true), 
+                   (true));
+    } 
+
+    
+  #endif
+  
+  #ifdef WIMOS_VALIDATION_TEST
+  
+    
+    /**
+     * @brief Wimos test n3.VT10.
+     *
+     * Unit test n3.VT10 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+    extern void _test_n3VT10 (void){
+      const char* testName = "n3.VT10 = %ld microseconds";
+      /*TODO: do a general validation.*/            
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+    }
+  #endif
+#endif

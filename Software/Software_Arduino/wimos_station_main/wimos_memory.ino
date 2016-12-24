@@ -397,15 +397,15 @@ extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFil
   #ifdef WIMOS_UNIT_TEST
     
     /**
-     * @brief Wimos test n1.UT29.
+     * @brief Wimos test n3.UT29.
      *
-     * Unit test n1.UT29 function.
+     * Unit test n3.UT29 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT29 (void){
-      const char* testName = "n1.UT29 = %d";
+     extern void _test_n3UT29 (void){
+      const char* testName = "n3.UT29 = %d";
       /*Body_TEST:*/
       
       #ifdef _EN_WIMOS_SD
@@ -425,19 +425,20 @@ extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFil
     } 
 
     /**
-     * @brief Wimos test n1.UT30.
+     * @brief Wimos test n3.UT30.
      *
-     * Unit test n1.UT30 function.
+     * Unit test n3.UT30 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT30 (void){
-      const char* testName = "n1.UT30 = %d";
+     extern void _test_n3UT30 (void){
+      const char* testName = "n3.UT30 = %d";
       uint8_t i=0, j=0, h=0;
       bool bTest = true;
       
       /*Body_TEST:*/     
+      /*TODO: test*/ 
       initSystemSD();
       bUnitTestSDInput = true;
       ucUnitTestSDInput = 5;
@@ -463,7 +464,7 @@ extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFil
         
         DEBUG_VALID(testName , 
                    (bTest), 
-                   (bTest));
+                   (true));
       #else      
       
         for(i=0; i<10; i++)
@@ -478,20 +479,21 @@ extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFil
     } 
 
     /**
-     * @brief Wimos test n1.UT31.
+     * @brief Wimos test n3.UT31.
      *
-     * Unit test n1.UT31 function.
+     * Unit test n3.UT31 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT31 (void){
+     extern void _test_n3UT31 (void){
       
-      const char* testName = "n1.UT31 = %d";
+      const char* testName = "n3.UT31 = %d";
       uint8_t i=0, j=0, h=0;
       bool bTest = true;
       
       /*Body_TEST:*/     
+      /*TODO: test*/ 
       initSystemSD();
       bUnitTestSDInput = true;
       ucUnitTestSDInput = 10;
@@ -512,7 +514,7 @@ extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFil
         
         DEBUG_VALID(testName , 
                    (bTest), 
-                   (bTest));
+                   (true));
       #else      
       
         for(i=0; i<10; i++)
@@ -527,17 +529,18 @@ extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFil
     } 
 
     /**
-     * @brief Wimos test n1.UT32.
+     * @brief Wimos test n3.UT32.
      *
-     * Unit test n1.UT32 function.
+     * Unit test n3.UT32 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT32 (void){
-      const char* testName = "n1.UT32 = %d";
+     extern void _test_n3UT32 (void){
+      const char* testName = "n3.UT32 = %d";
       uint8_t i, j, h;
-      /*Body_TEST:*/         
+      /*Body_TEST:*/    
+      /*TODO: test*/     
       initSystemSD();
       bUnitTestSDInput = true;
       ucUnitTestSDInput = 5;
@@ -585,15 +588,15 @@ extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFil
   
     
     /**
-     * @brief Wimos test n1.VT07.
+     * @brief Wimos test n3.VT07.
      *
-     * Unit test n1.VT07 function.
+     * Unit test n3.VT07 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-    extern void _test_n1VT07 (void){
-      const char* testName = "n1.VT07 = %ld microseconds";
+    extern void _test_n3VT07 (void){
+      const char* testName = "n3.VT07 = %ld microseconds";
       uint8_t i, j, h;
       /*Body_TEST:*/         
       initSystemSD();
@@ -626,7 +629,7 @@ extern int8_t moveFileToDirectory(const char* ptrDirNameFrom, const char* ptrFil
         
         DEBUG_VALID(testName , 
                    (ulUnitTestSDOutput), 
-                   (ucUnitTestSDOutput == 10000));
+                   (ucUnitTestSDOutput < 10000));
       #else      
       
         DEBUG_VALID(testName , 

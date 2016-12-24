@@ -45,6 +45,21 @@ extern uint32_t coreWimosTimer100ms = 0;
  */
 extern uint32_t coreWimosTimer1000ms = 0;
 
+/**
+ * @brief Wimos initialization service.
+ *
+ * This function initializes all threads, devices and ports system.
+ * @verbatim like this@endverbatim 
+ * @param none.
+ * @return none.
+ * @see https://github.com/andressanchezanillo/WIMOS_
+ */
+void initWimosService(void){
+      initDebug();
+      initInterPeriph();
+      initExterPeriph();  
+      coreWimosTimer1000ms = coreWimosTimer100ms = millis();
+}
 
 /**
  * @brief Wimos initialization.
@@ -56,10 +71,71 @@ extern uint32_t coreWimosTimer1000ms = 0;
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 extern void initWimos(void){
-  initDebug();
-  initInterPeriph();
-  initExterPeriph();  
-  coreWimosTimer1000ms = coreWimosTimer100ms = millis();
+  
+  #ifdef WIMOS_UNIT_TEST
+    initDebug();
+    _test_n3UT00();
+    _test_n3UT01();
+    _test_n3UT02();
+    _test_n3UT03();
+    _test_n3UT04();
+    _test_n3UT05();
+    _test_n3UT06();
+    _test_n3UT07();
+    _test_n3UT08();
+    _test_n3UT09();
+    _test_n3UT10();
+    _test_n3UT11();
+    _test_n3UT12();
+    _test_n3UT13();
+    _test_n3UT14();
+    _test_n3UT15();
+    _test_n3UT16();
+    _test_n3UT17();
+    _test_n3UT18();
+    _test_n3UT19();
+    _test_n3UT20();
+    _test_n3UT21();
+    _test_n3UT22();
+    _test_n3UT23();
+    _test_n3UT24();
+    _test_n3UT25();
+    _test_n3UT26();
+    _test_n3UT27();
+    _test_n3UT28();
+    _test_n3UT29();
+    _test_n3UT30();
+    _test_n3UT31();
+    _test_n3UT32();
+    _test_n3UT33();
+    _test_n3UT34();
+    _test_n3UT35();
+    _test_n3UT36();
+    _test_n3UT37();
+    _test_n3UT38();
+    _test_n3UT39();
+    _test_n3UT40();
+    _test_n3UT41();
+    while(true);
+  #else 
+    #ifdef WIMOS_VALIDATION_TEST
+      initDebug();
+      _test_n3VT01();
+      _test_n3VT02();
+      _test_n3VT03();
+      _test_n3VT04();
+      _test_n3VT05();
+      _test_n3VT06();
+      _test_n3VT07();
+      _test_n3VT08();
+      _test_n3VT09();
+      _test_n3VT10();
+      _test_n3VT11();
+      while(true);
+    #else
+      initWimosService();
+    #endif
+  #endif
 }
 
 extern void initInterPeriph(void){
@@ -72,24 +148,15 @@ extern void initInterPeriph(void){
 }
 
 extern void initExterPeriph(void){
-  //DEBUG_INFO("Starting external peripherals.");
-  //initPortA();
-  //initPortD();
-  //initPortI2C();
-}
-
-extern void stopWimos(void){  
-  DEBUG_INFO("Stoping peripherals.");
-  //stopRF();
-  //stopSD();
+  DEBUG_INFO("Starting external peripherals.");
+  initPortA();
+  initPortD();
+  initPortI2C();
 }
 
 void updateInfoWimos(){
   #ifdef _EN_WIMOS_GPS
     updateGPS(&stGlobalWimosInfoMsg.stInfo);
-  #endif
-  #ifdef _EN_WIMOS_SD
-    //updateStatusSD(&stGlobalWimosInfoMsg.stInfo);
   #endif
   #ifdef _EN_WIMOS_BAT
     updateStatusBattery(&stGlobalWimosInfoMsg.stInfo);
@@ -135,33 +202,49 @@ extern void coreWimos(void){
   #ifdef WIMOS_UNIT_TEST
     
     /**
-     * @brief Wimos test n1.UT01.
+     * @brief Wimos test n3.UT00.
      *
-     * Unit test n1.UT01 function.
+     * Unit test n3.UT00 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     void _test_n1UT01 (void){
-      const char* testName = "n1.UT01";
+     void _test_n3UT00 (void){
+      const char* testName = "n3.UT00";
       /*Body_TEST:*/
+      /*TODO: Check the initialization with bottom enabled.*/
+      /*End_Body_TEST:*/
       
+    } 
+    
+    /**
+     * @brief Wimos test n3.UT01.
+     *
+     * Unit test n3.UT01 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     void _test_n3UT01 (void){
+      const char* testName = "n3.UT01";
+      /*Body_TEST:*/
+      /*TODO: Check the initialization with bottom disabled.*/
       /*End_Body_TEST:*/
       
     } 
 
     /**
-     * @brief Wimos test n1.UT01.
+     * @brief Wimos test n3.UT01.
      *
-     * Unit test n1.UT01 function.
+     * Unit test n3.UT01 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     void _test_n1UT02 (void){
-      const char* testName = "n1.UT02";
+     void _test_n3UT02 (void){
+      const char* testName = "n3.UT02";
       /*Body_TEST:*/
-      
+      /*TODO: Check the timer control.*/      
       /*End_Body_TEST:*/
       
     } 
@@ -172,34 +255,42 @@ extern void coreWimos(void){
   
     
     /**
-     * @brief Wimos test n1.UT01.
+     * @brief Wimos test n3.VT01.
      *
-     * Unit test n1.UT01 function.
+     * Unit test n3.UT01 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     void _test_n1VT01 (void){
-      const char* testName = "n1.VT01";
+     void _test_n3VT01 (void){
+      const char* testName = "n3.VT01";
       /*Body_TEST:*/
+      /*TODO: Validation the initialization wimos.*/ 
       
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
       /*End_Body_TEST:*/
       
     } 
     
     
     /**
-     * @brief Wimos test n1.UT01.
+     * @brief Wimos test n3.VT02.
      *
-     * Unit test n1.UT01 function.
+     * Unit test n3.VT02 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     void _test_n1VT02 (void){
-      const char* testName = "n1.VT02";
+     void _test_n3VT02 (void){
+      const char* testName = "n3.VT02";
       /*Body_TEST:*/
+      /*TODO: Validation the wimos timer.*/ 
       
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
       /*End_Body_TEST:*/
       
     } 

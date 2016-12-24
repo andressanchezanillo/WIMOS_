@@ -87,15 +87,15 @@ extern void initBattery(void){
   #ifdef WIMOS_UNIT_TEST
     
     /**
-     * @brief Wimos test n1.UT03.
+     * @brief Wimos test n3.UT03.
      *
-     * Unit test n1.UT03 function.
+     * Unit test n3.UT03 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT03 (void){
-      const char* testName = "n1.UT03 = %d";
+     extern void _test_n3UT03 (void){
+      const char* testName = "n3.UT03 = %d";
       /*Body_TEST:*/
       
       #ifdef _EN_WIMOS_BAT
@@ -116,15 +116,15 @@ extern void initBattery(void){
     } 
 
     /**
-     * @brief Wimos test n1.UT04.
+     * @brief Wimos test n3.UT04.
      *
-     * Unit test n1.UT04 function.
+     * Unit test n3.UT04 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT04 (void){
-      const char* testName = "n1.UT04 = %d";
+     extern void _test_n3UT04 (void){
+      const char* testName = "n3.UT04 = %d";
       /*Body_TEST:*/     
       
       #ifdef _EN_WIMOS_BAT
@@ -148,15 +148,15 @@ extern void initBattery(void){
 
 
     /**
-     * @brief Wimos test n1.UT05.
+     * @brief Wimos test n3.UT05.
      *
-     * Unit test n1.UT05 function.
+     * Unit test n3.UT05 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT05 (void){
-      const char* testName = "n1.UT05 = %d";
+     extern void _test_n3UT05 (void){
+      const char* testName = "n3.UT05 = %d";
       /*Body_TEST:*/     
       
       #ifdef _EN_WIMOS_BAT
@@ -179,15 +179,15 @@ extern void initBattery(void){
     } 
 
     /**
-     * @brief Wimos test n1.UT06.
+     * @brief Wimos test n3.UT06.
      *
-     * Unit test n1.UT06 function.
+     * Unit test n3.UT06 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT06 (void){
-      const char* testName = "n1.UT06 = %d";
+     extern void _test_n3UT06 (void){
+      const char* testName = "n3.UT06 = %d";
       /*Body_TEST:*/     
       
       #ifdef _EN_WIMOS_BAT
@@ -215,15 +215,15 @@ extern void initBattery(void){
   
     
     /**
-     * @brief Wimos test n1.VT03.
+     * @brief Wimos test n3.VT03.
      *
-     * Unit test n1.VT03 function.
+     * Unit test n3.VT03 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-    extern void _test_n1VT03 (void){
-      const char* testName = "n1.VT03 = %ld";
+    extern void _test_n3VT03 (void){
+      const char* testName = "n3.VT03 = %ld";
       
       /*Body_TEST:*/     
       uint32_t ulTimerVT = micros();

@@ -75,29 +75,6 @@ extern void initTV(void){
 
 
 /**
- * @brief TV (RCA) destroy.
- *
- * This function destroyes the TV interface.
- * @verbatim like this@endverbatim 
- * @param none.
- * @return none.
- */
-extern void stopTV(void){
-  #ifdef _EN_WIMOS_TV
-    if ( stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_TV_MASK == WIMOS_DEVICE_TV_MASK){
-      VGA.end();    
-    }
-    coreWimosDisplay = communicationThread;
-    coreWimosTVTimer = 0;
-    DEBUG_OK("TV output signal destroyed.");
-  #else
-    DEBUG_INFO("TV output signal not destroyed.");
-  #endif
-  initInterPeriph();
-}
-
-
-/**
  * @brief Displayer the main screen image.
  *
  * This function displays the main screen.
@@ -143,3 +120,66 @@ void displayTV(void){
     coreWimosTVTimer = 0;
   #endif
 }
+
+
+
+#ifdef WIMOS_DEBUG
+  #ifdef WIMOS_UNIT_TEST
+
+    /**
+     * @brief Wimos test n3.UT36.
+     *
+     * Unit test n3.UT36 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT40 (void){
+      const char* testName = "n3.UT40 = %d";
+      /*TODO: do a Tv Signal initializer.*/
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+    } 
+
+
+    /**
+     * @brief Wimos test n3.UT41.
+     *
+     * Unit test n3.UT41 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     extern void _test_n3UT41 (void){
+      const char* testName = "n3.UT41 = %d";
+      /*TODO: Screen test.*/
+        DEBUG_VALID(testName , 
+                   (true), 
+                   (true));
+    } 
+
+    
+  #endif
+  
+  #ifdef WIMOS_VALIDATION_TEST
+  
+    
+    /**
+     * @brief Wimos test n3.VT11.
+     *
+     * Unit test n3.VT11 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+    extern void _test_n3VT11 (void){
+      const char* testName = "n3.VT11 = %ld microseconds";
+      /*TODO: do a general validation.*/            
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+    }
+  #endif
+#endif
+

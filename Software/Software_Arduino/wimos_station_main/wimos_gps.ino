@@ -422,15 +422,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
   #ifdef WIMOS_UNIT_TEST
     
     /**
-     * @brief Wimos test n1.UT10.
+     * @brief Wimos test n3.UT10.
      *
-     * Unit test n1.UT10 function.
+     * Unit test n3.UT10 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT10 (void){
-      const char* testName = "n1.UT10 = %d";
+     extern void _test_n3UT10 (void){
+      const char* testName = "n3.UT10 = %d";
       ucUnitTestGPSOutput = 0;
       /*Body_TEST:*/
       
@@ -452,15 +452,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
     } 
 
     /**
-     * @brief Wimos test n1.UT11.
+     * @brief Wimos test n3.UT11.
      *
-     * Unit test n1.UT11 function.
+     * Unit test n3.UT11 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT11 (void){
-      const char* testName = "n1.UT11 = %c";
+     extern void _test_n3UT11 (void){
+      const char* testName = "n3.UT11 = %c";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "Test$toTest" );
       /*Body_TEST:*/     
@@ -473,7 +473,7 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
         
         DEBUG_VALID(testName , 
                    (ucUnitTestGPSInput[ucUnitTestGPSOutput]), 
-                   (ucUnitTestGPSInput[ucUnitTestGPSOutput] == '$' && machineStateGPS == findCMDGPS));
+                   (ucUnitTestGPSInput[ucUnitTestGPSOutput] == 't' && machineStateGPS == findCMDGPS));
       #else      
         machineStateGPS = NULL;
         
@@ -488,15 +488,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT12.
+     * @brief Wimos test n3.UT12.
      *
-     * Unit test n1.UT12 function.
+     * Unit test n3.UT12 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT12 (void){
-      const char* testName = "n1.UT12 = %c";
+     extern void _test_n3UT12 (void){
+      const char* testName = "n3.UT12 = %c";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "Test@2Test_" );
       /*Body_TEST:*/     
@@ -524,15 +524,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT13.
+     * @brief Wimos test n3.UT13.
      *
-     * Unit test n1.UT13 function.
+     * Unit test n3.UT13 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT13 (void){
-      const char* testName = "n1.UT13 = %d";
+     extern void _test_n3UT13 (void){
+      const char* testName = "n3.UT13 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "GPRMC,Test" );
       
@@ -562,15 +562,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT14.
+     * @brief Wimos test n3.UT14.
      *
-     * Unit test n1.UT14 function.
+     * Unit test n3.UT14 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT14 (void){
-      const char* testName = "n1.UT14 = %d";
+     extern void _test_n3UT14 (void){
+      const char* testName = "n3.UT14 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "$GPRMC,Test" );
       
@@ -601,15 +601,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT15.
+     * @brief Wimos test n3.UT15.
      *
-     * Unit test n1.UT15 function.
+     * Unit test n3.UT15 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT15 (void){
-      const char* testName = "n1.UT15 = %d";
+     extern void _test_n3UT15 (void){
+      const char* testName = "n3.UT15 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "123519,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A" );
 
@@ -666,15 +666,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT16.
+     * @brief Wimos test n3.UT16.
      *
-     * Unit test n1.UT16 function.
+     * Unit test n3.UT16 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT16 (void){
-      const char* testName = "n1.UT16 = %d";
+     extern void _test_n3UT16 (void){
+      const char* testName = "n3.UT16 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "123519,V,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A" );
       
@@ -731,15 +731,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT17.
+     * @brief Wimos test n3.UT17.
      *
-     * Unit test n1.UT17 function.
+     * Unit test n3.UT17 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT17 (void){
-      const char* testName = "n1.UT17 = %d";
+     extern void _test_n3UT17 (void){
+      const char* testName = "n3.UT17 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "243519,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A" );
       
@@ -796,15 +796,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT18.
+     * @brief Wimos test n3.UT18.
      *
-     * Unit test n1.UT18 function.
+     * Unit test n3.UT18 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT18 (void){
-      const char* testName = "n1.UT18 = %d";
+     extern void _test_n3UT18 (void){
+      const char* testName = "n3.UT18 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "126019,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A" );
       
@@ -861,15 +861,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT19.
+     * @brief Wimos test n3.UT19.
      *
-     * Unit test n1.UT19 function.
+     * Unit test n3.UT19 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT19 (void){
-      const char* testName = "n1.UT19 = %d";
+     extern void _test_n3UT19 (void){
+      const char* testName = "n3.UT19 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "123567,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A" );
       
@@ -926,15 +926,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT20.
+     * @brief Wimos test n3.UT20.
      *
-     * Unit test n1.UT20 function.
+     * Unit test n3.UT20 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT20 (void){
-      const char* testName = "n1.UT20 = %d";
+     extern void _test_n3UT20 (void){
+      const char* testName = "n3.UT20 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "123519,A,9107.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A" );
       
@@ -991,15 +991,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT21.
+     * @brief Wimos test n3.UT21.
      *
-     * Unit test n1.UT21 function.
+     * Unit test n3.UT21 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT21 (void){
-      const char* testName = "n1.UT21 = %d";
+     extern void _test_n3UT21 (void){
+      const char* testName = "n3.UT21 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "123519,A,4107.038,N,18131.000,E,022.4,084.4,230394,003.1,W*6A" );
       
@@ -1056,15 +1056,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT22.
+     * @brief Wimos test n3.UT22.
      *
-     * Unit test n1.UT22 function.
+     * Unit test n3.UT22 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT22 (void){
-      const char* testName = "n1.UT22 = %d";
+     extern void _test_n3UT22 (void){
+      const char* testName = "n3.UT22 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "123519,A,4107.038,R,01131.000,E,022.4,084.4,230394,003.1,W*6A" );
       
@@ -1121,15 +1121,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT23.
+     * @brief Wimos test n3.UT23.
      *
-     * Unit test n1.UT23 function.
+     * Unit test n3.UT23 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT23 (void){
-      const char* testName = "n1.UT23 = %d";
+     extern void _test_n3UT23 (void){
+      const char* testName = "n3.UT23 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "123519,A,4107.038,N,01131.000,R,022.4,084.4,230394,003.1,W*6A" );
       
@@ -1186,15 +1186,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
 
 
     /**
-     * @brief Wimos test n1.UT24.
+     * @brief Wimos test n3.UT24.
      *
-     * Unit test n1.UT24 function.
+     * Unit test n3.UT24 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-     extern void _test_n1UT24 (void){
-      const char* testName = "n1.UT24 = %d";
+     extern void _test_n3UT24 (void){
+      const char* testName = "n3.UT24 = %d";
       ucUnitTestGPSOutput = 0;
       sprintf(ucUnitTestGPSInput, "123519,A,4807.038,S,01131.000,W,022.4,084.4,230394,003.1,W*6A" );
 
@@ -1261,15 +1261,15 @@ extern void updateGPS(stWimosInfo* _stWimosInfo){
   
     
     /**
-     * @brief Wimos test n1.VT05.
+     * @brief Wimos test n3.VT05.
      *
-     * Unit test n1.VT05 function.
+     * Unit test n3.VT05 function.
      * @verbatim like this@endverbatim 
      * @param none.
      * @return none.
      */
-    extern void _test_n1VT05 (void){
-      const char* testName = "n1.VT05 = %s microseconds";
+    extern void _test_n3VT05 (void){
+      const char* testName = "n3.VT05 = %s microseconds";
       char ucOutputBuffer[30];
       uint8_t ucSuccessStatus = -1;
       uint32_t ulMaxTimeMicroSeconds = 0;

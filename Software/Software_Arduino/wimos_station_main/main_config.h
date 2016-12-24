@@ -283,11 +283,16 @@
 /**
  * @brief RF Serial interface.
  */
-#define SERIAL_RF Serial1
+#define SERIAL_RF Serial2
 /**
  * @brief RF Serial baudrate.
  */
-#define BAUDRATE_RF (115200)
+#define BAUDRATE_RF (9600)
+
+/**
+ * @brief Timeout ACK.
+ */
+#define TIMEOUT_ACK 5000
 
 /**
  * @brief GPS Serial interface.
@@ -338,7 +343,6 @@ enum PeriphericErrors{
   ERROR_INITIALIZATION = 1,
   UKNOWN_ERROR = 2,
 };
-
 
 
 
@@ -608,7 +612,7 @@ typedef struct _portStatus{
  */
 typedef struct _portStatusMsg{
   const uint8_t ucBegin = 0xFF; /**< Constant value for . */
-  const uint8_t usFrameSize = sizeof(stWimosPortValues)+5; /**< Frame size value. */
+  const uint8_t usFrameSize = sizeof(stWimosPortValues)+3; /**< Frame size value. */
 
   uint8_t ucMessageFrom;/**< Address of system what send the message . */
   uint8_t ucMessageTo;/**< The message is for this address . */
@@ -623,10 +627,24 @@ typedef struct _portStatusMsg{
  */
 typedef struct _ackMessage{
   const uint8_t ucBegin = 0xFF; /**< Constant frame begin value. */
-  const uint8_t ucFrameSize = 0x01; /**< Const size value. */
-  uint8_t ucLastChecksum; /**< checksum value. */
+  const uint8_t ucFrameSize = 0x03; /**< Const size value. */
+  
+  uint8_t ucMessageFrom;/**< Address of system what send the message . */
+  uint8_t ucMessageTo;/**< The message is for this address . */
+  
+  uint8_t ucACK; /**< checksum value. */
 } stWimosACK;
 
+typedef struct _commandMessage{ 
+  const uint8_t ucBegin = 0xFF; /**< Constant frame begin value. */
+  const uint8_t ucFrameSize = 0x03; /**< Const size value. */
+  
+  uint8_t ucMessageFrom;/**< Address of system what send the message . */
+  uint8_t ucMessageTo;/**< The message is for this address . */
+  
+  uint8_t ucCommand; /**< Command value. */
+  uint8_t ucChecksum; /**< Checksum value. */
+} stCommandMessage;
 
 
 
@@ -735,3 +753,69 @@ uint32_t coreWimosTVTimer;
 int8_t storeVolatile(void* ptrBuffer, uint8_t ucBufferSize);
 
 #endif
+
+
+
+#ifdef WIMOS_DEBUG
+  #ifdef WIMOS_UNIT_TEST
+    void _test_n3UT00 (void);
+    void _test_n3UT01 (void);
+    void _test_n3UT02 (void);
+    void _test_n3UT03 (void);
+    void _test_n3UT04 (void);
+    void _test_n3UT05 (void);
+    void _test_n3UT06 (void);
+    void _test_n3UT07 (void);
+    void _test_n3UT08 (void);
+    void _test_n3UT09 (void);
+    void _test_n3UT10 (void);
+    void _test_n3UT11 (void);
+    void _test_n3UT12 (void);
+    void _test_n3UT13 (void);
+    void _test_n3UT14 (void);
+    void _test_n3UT15 (void);
+    void _test_n3UT16 (void);
+    void _test_n3UT17 (void);
+    void _test_n3UT18 (void);
+    void _test_n3UT19 (void);
+    void _test_n3UT20 (void);
+    void _test_n3UT21 (void);
+    void _test_n3UT22 (void);
+    void _test_n3UT23 (void);
+    void _test_n3UT24 (void);
+    void _test_n3UT25 (void);
+    void _test_n3UT26 (void);
+    void _test_n3UT27 (void);
+    void _test_n3UT28 (void);
+    void _test_n3UT29 (void);
+    void _test_n3UT30 (void);
+    void _test_n3UT31 (void);
+    void _test_n3UT32 (void);
+    void _test_n3UT33 (void);
+    void _test_n3UT34 (void);
+    void _test_n3UT35 (void);
+    void _test_n3UT36 (void);
+    void _test_n3UT37 (void);
+    void _test_n3UT38 (void);
+    void _test_n3UT39 (void);
+    void _test_n3UT40 (void);
+    void _test_n3UT41 (void);
+  #endif
+  
+  #ifdef WIMOS_VALIDATION_TEST
+    void _test_n3VT01 (void);
+    void _test_n3VT02 (void);
+    void _test_n3VT03 (void);
+    void _test_n3VT04 (void);
+    void _test_n3VT05 (void);
+    void _test_n3VT06 (void);
+    void _test_n3VT07 (void);
+    void _test_n3VT08 (void);
+    void _test_n3VT09 (void);
+    void _test_n3VT10 (void);
+    void _test_n3VT11 (void);
+  #endif
+#endif
+
+  
+
