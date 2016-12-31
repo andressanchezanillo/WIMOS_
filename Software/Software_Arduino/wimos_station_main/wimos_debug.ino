@@ -28,99 +28,104 @@
  */
 
 
-#include "_setting.h"
-#include "main_config.h"
+#ifndef __AVR_ATmega32U4__
 
-
-#ifdef WIMOS_DEBUG  //~(eINFO | eDATA);
-
-  
-  /**
-   * @brief Debug buffer.
-   */
-  extern char pDebug[150];
+  #include "_setting.h"
+  #include "main_config.h"
   
   
-  static uint8_t ucCurrentDebugMode = ~(eINFO | eDATA);
-
+  #ifdef WIMOS_DEBUG  //~(eINFO | eDATA);
   
-  extern void initDebug(void){
-    #ifdef WIMOS_DEBUG
-      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_DEBUG_MASK;
-      SERIAL_DEBUG.begin(BAUDRATE_DEBUG);
-      while(!SERIAL_DEBUG);
-      delay(1000);
-    #else
-      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_DEBUG_MASK;
-    #endif
-  }
-  
-  extern void debug_print(const char* pFunction, const char* pLabel, const char* pData){
-    uint8_t i=0;
-    SERIAL_DEBUG.print(pFunction);
     
-    for(i=strlen(pFunction); i<12; i++)
-      SERIAL_DEBUG.print(" ");
-      
-    SERIAL_DEBUG.print(":\t");
-    SERIAL_DEBUG.print(pLabel);
+    /**
+     * @brief Debug buffer.
+     */
+    extern char pDebug[150];
     
-    for(i=strlen(pLabel); i<12; i++)
-      SERIAL_DEBUG.print(" ");
-      
-    SERIAL_DEBUG.print("\t");
-    SERIAL_DEBUG.println(pData);
-  }
+    
+    static uint8_t ucCurrentDebugMode = ~(eINFO | eDATA);
   
-  
-  extern void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
-    //#if !defined(WIMOS_UNIT_TEST) and !defined(WIMOS_VALIDATION_TEST)
-      if( eMode == eERROR || eMode == eOK ){
-        debug_print(pFunction,pLabel,pData);
-      }else{
-        if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
-          debug_print(pFunction,pLabel,pData);
-        }
-      }
-    //#endif
-  }
-  
-  
-  extern void debugUTest(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
-      if( eMode == eERROR || eMode == eOK ){
-        debug_print(pFunction,pLabel,pData);
-      }else{
-        if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
-          debug_print(pFunction,pLabel,pData);
-        }
-      }
-    #endif
-  }
-  
-  extern void debugCommand(void){
-    uint8_t ucRecv = 0;
-    if(SERIAL_DEBUG.available() >= 2){
-      if(SERIAL_DEBUG.read() == 'C'){
-        
-        ucRecv = SERIAL_DEBUG.read();
-        DEBUG_DATA("CMD Debug parameter received (cmd = %c).", (char)ucRecv);
-        
-        if(ucRecv >= '0'  && ucRecv < '4'){
-          
-          ucCurrentDebugMode = ucRecv - '0';
-          DEBUG_OK("CMD Debug received.");
-          
-        }else{
-          DEBUG_ERROR("CMD Debug parameter error.");
-        }
-        while(SERIAL_DEBUG.available()){
-          SERIAL_DEBUG.read();
-        }
-      }else{
-        DEBUG_ERROR("CMD Debug unknown.");
-      }      
+    
+    extern void initDebug(void){
+      #ifdef WIMOS_DEBUG
+        #ifdef __SAM3X8E__
+          stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_DEBUG_MASK;
+        #endif
+        SERIAL_DEBUG.begin(BAUDRATE_DEBUG);
+        while(!SERIAL_DEBUG);
+        delay(1000);
+      #else
+        stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_DEBUG_MASK;
+      #endif
     }
-  }
-  
+    
+    extern void debug_print(const char* pFunction, const char* pLabel, const char* pData){
+      uint8_t i=0;
+      SERIAL_DEBUG.print(pFunction);
+      
+      for(i=strlen(pFunction); i<12; i++)
+        SERIAL_DEBUG.print(" ");
+        
+      SERIAL_DEBUG.print(":\t");
+      SERIAL_DEBUG.print(pLabel);
+      
+      for(i=strlen(pLabel); i<12; i++)
+        SERIAL_DEBUG.print(" ");
+        
+      SERIAL_DEBUG.print("\t");
+      SERIAL_DEBUG.println(pData);
+    }
+    
+    
+    extern void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
+      //#if !defined(WIMOS_UNIT_TEST) and !defined(WIMOS_VALIDATION_TEST)
+        if( eMode == eERROR || eMode == eOK ){
+          debug_print(pFunction,pLabel,pData);
+        }else{
+          if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
+            debug_print(pFunction,pLabel,pData);
+          }
+        }
+      //#endif
+    }
+    
+    
+    extern void debugUTest(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
+      #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+        if( eMode == eERROR || eMode == eOK ){
+          debug_print(pFunction,pLabel,pData);
+        }else{
+          if( (uint8_t)(ucCurrentDebugMode & eMode) ==  (uint8_t)eMode){
+            debug_print(pFunction,pLabel,pData);
+          }
+        }
+      #endif
+    }
+    
+    extern void debugCommand(void){
+      uint8_t ucRecv = 0;
+      if(SERIAL_DEBUG.available() >= 2){
+        if(SERIAL_DEBUG.read() == 'C'){
+          
+          ucRecv = SERIAL_DEBUG.read();
+          DEBUG_DATA("CMD Debug parameter received (cmd = %c).", (char)ucRecv);
+          
+          if(ucRecv >= '0'  && ucRecv < '4'){
+            
+            ucCurrentDebugMode = ucRecv - '0';
+            DEBUG_OK("CMD Debug received.");
+            
+          }else{
+            DEBUG_ERROR("CMD Debug parameter error.");
+          }
+          while(SERIAL_DEBUG.available()){
+            SERIAL_DEBUG.read();
+          }
+        }else{
+          DEBUG_ERROR("CMD Debug unknown.");
+        }      
+      }
+    }
+    
+  #endif
 #endif

@@ -55,10 +55,19 @@ extern uint32_t coreWimosTimer1000ms = 0;
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 void initWimosService(void){
-      initDebug();
+      #ifdef WIMOS_DEBUG
+        #ifdef __AVR_ATmega32U4__
+        #endif
+        #ifdef __SAM3X8E__
+          initDebug();
+        #endif
+      #endif
       initInterPeriph();
-      initExterPeriph();  
-      coreWimosTimer1000ms = coreWimosTimer100ms = millis();
+      #ifdef __SAM3X8E__
+        initExterPeriph(); 
+        coreWimosTimer1000ms = millis();
+      #endif 
+      coreWimosTimer100ms = millis();
 }
 
 /**
@@ -71,104 +80,121 @@ void initWimosService(void){
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 extern void initWimos(void){
+  #ifdef __AVR_ATmega32U4__
+        initWimosService();
+        delay(3000);
+        while(SERIAL_USB.available())
+          SERIAL_USB.read();
+        SERIAL_USB.println("FRAME1: Begin.");
+  #endif
   
-  #ifdef WIMOS_UNIT_TEST
-    initDebug();
-    _test_n3UT00();
-    _test_n3UT01();
-    _test_n3UT02();
-    _test_n3UT03();
-    _test_n3UT04();
-    _test_n3UT05();
-    _test_n3UT06();
-    _test_n3UT07();
-    _test_n3UT08();
-    _test_n3UT09();
-    _test_n3UT10();
-    _test_n3UT11();
-    _test_n3UT12();
-    _test_n3UT13();
-    _test_n3UT14();
-    _test_n3UT15();
-    _test_n3UT16();
-    _test_n3UT17();
-    _test_n3UT18();
-    _test_n3UT19();
-    _test_n3UT20();
-    _test_n3UT21();
-    _test_n3UT22();
-    _test_n3UT23();
-    _test_n3UT24();
-    _test_n3UT25();
-    _test_n3UT26();
-    _test_n3UT27();
-    _test_n3UT28();
-    _test_n3UT29();
-    _test_n3UT30();
-    _test_n3UT31();
-    _test_n3UT32();
-    _test_n3UT33();
-    _test_n3UT34();
-    _test_n3UT35();
-    _test_n3UT36();
-    _test_n3UT37();
-    _test_n3UT38();
-    _test_n3UT39();
-    _test_n3UT40();
-    _test_n3UT41();
-    while(true);
-  #else 
-    #ifdef WIMOS_VALIDATION_TEST
+  #ifdef __SAM3X8E__
+    #ifdef WIMOS_UNIT_TEST
       initDebug();
-      _test_n3VT01();
-      _test_n3VT02();
-      _test_n3VT03();
-      _test_n3VT04();
-      _test_n3VT05();
-      _test_n3VT06();
-      _test_n3VT07();
-      _test_n3VT08();
-      _test_n3VT09();
-      _test_n3VT10();
-      _test_n3VT11();
+      _test_n3UT00();
+      _test_n3UT01();
+      _test_n3UT02();
+      _test_n3UT03();
+      _test_n3UT04();
+      _test_n3UT05();
+      _test_n3UT06();
+      _test_n3UT07();
+      _test_n3UT08();
+      _test_n3UT09();
+      _test_n3UT10();
+      _test_n3UT11();
+      _test_n3UT12();
+      _test_n3UT13();
+      _test_n3UT14();
+      _test_n3UT15();
+      _test_n3UT16();
+      _test_n3UT17();
+      _test_n3UT18();
+      _test_n3UT19();
+      _test_n3UT20();
+      _test_n3UT21();
+      _test_n3UT22();
+      _test_n3UT23();
+      _test_n3UT24();
+      _test_n3UT25();
+      _test_n3UT26();
+      _test_n3UT27();
+      _test_n3UT28();
+      _test_n3UT29();
+      _test_n3UT30();
+      _test_n3UT31();
+      _test_n3UT32();
+      _test_n3UT33();
+      _test_n3UT34();
+      _test_n3UT35();
+      _test_n3UT36();
+      _test_n3UT37();
+      _test_n3UT38();
+      _test_n3UT39();
+      _test_n3UT40();
+      _test_n3UT41();
       while(true);
-    #else
-      initWimosService();
+    #else 
+      #ifdef WIMOS_VALIDATION_TEST
+        initDebug();
+        _test_n3VT01();
+        _test_n3VT02();
+        _test_n3VT03();
+        _test_n3VT04();
+        _test_n3VT05();
+        _test_n3VT06();
+        _test_n3VT07();
+        _test_n3VT08();
+        _test_n3VT09();
+        _test_n3VT10();
+        _test_n3VT11();
+        while(true);
+      #else
+        initWimosService();
+      #endif
     #endif
   #endif
 }
 
 extern void initInterPeriph(void){
   DEBUG_INFO("Starting internal peripherals.");
-  initBattery();
-  initGPS();  
-  initIMU();  
   initRF();
-  stGlobalWimosInfoMsg.stInfo.ucPercentMemory = initSD();
+  #ifdef __SAM3X8E__
+    initBattery();
+    initGPS();  
+    initIMU();  
+    stGlobalWimosInfoMsg.stInfo.ucPercentMemory = initSD();
+  #endif
 }
 
 extern void initExterPeriph(void){
   DEBUG_INFO("Starting external peripherals.");
-  initPortA();
-  initPortD();
-  initPortI2C();
+  #ifdef __SAM3X8E__
+    initPortA();
+    initPortD();
+    initPortI2C();
+  #endif
 }
 
 void updateInfoWimos(){
-  #ifdef _EN_WIMOS_GPS
-    updateGPS(&stGlobalWimosInfoMsg.stInfo);
-  #endif
-  #ifdef _EN_WIMOS_BAT
-    updateStatusBattery(&stGlobalWimosInfoMsg.stInfo);
+  #ifdef __SAM3X8E__
+    #ifdef _EN_WIMOS_GPS
+      updateGPS(&stGlobalWimosInfoMsg.stInfo);
+    #endif
+    #ifdef _EN_WIMOS_BAT
+      updateStatusBattery(&stGlobalWimosInfoMsg.stInfo);
+    #endif
   #endif
 }
 
 
 void readSensorsWimos(){
-  readIMU(&stGlobalWimosPortMsg.stPortValues);
-  readPortI2C(&stGlobalWimosPortMsg.stPortValues);
-  readPortA(&stGlobalWimosPortMsg.stPortValues);
-  readPortD(&stGlobalWimosPortMsg.stPortValues);
+  #ifdef __SAM3X8E__
+    readIMU(&stGlobalWimosPortMsg.stPortValues);
+    readPortI2C(&stGlobalWimosPortMsg.stPortValues);
+    readPortA(&stGlobalWimosPortMsg.stPortValues);
+    readPortD(&stGlobalWimosPortMsg.stPortValues);
+  #endif
 }
 
 /**
@@ -180,22 +206,24 @@ void readSensorsWimos(){
  * @return none.
  */
 extern void coreWimos(void){
-  #ifdef WIMOS_DEBUG
-    debugCommand();
+  #ifdef __SAM3X8E__
+    #ifdef WIMOS_DEBUG
+      debugCommand();
+    #endif
+    communicationThread();
+    if((millis() - coreWimosTimer100ms) > 100){
+      coreWimosTimer100ms = millis();
+      readSensorsWimos();
+      /*sendFrame(void* pData, uint8_t ucSize);*/
+    }
+    if((millis() - coreWimosTimer1000ms) > 250){
+      coreWimosTimer1000ms = millis();
+      updateInfoWimos();
+    }
   #endif
-  communicationThread();
-  if((millis() - coreWimosTimer100ms) > 100){
-    coreWimosTimer100ms = millis();
-    readSensorsWimos();
-    /*sendFrame(void* pData, uint8_t ucSize);*/
-  }
-  if((millis() - coreWimosTimer1000ms) > 1000){
-    coreWimosTimer1000ms = millis();
-    updateInfoWimos();
-  }
-  
-  /** Timer Control **/
-  
+  #ifdef __AVR_ATmega32U4__
+    communicationThread();
+  #endif
 }
 
 

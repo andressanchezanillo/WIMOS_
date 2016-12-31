@@ -1,3 +1,4 @@
+
 /****************************************************************************
  * Copyright (C) 2015 by Andrés Sánchez Anillo                              *
  *                                                                          *
@@ -30,21 +31,30 @@
 #include "_setting.h"
 #include "main_config.h"
 
+#ifdef __SAM3X8E__
+  void waitCommand(void);
+#endif
+#ifdef __AVR_ATmega32U4__
+  void sendCommand(void);
+  uint8_t ucIndexCommand = 0;                              
+  stCommandMessage prtMessageArray[] = _WIMOS_COMMAND_LIST;  
+  
+  const uint8_t ucMessageArraySize = sizeof(prtMessageArray) / sizeof(stCommandMessage);
+#endif
 
-void waitCommand(void);
+stWimosACK stACK = { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameSize = ACK_SIZE_BYTE_CONST, .ucMessageFrom = 0x00, .ucMessageTo = 0x01, .ucACK = 0x00 };
+stCommandMessage stCommand = (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameSize = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = 0x00, .ucMessageTo = 0x01, .ucCommand = 0x00, .ucChecksum = 0x00 };
+uint8_t ucLastChecksum = 0;
+uint8_t ucMessageTries = 0x00;
+
 void sendACK(void);
 void waitACK(void);
 void sendResponse(void);
 void clearBuffer(void);
 void runFunction(void);
+bool receiveFrame( void* pData, uint8_t ucSize, uint8_t ucFrameSize);
 void sendFrame(const void* ptrData, uint8_t ucSize);
-
 extern void (*communicationThread)(void);
-static uint8_t lastCMD = NONE;
-
-uint8_t ucBufferRF[20] = {0};
-stCommandMessage stCommand;
-uint8_t ucLastChecksum = 0;
 
 #ifdef WIMOS_UNIT_TEST
   uint8_t ucUnitTestOutput[70];
@@ -59,26 +69,37 @@ uint8_t ucLastChecksum = 0;
  */
 extern void initRF(void){
   #ifdef _EN_WIMOS_RF
-    /*communicationThread = waitCommand;*/
-    SERIAL_RF.begin(BAUDRATE_RF);
-    stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_RF_MASK;
-    DEBUG_OK("Communication RF initialized.");
+    #ifdef __SAM3X8E__
+      communicationThread = waitCommand;
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_RF_MASK;
+    #endif
+    #ifdef __AVR_ATmega32U4__
+      communicationThread = sendCommand;
+      SERIAL_USB.begin(BAUDRATE_USB);
+    #endif    
+      SERIAL_RF.begin(BAUDRATE_RF);
+      DEBUG_OK("Communication RF initialized.");
   #else
-    /*communicationThread = noOperation;*/
+    communicationThread = noOperation;
     stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_RF_MASK;
     DEBUG_INFO("Communication RF NOT initialized.");
   #endif
 }
 
-#define COMMAND true
-#define IS_FOR_ME true
-#define BUFFER_FULL true
-#define QUERY_ID true
-#define TIMEOUT true
-bool ACK_SENT = true;
-uint8_t ACK_ATTEMPTS = 0;
-bool ACK_RECEIVED = true;
+uint8_t getChecksum(void* ptrDataInput, uint8_t ucDataInputSize){
+  uint8_t ucRetValue = 0;
+  if(ucDataInputSize > 0){
+    ucRetValue = ((uint8_t*)ptrDataInput)[0];
+    uint8_t i;
+    for(i = 1; i < ucDataInputSize; i++){
+      ucRetValue ^= ((uint8_t*)ptrDataInput)[i];
+    }
+  }
+  return ucRetValue;
+}
 
+
+#ifdef __SAM3X8E__
 /**
  * @brief Waiting a Correct Command State.
  *
@@ -88,45 +109,60 @@ bool ACK_RECEIVED = true;
  * @return none.
  */
 void waitCommand(void){
-  uint8_t ucValueRF = 0x00;
-  uint8_t i=0;
-  DEBUG_INFO("Waiting Command over RF.");
-  
-  while(SERIAL_RF.available() >= sizeof(stCommand) && ucValueRF != 0xFF){
-    ucValueRF = SERIAL_RF.read();
-  }
-  if(ucValueRF == 0xFF){
-    DEBUG_INFO("Command token 0xFF found.");
-    ucBufferRF[0] = 0xFF;
-    for(i=1; i<sizeof(stCommand); i++)
-      ucBufferRF[i] = SERIAL_RF.read();
-    if(ucBufferRF[1] == 0x03){
-      DEBUG_INFO("Command size match.");
-      memcpy(&stCommand,ucBufferRF,sizeof(stCommand));
-      
-      /** Process RF input **/
-      if(stCommand.ucMessageTo == WIMOS_ID || stCommand.ucMessageTo == 0xFF ){
-        DEBUG_DATA("Command for me = %d.",stCommand.ucMessageTo);
-        if(stCommand.ucCommand != 0x05){
-          DEBUG_INFO("Command with ACK found");
-          communicationThread = sendACK;
-          return;
-        }else{
-          DEBUG_INFO("Command without ACK found");
-          communicationThread = runFunction;
-          return;          
-        }
+  ucMessageTries = 0x00;     
+  if( receiveFrame(&stCommand, sizeof(stCommand), COMMAND_SIZE_BYTE_CONST) ){   
+    /** Process RF input **/
+    if(stCommand.ucMessageTo == WIMOS_ID || stCommand.ucMessageTo == 0xFF ){
+      if(stCommand.ucCommand == COMMAND_GET_STATION_ID || stCommand.ucCommand == COMMAND_GET_STATUS_ALERT ){
+        communicationThread = runFunction;
+        return;
       }else{
-          DEBUG_INFO("Command for another ID.");
-      }  
+        communicationThread = sendACK;
+        return;          
+      }
     }else{
-      DEBUG_INFO("Command size not match");  
-    }
-  }else{
-    DEBUG_INFO("Command token not found");
-  }  
+        DEBUG_INFO("Command for another ID.");
+    }  
+  }
 }
+#endif
 
+#ifdef __AVR_ATmega32U4__
+  /**
+   * @brief Waiting a Correct Command State.
+   *
+   * This is a state of communication state machine, it waits until a correct command.
+   * @verbatim like this@endverbatim 
+   * @param none.
+   * @return none.
+   */
+  void sendCommand(void){    
+    ucMessageTries = 0x00;
+    DEBUG_INFO("Sending the Command.");
+    memcpy(&stCommand,&prtMessageArray[ucIndexCommand],sizeof(stCommand));
+    //stCommand.ucChecksum = getChecksum(&stCommand, (sizeof(stCommand)-1));
+    ucLastChecksum = stCommand.ucChecksum;
+    SERIAL_USB.println("Command sent.");
+    sendFrame(&stCommand, sizeof(stCommand));
+    ucIndexCommand = (ucIndexCommand + 1) % ucMessageArraySize;
+             
+    if(stCommand.ucCommand == COMMAND_GET_STATION_ID || stCommand.ucCommand == COMMAND_GET_STATUS_ALERT ){
+      communicationThread = runFunction;
+      return;
+    }else{
+      communicationThread = waitACK;
+      return;          
+    }
+  }
+#endif
+
+uint8_t getByteRF(void){
+  uint8_t ucReadValue = SERIAL_RF.read();
+  char ucDebugRF[8];
+  sprintf(ucDebugRF, "%d ",ucReadValue);
+  DEBUG_OK(ucDebugRF);
+  return ucReadValue;
+}
 /**
  * @brief Waiting ACK State.
  *
@@ -136,65 +172,79 @@ void waitCommand(void){
  * @return none.
  */
 void waitACK(void){
-  uint8_t i = 0;
-  uint8_t ucValueRF = 0;  
-  stWimosACK stACK;
-  
   static bool bACKReceived = true;
   static uint32_t ulTimeoutACK = 0;
   
-  DEBUG_INFO("Waiting ACK.");
-
   if(bACKReceived){
-    DEBUG_INFO("The last ACK was received.");
-    DEBUG_INFO("Waiting a new ACK.");
+    DEBUG_OK("Into");
+    /*Init the ACK received value.*/
     bACKReceived =  false;
+    /*Init the timer for timeout.*/
     ulTimeoutACK = millis();    
   }else{
-    DEBUG_INFO("The last ACK was not received.");
-    if(millis() - ulTimeoutACK > TIMEOUT_ACK){
-        DEBUG_INFO("The timeout was excedded.");
-        communicationThread = runFunction; 
-        bACKReceived =  true;
-        ulTimeoutACK = 0;  
+    /*If the timeour was excedded.*/
+    if(millis() - ulTimeoutACK > (TIMEOUT_ACK)){
+      /*Go to the previous State.*/
+      #ifdef __AVR_ATmega32U4__
+        communicationThread = sendCommand;
+      #endif
+      #ifdef __SAM3X8E__
+        communicationThread = waitCommand;
+      #endif 
+      /*Restart ACK received status.*/
+      bACKReceived =  true;
+      /*Restart ACK timeout value.*/
+      ulTimeoutACK = 0;  
     }else{
-      while(SERIAL_RF.available() >= sizeof(stACK) && ucValueRF != 0xFF){
-        ucValueRF = SERIAL_RF.read();
-      }
-      if(ucValueRF == 0xFF){
-        DEBUG_INFO("The ACK token was found.");
-        ucBufferRF[0] = 0xFF;
-        for(i=1; i<sizeof(stWimosACK); i++)
-          ucBufferRF[i] = SERIAL_RF.read();
-        if(ucBufferRF[1] == 0x03){
-          DEBUG_INFO("The ACK size match.");
-          memcpy(&stACK,ucBufferRF,sizeof(stACK));
-          
-          /** Process RF input **/
-          if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageFrom){
-            DEBUG_DATA("The ACK is for me = %d.",stACK.ucMessageTo);
-            DEBUG_DATA("The ACK is from = %d.",stACK.ucMessageFrom);
-            if(stACK.ucACK == (~ucLastChecksum)){
-              DEBUG_INFO("The ACK checksum matched.");
-              bACKReceived =  true;
-              ulTimeoutACK = 0;
-              communicationThread = waitCommand; 
-              return;
-            }else{
-              DEBUG_INFO("The ACK checksum not matched.");
-              communicationThread = runFunction; 
-              bACKReceived =  true;
-              ulTimeoutACK = 0;
-              return;
-            }
+      if( receiveFrame(&stACK, sizeof(stACK), ACK_SIZE_BYTE_CONST) ){
+        /*If the message is for me, and from the message is a response for command.*/
+    #ifdef __SAM3X8E__
+        if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageFrom)
+    #endif
+    #ifdef __AVR_ATmega32U4__
+        if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageTo)
+    #endif
+        {
+          /*If the ACK matchs with the last Checksum sent.*/
+          if(true){         
+            /*Restart the Received state.*/
+            bACKReceived =  true;
+            /*Restart the timeout counter.*/
+            ulTimeoutACK = 0;
+            Serial.println("ACK received.");
+            /*Go to the next state.*/
+            #ifdef __AVR_ATmega32U4__
+              communicationThread = runFunction;
+            #endif
+            #ifdef __SAM3X8E__
+              communicationThread = waitCommand;
+            #endif 
+            
+            stACK.ucMessageTo = stACK.ucMessageFrom;
+            /*Update the ACK response.*/
+            stACK.ucMessageFrom = WIMOS_ID;
+            //stACK.ucACK = ~stACK.ucACK;
+            /*Send the ACK response.*/
+            sendFrame(&stACK,sizeof(stACK));
+            return;
+          /*The ACK received does not match.*/
           }else{
-            DEBUG_INFO("The message is not for me.");
-          }  
+            DEBUG_INFO("The ACK checksum not matched.");
+            /*Go to the last state.*/
+            #ifdef __AVR_ATmega32U4__
+              communicationThread = sendCommand;
+            #endif
+            #ifdef __SAM3X8E__
+              communicationThread = runFunction;
+            #endif 
+            /*Restart the status*/
+            bACKReceived =  true;
+            ulTimeoutACK = 0;
+            return;
+          }
         }else{
-          DEBUG_INFO("The ACK checksum not matched.");
-        }
-      }else{
-        DEBUG_INFO("The ACK token not found.");
+          DEBUG_INFO("The message is not for me.");
+        }  
       } 
     }
   }
@@ -211,70 +261,92 @@ void waitACK(void){
 void sendACK(void){
   uint8_t i = 0;
   uint8_t ucValueRF = 0;  
-  stWimosACK stACK;
-  
+  stWimosACK stACK = {.ucBegin = 0xFF, .ucFrameSize = 0x03};
   static bool bACKSent = false;
   static uint32_t ulTimeoutACK = 0;
   static uint8_t ucACKTries = 0;
-  DEBUG_INFO("Sending the ACK.");
   
   if(bACKSent == false){
-    DEBUG_INFO("The ACK was not sent.");
+    
+    /*Build the message.*/
+    stACK.ucBegin = 0xFF;
+    stACK.ucFrameSize= 0x03;
+    
+    #ifdef __SAM3X8E__
+      stACK.ucMessageTo = stCommand.ucMessageFrom;
+    #endif
+    #ifdef __AVR_ATmega32U4__
+      stACK.ucMessageTo = stCommand.ucMessageTo;    
+    #endif 
     
     stACK.ucMessageFrom = WIMOS_ID;
-    stACK.ucMessageTo = stCommand.ucMessageFrom;
     stACK.ucACK = ~(stCommand.ucChecksum);
-
+    /*Send the message*/
+    DEBUG_INFO("The ACK sent.");
+    Serial.println("ACK sent");
     sendFrame(&stACK, sizeof(stACK));
+    /*Set the current time.*/
     ulTimeoutACK = millis();
-    ucACKTries++;
+    /*Set the ACK as sent.*/
     bACKSent = true;
+    delay(1000);
+    return;
+  }
+  DEBUG_INFO("The ACK was sent.");
+  if( millis() - ulTimeoutACK > TIMEOUT_ACK ){
+    /*Reset the timeout counter.*/   
+    ulTimeoutACK = 0;
+    /*Set the state to not sent.*/
+    bACKSent = false;
+    
+    #ifdef __SAM3X8E__
+      communicationThread = waitCommand;
+    #endif
+    #ifdef __AVR_ATmega32U4__
+      communicationThread = sendCommand;      
+    #endif 
+    
     return;
   }else{
-    DEBUG_INFO("The ACK was sent.");
-    if(ucACKTries >= 3){
-      DEBUG_INFO("The number of tries was excedded.");        
-      communicationThread = waitCommand; 
-      return;
-    }else{
-      if( millis() - ulTimeoutACK > TIMEOUT_ACK ){
-        DEBUG_INFO("The timeout was excedded.");     
-        ulTimeoutACK = 0;
-        bACKSent = false;
-        return;
-      }else{
-        while(SERIAL_RF.available() >= sizeof(stACK) && ucValueRF != 0xFF){
-          ucValueRF = SERIAL_RF.read();
-        }
-        if(ucValueRF == 0xFF){
-          DEBUG_INFO("The ACK response token was found.");     
-          ucBufferRF[0] = 0xFF;
-          for(i=1; i<sizeof(stWimosACK); i++)
-            ucBufferRF[i] = SERIAL_RF.read();
-          if(ucBufferRF[1] == 0x03){
-            DEBUG_INFO("The ACK response size match.");     
-            memcpy(&stACK,ucBufferRF,sizeof(stACK));
-            
-            /** Process RF input **/
-            if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageFrom){
-              DEBUG_DATA("The ACK response is for me = %d.", stACK.ucMessageTo); 
-              DEBUG_DATA("The ACK response is from = %d.", stACK.ucMessageFrom);                   
-              if(stACK.ucACK == stCommand.ucChecksum){
-                DEBUG_INFO("The ACK response checksum match.");     
-                bACKSent = false;
-                ucACKTries = 0;
-                ulTimeoutACK = 0;
-                communicationThread = runFunction; 
-                return;
-              }else{
-                DEBUG_INFO("The ACK response checksum not match.");     
-                bACKSent = false;
-                ucACKTries = 0;
-                ulTimeoutACK = 0;
-                return;
-              }
-            }  
-          }
+    
+    if( receiveFrame(&stACK, sizeof(stACK), ACK_SIZE_BYTE_CONST) ){ 
+      /*If the ACK message is for me and from the Command.*/
+  #ifdef __SAM3X8E__
+      if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageFrom)
+  #endif
+  #ifdef __AVR_ATmega32U4__
+      if(stACK.ucMessageTo == WIMOS_ID && stACK.ucMessageFrom == stCommand.ucMessageTo)
+  #endif
+      {
+        DEBUG_DATA("The ACK response is for me = %d.", stACK.ucMessageTo); 
+        DEBUG_DATA("The ACK response is from = %d.", stACK.ucMessageFrom);    
+        /*The checksum matchs.*/              
+        if(true){     
+          /*Reset the ACK to not sent.*/     
+          bACKSent = false;
+          /*Reset the number of tries.*/
+          ucACKTries = 0;
+          /*Reset the timeout counter.*/
+          ulTimeoutACK = 0;
+          /*Go to next state.*/      
+          Serial.println("ACK-OK received");     
+          DEBUG_OK("ACK-OK is received");        
+          #ifdef __AVR_ATmega32U4__
+            communicationThread = sendCommand;
+          #endif
+          #ifdef __SAM3X8E__
+            communicationThread = runFunction;
+          #endif 
+          return;
+        }else{
+          DEBUG_INFO("The ACK response checksum not match."); 
+          /*Reset the ACK sent state.*/    
+          bACKSent = false;
+          /*Reset the ACK tries.*/
+          ucACKTries = 0;
+          /*Reset the ACK timeout counter.*/
+          ulTimeoutACK = 0;
+          return;
         }
       }
     }
@@ -290,13 +362,183 @@ void sendACK(void){
  * @return none.
  */
 void runFunction(void){
-  switch(stCommand.ucCommand){
-    case 0x01:
-      sendFrame("Hola",5);
-    break;
-    default:
+  uint8_t ucValueRF = 0x00;
+  static uint32_t ulTimeout = 0x00;
+  static bool bFirstExec = true;
+  
+  #ifdef __SAM3X8E__
+  
+    if(bFirstExec == true){
+      DEBUG_OK("Run function execution.");
+      bFirstExec = false;
+    }else{
+      switch(stCommand.ucCommand){
+        case COMMAND_GET_STATION_ID:
+          DEBUG_INFO("GET STATION ID COMMAND received.");
+          ucValueRF = WIMOS_ID;
+          sendFrame(&ucValueRF,1);
+          communicationThread = waitCommand;
+        break;
+        case COMMAND_GET_GENERAL_INFO:
+          DEBUG_OK("GET GENERAL INFO COMMAND received.");
+          stGlobalWimosInfoMsg.ucChecksum = 0x00; /*TODO: Checksum.*/
+          stGlobalWimosInfoMsg.ucBegin = 0xFF; /*TODO: Checksum.*/
+          stGlobalWimosInfoMsg.ucFrameSize = 0x05; /*TODO: Checksum.*/
+          stGlobalWimosInfoMsg.ucMessageTo = 0x00; /*TODO: Checksum.*/
+          stGlobalWimosInfoMsg.ucMessageFrom = 0x10; /*TODO: Checksum.*/
+          sendFrame(&stGlobalWimosInfoMsg,sizeof(stGlobalWimosInfoMsg));
+          communicationThread = waitACK;
+        break;
+        case COMMAND_GET_QUEUE_ALERT:
+          DEBUG_INFO("GET QUEUE ALERT COMMAND received.");
+          /*TODO: make a Alert Queue.*/
+          communicationThread = waitACK;
+        
+        break;
+        case COMMAND_GET_STATUS_ALERT:
+          DEBUG_INFO("GET STATUS ALERT COMMAND received.");
+          /*TODO: check the alert Queue.*/
+          ucValueRF = WIMOS_ID;
+          sendFrame(&ucValueRF,1);
+          communicationThread = waitCommand;
+        break;
+        case COMMAND_GET_SENSOR_INFO:
+          DEBUG_INFO("GET SENSOR INFO COMMAND received.");
+          stGlobalWimosPortMsg.ucChecksum = 0x00; /*TODO: Checksum.*/
+          sendFrame(&stGlobalWimosPortMsg,sizeof(stGlobalWimosPortMsg));
+          communicationThread = waitACK;      
+        break;
+        default:
+          DEBUG_ERROR("Unknow Command received.");
+          communicationThread = waitCommand;
+        break; 
+      }
+    }
+  #endif
+  #ifdef __AVR_ATmega32U4__
+    if(bFirstExec == true){
+      SERIAL_USB.print("Run Command = ");
+      SERIAL_USB.println(stCommand.ucCommand, HEX);
+      ulTimeout = millis();
+      bFirstExec = false;
+    }
+    if(millis() - ulTimeout >= (TIMEOUT_ACK)){
+      SERIAL_USB.println("Run timeout.");
+      communicationThread = sendCommand;
+      ulTimeout = 0;
+      bFirstExec = true;
+      return;
+    }
+    switch(stCommand.ucCommand){
+      case COMMAND_GET_STATION_ID:
+        delay(1875);
+        SERIAL_USB.print("FRAME512(");
+        SERIAL_USB.print(SERIAL_RF.available());
+        SERIAL_USB.print("): ");
+        while(SERIAL_RF.available()){
+          SERIAL_USB.print(SERIAL_RF.read());
+          SERIAL_USB.print(" ");
+        }
+        SERIAL_USB.println("");
+        communicationThread = sendCommand;
+      break;
+      case COMMAND_GET_GENERAL_INFO:
+        if( receiveFrame(&stGlobalWimosInfoMsg, sizeof(stGlobalWimosInfoMsg),  5 ) ){ 
+          /*If the ACK message is for me and from the Command.*/
+        SERIAL_USB.print(stGlobalWimosInfoMsg.ucMessageTo);
+        SERIAL_USB.print(" ");
+        SERIAL_USB.println(WIMOS_ID);
+        SERIAL_USB.print(stGlobalWimosInfoMsg.ucMessageFrom);
+        SERIAL_USB.print(" ");
+        SERIAL_USB.println(stCommand.ucMessageTo);
+          if(stGlobalWimosInfoMsg.ucMessageTo == WIMOS_ID && stGlobalWimosInfoMsg.ucMessageFrom == stCommand.ucMessageTo){
+            /*The checksum matchs.*/              
+            if(true){ /*TODO: make Checksum.*/       
+              SERIAL_USB.println("FRAME515:");
+              communicationThread = sendACK;
+              bFirstExec = true;
+              return;
+            }else{
+              return;
+            }
+          }
+        }
+      break;
+      case COMMAND_GET_QUEUE_ALERT:
+        /*TODO: make a Alert Queue.*/
+        communicationThread = waitACK;
+      
+      break;
+      case COMMAND_GET_STATUS_ALERT:
+        /*TODO: check the alert Queue.*/
+        ucValueRF = WIMOS_ID;
+        sendFrame(&ucValueRF,1);
+        communicationThread = sendCommand;
+      break;
+      case COMMAND_GET_SENSOR_INFO:
+        stGlobalWimosPortMsg.ucChecksum = 0x00; /*TODO: Checksum.*/
+        sendFrame(&stGlobalWimosPortMsg,sizeof(stGlobalWimosPortMsg));
+        communicationThread = waitACK;      
+      break;
+      default:
+        DEBUG_ERROR("Unknow Command received.");
+        communicationThread = sendCommand;
+      break; 
+    }
+  #endif
+}
+
+/**
+ * @brief Send Frame function.
+ *
+ * This function sends the frame byte to byte.
+ * @verbatim like this@endverbatim 
+ * @param pData Pointer to data for sending.
+ * @param ucSize Data length for sending.
+ * @return none.
+ */
+bool receiveFrame( void* pData, uint8_t ucSize, uint8_t ucFrameSize){
+  uint8_t i = 0x00;
+  
+  #ifdef __AVR_ATmega32U4__
+    delay(5);
+  #endif
+  
+  #ifdef WIMOS_UNIT_TEST
+    if(true)
+  #else
+    if(SERIAL_RF.available() >= ucSize)
+  #endif
+  {
+    do{
+      ((uint8_t*)pData)[0] = getByteRF();
+    }while(SERIAL_RF.available() >= ucSize && ((uint8_t*)pData)[0] != COMMAND_BEGIN_BYTE_CONST);
     
-    break; 
+    if(((uint8_t*)pData)[0] == COMMAND_BEGIN_BYTE_CONST){
+      //SERIAL_USB.println("Token received.");
+      ((uint8_t*)pData)[1] = getByteRF();
+      if(((uint8_t*)pData)[1] == ucFrameSize){
+      //SERIAL_USB.println("Size matchs.");
+        for(i=2; i < ucSize; i++){
+          ((uint8_t*)pData)[i] = getByteRF();
+        }
+        for(i=0; i < ucSize; i++){
+          Serial.print(((uint8_t*)pData)[i]);
+          Serial.print(" ");
+        }
+        Serial.println();
+        return true;
+      }else{
+        //SERIAL_USB.println("Size does not match.");
+        //SERIAL_USB.println(((uint8_t*)pData)[1] );
+        //SERIAL_USB.println(ucFrameSize);
+        return false;
+      }
+    }else{
+      return false; 
+    }
+  }else{
+    return false;
   }
 }
 
@@ -314,10 +556,12 @@ void sendFrame(const void* pData, uint8_t ucSize){
     /** Send the frame over RF **/
     uint8_t i = 0;
     for(i=0; i<ucSize; i++){
+      DEBUG_DATA("Send Byte = %d.", ((uint8_t*)pData)[i]);
       #ifdef WIMOS_UNIT_TEST
         ucUnitTestOutput[i] = ((uint8_t*)pData)[i];
       #else
         SERIAL_RF.write(((uint8_t*)pData)[i]);
+        delayMicroseconds(100);
       #endif    
     }
   #endif
@@ -343,119 +587,121 @@ extern void noOperation(void){
 
 
 
-#ifdef WIMOS_DEBUG
-  #ifdef WIMOS_UNIT_TEST
-    
-    /**
-     * @brief Wimos test n3.UT10.
-     *
-     * Unit test n3.UT07 function.
-     * @verbatim like this@endverbatim 
-     * @param none.
-     * @return none.
-     */
-     extern void _test_n3UT07 (void){
-      const char* testName = "n3.UT07 = %d";
-      /*Body_TEST:*/
+#ifdef __SAM3X8E__
+  #ifdef WIMOS_DEBUG
+    #ifdef WIMOS_UNIT_TEST
       
-      #ifdef _EN_WIMOS_RF
-        stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus = 0;
-        initRF();
-        DEBUG_VALID(testName , 
-                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK), 
-                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK) == WIMOS_DEVICE_RF_MASK);
-      #else
-        stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus = WIMOS_DEVICE_RF_MASK;
-        initRF();
-        DEBUG_VALID(testName , 
-                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK), 
-                   (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK) == 0x00);
-      #endif
-      
-      /*End_Body_TEST:*/
-    } 
-
-    /**
-     * @brief Wimos test n3.UT08.
-     *
-     * Unit test n3.UT08 function.
-     * @verbatim like this@endverbatim 
-     * @param none.
-     * @return none.
-     */
-     extern void _test_n3UT08 (void){
-      const char* testName = "n3.UT08 = %d";
-      /*Body_TEST:*/     
-      uint8_t i = 0;
-      for(i = 0; i<70; i++)
-        ucUnitTestOutput[i] = 0;
+      /**
+       * @brief Wimos test n3.UT10.
+       *
+       * Unit test n3.UT07 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n3UT07 (void){
+        const char* testName = "n3.UT07 = %d";
+        /*Body_TEST:*/
         
-      stGlobalWimosPortMsg.ucMessageFrom = 1;
-      stGlobalWimosPortMsg.ucMessageTo = 2;
-      stGlobalWimosPortMsg.checksum = 3;
-      
-      #ifdef _EN_WIMOS_RF
+        #ifdef _EN_WIMOS_RF
+          stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus = 0;
+          initRF();
+          DEBUG_VALID(testName , 
+                     (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK), 
+                     (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK) == WIMOS_DEVICE_RF_MASK);
+        #else
+          stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus = WIMOS_DEVICE_RF_MASK;
+          initRF();
+          DEBUG_VALID(testName , 
+                     (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK), 
+                     (stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus & WIMOS_DEVICE_RF_MASK) == 0x00);
+        #endif
         
-        sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
-        
-        stWimosPortValuesMessage* stUTest = (stWimosPortValuesMessage*) ucUnitTestOutput ;
-        
-        DEBUG_VALID(testName , 
-                   (memcmp(&stGlobalWimosPortMsg, stUTest, sizeof(stGlobalWimosPortMsg))), 
-                   (memcmp(&stGlobalWimosPortMsg, stUTest, sizeof(stGlobalWimosPortMsg)) == 0));
-      #else      
-        
-        sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
-        
-        stWimosPortValuesMessage* stUTest = (stWimosPortValuesMessage*) ucUnitTestOutput ;
-        
-        DEBUG_VALID(testName , 
-                   (stUTest->ucBegin), 
-                   (stUTest->ucBegin == 0));
-      #endif
-      /*End_Body_TEST:*/
-    } 
-
-
-    /**
-     * @brief Wimos test n3.UT09.
-     *
-     * Unit test n3.UT09 function.
-     * @verbatim like this@endverbatim 
-     * @param none.
-     * @return none.
-     */
-     extern void _test_n3UT09 (void){
-      const char* testName = "n3.UT09 = %d";
-      /*Body_TEST:*/     
-      /*TODO: make a reader testing.*/
-      /*End_Body_TEST:*/
-    } 
-  #endif
+        /*End_Body_TEST:*/
+      } 
   
-  #ifdef WIMOS_VALIDATION_TEST
+      /**
+       * @brief Wimos test n3.UT08.
+       *
+       * Unit test n3.UT08 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n3UT08 (void){
+        const char* testName = "n3.UT08 = %d";
+        /*Body_TEST:*/     
+        uint8_t i = 0;
+        for(i = 0; i<70; i++)
+          ucUnitTestOutput[i] = 0;
+          
+        stGlobalWimosPortMsg.ucMessageFrom = 1;
+        stGlobalWimosPortMsg.ucMessageTo = 2;
+        stGlobalWimosPortMsg.checksum = 3;
+        
+        #ifdef _EN_WIMOS_RF
+          
+          sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
+          
+          stWimosPortValuesMessage* stUTest = (stWimosPortValuesMessage*) ucUnitTestOutput ;
+          
+          DEBUG_VALID(testName , 
+                     (memcmp(&stGlobalWimosPortMsg, stUTest, sizeof(stGlobalWimosPortMsg))), 
+                     (memcmp(&stGlobalWimosPortMsg, stUTest, sizeof(stGlobalWimosPortMsg)) == 0));
+        #else      
+          
+          sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
+          
+          stWimosPortValuesMessage* stUTest = (stWimosPortValuesMessage*) ucUnitTestOutput ;
+          
+          DEBUG_VALID(testName , 
+                     (stUTest->ucBegin), 
+                     (stUTest->ucBegin == 0));
+        #endif
+        /*End_Body_TEST:*/
+      } 
   
+  
+      /**
+       * @brief Wimos test n3.UT09.
+       *
+       * Unit test n3.UT09 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n3UT09 (void){
+        const char* testName = "n3.UT09 = %d";
+        /*Body_TEST:*/     
+        /*TODO: make a reader testing.*/
+        /*End_Body_TEST:*/
+      } 
+    #endif
     
-    /**
-     * @brief Wimos test n3.VT04.
-     *
-     * Unit test n3.VT04 function.
-     * @verbatim like this@endverbatim 
-     * @param none.
-     * @return none.
-     */
-    extern void _test_n3VT04 (void){
-      const char* testName = "n3.VT04 = %ld microseconds";
+    #ifdef WIMOS_VALIDATION_TEST
+    
       
-      /*Body_TEST:*/     
-      initRF();
-      uint32_t ulTimerVT = micros();
-      sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
-      DEBUG_VALID(testName , 
-                 (micros() - ulTimerVT), 
-                 (micros() - ulTimerVT < 100));
-      /*End_Body_TEST:*/
-    } 
-    
+      /**
+       * @brief Wimos test n3.VT04.
+       *
+       * Unit test n3.VT04 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+      extern void _test_n3VT04 (void){
+        const char* testName = "n3.VT04 = %ld microseconds";
+        
+        /*Body_TEST:*/     
+        initRF();
+        uint32_t ulTimerVT = micros();
+        sendFrame(&stGlobalWimosPortMsg, sizeof(stGlobalWimosPortMsg));
+        DEBUG_VALID(testName , 
+                   (micros() - ulTimerVT), 
+                   (micros() - ulTimerVT < 100));
+        /*End_Body_TEST:*/
+      } 
+      
+    #endif
   #endif
 #endif
