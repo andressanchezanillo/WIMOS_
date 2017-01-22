@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data>
+  <loop>true</loop>
+  <repeat_times>1</repeat_times>
+  <repeat_period>490</repeat_period>
+  <packets_list>
+    <packet name="CMD">
+      <payload>FF040010A14A</payload>
+    </packet>
+    <packet name="ACK-OK">
+      <payload>FF03001028</payload>
+    </packet>
+    <packet name="ACK">
+      <payload>FF030010D4</payload>
+    </packet>
+  </packets_list>
+</data>

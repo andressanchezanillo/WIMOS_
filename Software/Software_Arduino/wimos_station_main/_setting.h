@@ -38,6 +38,7 @@
   #define WIMOS_DEBUG
   //#define WIMOS_UNIT_TEST
   //#define WIMOS_VALIDATION_TEST
+  #define WIMOS_VALIDATION_TEST_CENTER
   
   /**
    * @brief Label for RF activation.

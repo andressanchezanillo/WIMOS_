@@ -41,11 +41,15 @@
     #define COMMAND_GET_STATUS_ALERT  0xA3
     #define COMMAND_GET_SENSOR_INFO   0xA4
     #define BROADCAST_ID              0xFE
+    /**
+     * @brief Timeout ACK.
+     */
+    #define TIMEOUT_ACK 60000
     
     /**
      * @brief Date data struct.
      */
-    typedef struct _date{
+    typedef struct __attribute__((packed)) _date{
       uint8_t ucDay; /**< Day value. */
       uint8_t ucMonth; /**< Month value. */
       uint8_t ucYear;  /**< Year value [2000 -> 2255]. */
@@ -54,7 +58,7 @@
     /**
      * @brief Time data struct.
      */
-    typedef struct _time{
+    typedef struct __attribute__((packed)) _time{
       uint8_t ucSecond; /**< Second value. */
       uint8_t ucMinute; /**< Minute value. */
       uint8_t ucHour; /**< Year value. */
@@ -63,7 +67,7 @@
     /**
      * @brief DateTime data struct.
      */
-    typedef struct _dateTime{
+    typedef struct __attribute__((packed)) _dateTime{
       stWimosDate stDate; /**< Date value. */
       stWimosTime stTime; /**< Time value. */
     }stWimosDateTime;
@@ -71,7 +75,7 @@
     /**
      * @brief Localization data struct.
      */
-    typedef struct _gpsCoordenate{
+    typedef struct __attribute__((packed)) _gpsCoordenate{
       uint8_t ucDegree;  /**< Degree for Coordenate. */
       int32_t slMinute;  /**< Minute (multiplicated by 1000). */
     }stWimosGpsCoordenate;
@@ -79,7 +83,7 @@
     /**
      * @brief GPS position data struct
      */
-    typedef struct _gpsPosition{
+    typedef struct __attribute__((packed)) _gpsPosition{
       stWimosGpsCoordenate stLatitude; /**< Latitude position. */
       stWimosGpsCoordenate stLongitude;/**< Longitude position. */
     }stWimosGpsPosition;
@@ -88,7 +92,7 @@
     /**
      * @brief System Status data struct.
      */
-    typedef struct _status{
+    typedef struct __attribute__((packed)) _status{
       uint16_t usPortStatus; /**< Status of System Ports. */
       uint8_t ucDeviceStatus;/**< Status of System Devices. */
     }stWimosStatus;
@@ -97,7 +101,7 @@
     /**
      * @brief System Signature data struct.
      */
-    typedef struct _signature{
+    typedef struct __attribute__((packed)) _signature{
       uint8_t ucWimosID; /**< Status of System Ports. */
       stWimosStatus stStatus;/**< Status of System Devices. */  
     }stWimosSignature;
@@ -106,7 +110,7 @@
     /**
      * @brief Wimos information Frame
      */
-    typedef struct _wimosInfo{
+    typedef struct __attribute__((packed)) _wimosInfo{
       stWimosDateTime stDateTime; /**< Date Time value. */
       stWimosGpsPosition stGpsPosition; /**< GPS position value. */
       uint8_t ucPercentMemory;  /**< Percent memory used value. */
@@ -117,7 +121,7 @@
     /**
      * @brief Wimos information Frame
      */
-    typedef struct _wimosInfoMsg{
+    typedef struct __attribute__((packed)) _wimosInfoMsg{
       uint8_t ucBegin; /**< Constant value for frame begin. */
       uint8_t ucFrameSize; /**< Frame size value. */
       
@@ -132,7 +136,7 @@
     /**
      * @brief Wimos Ports values Frame
      */
-    typedef struct _portStatus{
+    typedef struct __attribute__((packed)) _portStatus{
       #ifdef _WIMOS_IMU
         uint32_t usInternalIMUAcc; /**< Internal IMU module value. */
         int8_t usInternalIMUGyrosX; /**< Internal IMU module value. */
@@ -180,7 +184,7 @@
     /**
      * @brief Wimos Ports values Frame
      */
-    typedef struct _portStatusMsg{
+    typedef struct __attribute__((packed)) _portStatusMsg{
       uint8_t ucBegin; /**< Constant value for . */
       uint8_t usFrameSize; /**< Frame size value. */
     
@@ -195,7 +199,7 @@
     /**
      * @brief ACK message frame.
      */
-    typedef struct _ackMessage{
+    typedef struct __attribute__((packed)) _ackMessage{
       uint8_t ucBegin; /**< Constant frame begin value. */
       uint8_t ucFrameSize; /**< Const size value. */
       
@@ -209,7 +213,7 @@
     #define COMMAND_SIZE_BYTE_CONST   0x04
     #define ACK_SIZE_BYTE_CONST   0x03
     
-    typedef struct _commandMessage{ 
+    typedef struct __attribute__((packed)) _commandMessage{ 
       uint8_t ucBegin; /**< Constant frame begin value. */
       uint8_t ucFrameSize; /**< Const size value. */
       
@@ -639,13 +643,8 @@
     /**
      * @brief RF Serial baudrate.
      */
-    #define BAUDRATE_RF (9600)
-    
-    /**
-     * @brief Timeout ACK.
-     */
-    #define TIMEOUT_ACK 5000
-    
+    #define BAUDRATE_RF (115200)
+        
     /**
      * @brief GPS Serial interface.
      */
@@ -869,16 +868,11 @@
     /**
      * @brief RF Serial interface.
      */
-    #define SERIAL_RF Serial1
+    #define SERIAL_RF SerialRF
     /**
      * @brief RF Serial baudrate.
      */
-    #define BAUDRATE_RF (9600)
-    
-    /**
-     * @brief Timeout ACK.
-     */
-    #define TIMEOUT_ACK 5000
+    #define BAUDRATE_RF (115200)
 
     
     

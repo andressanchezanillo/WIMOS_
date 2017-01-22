@@ -205,12 +205,14 @@ void readSensorsWimos(){
  * @param none.
  * @return none.
  */
+
 extern void coreWimos(void){
+  
+  communicationThread();
   #ifdef __SAM3X8E__
     #ifdef WIMOS_DEBUG
       debugCommand();
     #endif
-    communicationThread();
     if((millis() - coreWimosTimer100ms) > 100){
       coreWimosTimer100ms = millis();
       readSensorsWimos();
@@ -220,9 +222,6 @@ extern void coreWimos(void){
       coreWimosTimer1000ms = millis();
       updateInfoWimos();
     }
-  #endif
-  #ifdef __AVR_ATmega32U4__
-    communicationThread();
   #endif
 }
 
