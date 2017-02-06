@@ -44,7 +44,7 @@
     /**
      * @brief Timeout ACK.
      */
-    #define TIMEOUT_ACK 60000
+    #define TIMEOUT_ACK 250
     
     /**
      * @brief Date data struct.
@@ -123,7 +123,7 @@
      */
     typedef struct __attribute__((packed)) _wimosInfoMsg{
       uint8_t ucBegin; /**< Constant value for frame begin. */
-      uint8_t ucFrameSize; /**< Frame size value. */
+      uint8_t ucFrameID; /**< Frame size value. */
       
       uint8_t ucMessageFrom;/**< Address of system what send the message . */
       uint8_t ucMessageTo;/**< The message is for this address . */
@@ -201,7 +201,7 @@
      */
     typedef struct __attribute__((packed)) _ackMessage{
       uint8_t ucBegin; /**< Constant frame begin value. */
-      uint8_t ucFrameSize; /**< Const size value. */
+      uint8_t ucFrameID; /**< Const size value. */
       
       uint8_t ucMessageFrom;/**< Address of system what send the message . */
       uint8_t ucMessageTo;/**< The message is for this address . */
@@ -215,7 +215,7 @@
     
     typedef struct __attribute__((packed)) _commandMessage{ 
       uint8_t ucBegin; /**< Constant frame begin value. */
-      uint8_t ucFrameSize; /**< Const size value. */
+      uint8_t ucFrameID; /**< Const size value. */
       
       uint8_t ucMessageFrom;/**< Address of system what send the message . */
       uint8_t ucMessageTo;/**< The message is for this address . */

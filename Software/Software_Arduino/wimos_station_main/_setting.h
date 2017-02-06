@@ -228,8 +228,8 @@
     #define _WIMOS_COMMAND_LIST_SIZE 0x02
     
     #define _WIMOS_COMMAND_LIST {\
-                                  (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameSize = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x00 },\
-                                  (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameSize = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x00 } \                                                        
+                                  (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameID = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x00 },\
+                                  (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameID = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x00 } \                                                        
                                 }
   #endif
 #endif
