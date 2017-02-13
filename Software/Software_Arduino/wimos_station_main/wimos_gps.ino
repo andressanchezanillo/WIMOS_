@@ -929,15 +929,15 @@
   
   
       /**
-       * @brief Wimos test n3.UT20.
+       * @brief Wimos test n3.UT07.
        *
-       * Unit test n3.UT20 function.
+       * Unit test n3.UT07 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n3UT20 (void){
-        const char* testName = "n3.UT20 = %d";
+       extern void _test_n3UT07 (void){
+        const char* testName = "n3.UT07 = %d";
         ucUnitTestGPSOutput = 0;
         sprintf(ucUnitTestGPSInput, "123519,A,9107.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A" );
         

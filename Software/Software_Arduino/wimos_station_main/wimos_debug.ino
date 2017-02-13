@@ -28,13 +28,14 @@
  */
 
 
+#ifdef WIMOS_DEBUG  //~(eINFO | eDATA);
+
 #ifndef __AVR_ATmega32U4__
 
   #include "_setting.h"
   #include "main_config.h"
   
   
-  #ifdef WIMOS_DEBUG  //~(eINFO | eDATA);
   
     
     /**
@@ -44,8 +45,9 @@
     
     
     static uint8_t ucCurrentDebugMode = ~(eINFO | eDATA);
-  
-    
+ 
+ #endif 
+ 
     extern void initDebug(void){
       #ifdef WIMOS_DEBUG
         #ifdef __SAM3X8E__
@@ -58,7 +60,10 @@
         stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_DEBUG_MASK;
       #endif
     }
-    
+
+ 
+#ifndef __AVR_ATmega32U4__
+
     extern void debug_print(const char* pFunction, const char* pLabel, const char* pData){
       uint8_t i=0;
       SERIAL_DEBUG.print(pFunction);

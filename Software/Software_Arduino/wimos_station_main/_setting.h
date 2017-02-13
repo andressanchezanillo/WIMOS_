@@ -35,10 +35,9 @@
   /**
    * @brief Label Debug traces activation.
    */
-  #define WIMOS_DEBUG
+  //#define WIMOS_DEBUG
   //#define WIMOS_UNIT_TEST
   //#define WIMOS_VALIDATION_TEST
-  #define WIMOS_VALIDATION_TEST_CENTER
   
   /**
    * @brief Label for RF activation.
@@ -225,11 +224,18 @@
   
     #define WIMOS_ID 0x00
     
-    #define _WIMOS_COMMAND_LIST_SIZE 0x02
+      #if defined(WIMOS_UNIT_TEST) && defined(WIMOS_DEBUG)
+        #define _WIMOS_COMMAND_LIST_SIZE 0x01 
+        #define _WIMOS_COMMAND_LIST {\
+                                      (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameID = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x10 } \                                                       
+                                    }  
+      #else
     
-    #define _WIMOS_COMMAND_LIST {\
-                                  (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameID = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x00 },\
-                                  (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameID = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x00 } \                                                        
-                                }
+        #define _WIMOS_COMMAND_LIST_SIZE 0x02
+        #define _WIMOS_COMMAND_LIST {\
+                                      (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameID = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x00 },\
+                                      (stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameID = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 0x10, .ucCommand = COMMAND_GET_GENERAL_INFO, .ucChecksum = 0x00 } \                                                        
+                                    }      
+      #endif
   #endif
 #endif

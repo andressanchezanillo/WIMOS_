@@ -57,6 +57,7 @@ extern uint32_t coreWimosTimer1000ms = 0;
 void initWimosService(void){
       #ifdef WIMOS_DEBUG
         #ifdef __AVR_ATmega32U4__
+          initDebug();
         #endif
         #ifdef __SAM3X8E__
           initDebug();
@@ -79,18 +80,11 @@ void initWimosService(void){
  * @return none.
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
-extern void initWimos(void){
-  #ifdef __AVR_ATmega32U4__
-        initWimosService();
-        delay(3000);
-        while(SERIAL_USB.available())
-          SERIAL_USB.read();
-        SERIAL_USB.println("FRAME1: Begin.");
-  #endif
-  
-  #ifdef __SAM3X8E__
-    #ifdef WIMOS_UNIT_TEST
-      initDebug();
+extern void initWimos(void){  
+#if defined(WIMOS_UNIT_TEST) and defined(WIMOS_DEBUG)
+    
+    initDebug();
+    #ifdef __SAM3X8E__
       _test_n3UT00();
       _test_n3UT01();
       _test_n3UT02();
@@ -99,8 +93,6 @@ extern void initWimos(void){
       _test_n3UT05();
       _test_n3UT06();
       _test_n3UT07();
-      _test_n3UT08();
-      _test_n3UT09();
       _test_n3UT10();
       _test_n3UT11();
       _test_n3UT12();
@@ -133,10 +125,42 @@ extern void initWimos(void){
       _test_n3UT39();
       _test_n3UT40();
       _test_n3UT41();
+    #endif
+      _test_n4UT01();
+      _test_n4UT02();
+      _test_n4UT03();
+      _test_n4UT04();
+      _test_n4UT05();
+      #ifdef __SAM3X8E__
+        _test_n4UT06 ();
+        _test_n4UT07 ();
+        _test_n4UT08 ();
+        _test_n4UT09 ();
+        _test_n4UT10 ();
+      #endif
+      #ifdef __AVR_ATmega32U4__        
+        _test_n4UT11 ();
+      #endif      
+      _test_n4UT12 ();
+      _test_n4UT13 ();
+      _test_n4UT14 ();
+      _test_n4UT15 ();
+      _test_n4UT16 ();
+      _test_n4UT17 ();
+      #ifdef __SAM3X8E__
+        _test_n4UT18 ();
+      #endif
+      #ifdef __AVR_ATmega32U4__  
+        _test_n4UT19 ();
+        _test_n4UT20 ();
+      #endif      
+      
       while(true);
-    #else 
-      #ifdef WIMOS_VALIDATION_TEST
-        initDebug();
+  #else 
+    #if defined(WIMOS_VALIDATION_TEST) and defined(WIMOS_DEBUG)
+      initDebug();
+      
+      #ifdef __SAM3X8E__
         _test_n3VT01();
         _test_n3VT02();
         _test_n3VT03();
@@ -148,12 +172,19 @@ extern void initWimos(void){
         _test_n3VT09();
         _test_n3VT10();
         _test_n3VT11();
-        while(true);
-      #else
-        initWimosService();
+      #endif
+      while(true);
+    #else
+      initWimosService();
+      #ifdef __AVR_ATmega32U4__
+            delay(3000);
+            while(SERIAL_USB.available())
+              SERIAL_USB.read();
+            SERIAL_USB.println("FRAME1: Begin.");
       #endif
     #endif
   #endif
+
 }
 
 extern void initInterPeriph(void){

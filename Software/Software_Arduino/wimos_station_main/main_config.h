@@ -35,11 +35,8 @@
      * Debug interface definition:
      ***************************************************************/
     
-    #define COMMAND_GET_STATION_ID    0xA0
     #define COMMAND_GET_GENERAL_INFO  0xA1
     #define COMMAND_GET_QUEUE_ALERT   0xA2
-    #define COMMAND_GET_STATUS_ALERT  0xA3
-    #define COMMAND_GET_SENSOR_INFO   0xA4
     #define BROADCAST_ID              0xFE
     /**
      * @brief Timeout ACK.
@@ -234,6 +231,11 @@
     void initWimos(void);
     
     /**
+     * @brief Initialize Debug.
+     */
+    void initDebug(void);
+    
+    /**
      * @brief Initialize the internal peripherals.
      */
     void initInterPeriph(void);
@@ -268,6 +270,27 @@
     #define _NEXT_STEP ((int8_t)1)
 
 
+  #ifdef WIMOS_DEBUG
+    #ifdef __AVR_ATmega32U4__  
+      /**
+       * @brief DEBUG Serial interface.
+       */
+      #define SERIAL_DEBUG Serial
+      
+      /**
+       * @brief DEBUG Serial baudrate.
+       */
+      #define BAUDRATE_DEBUG (115200)
+      
+      /**
+       * @brief Debug Macro for Test.
+       */
+      #define DEBUG_VALID(x,data,cond) SERIAL_DEBUG.print(x);SERIAL_DEBUG.print(data);SERIAL_DEBUG.println(cond?"\t\tOK":"\t\tERROR"); 
+        
+    #endif
+  #endif
+
+  
   #ifdef __SAM3X8E__  
     
     /***************************************************************
@@ -287,40 +310,40 @@
     #ifdef WIMOS_DEBUG
     
       #ifdef DEBUG_COLOR
-      /**
-       * @brief Info label displaying with colour.
-       */
-      #define D_INFO "[\x1B[36mINFO\x1B[0m]  "
-      /**
-       * @brief Error label displaying with colour.
-       */
-      #define D_ERROR "[\x1B[31mERROR\x1B[0m] "
-      /**
-       * @brief Data label displaying with colour.
-       */
-      #define D_DATA "[\x1B[33mDATA\x1B[0m]  "
-      /**
-       * @brief Data label displaying with colour.
-       */
-      #define D_OK "[\x1B[32mOK\x1B[0m]    "
-      
+        /**
+         * @brief Info label displaying with colour.
+         */
+        #define D_INFO "[\x1B[36mINFO\x1B[0m]  "
+        /**
+         * @brief Error label displaying with colour.
+         */
+        #define D_ERROR "[\x1B[31mERROR\x1B[0m] "
+        /**
+         * @brief Data label displaying with colour.
+         */
+        #define D_DATA "[\x1B[33mDATA\x1B[0m]  "
+        /**
+         * @brief Data label displaying with colour.
+         */
+        #define D_OK "[\x1B[32mOK\x1B[0m]    "
+        
       #else
-      /**
-       * @brief Info label displaying.
-       */
-      #define D_INFO "[INFO]  "
-      /**
-       * @brief Error label displaying.
-       */
-      #define D_ERROR "[ERROR] "
-      /**
-       * @brief Data label displaying.
-       */
-      #define D_DATA "[DATA]  "
-      /**
-       * @brief OK label displaying.
-       */
-      #define D_OK "[OK]    "
+        /**
+         * @brief Info label displaying.
+         */
+        #define D_INFO "[INFO]  "
+        /**
+         * @brief Error label displaying.
+         */
+        #define D_ERROR "[ERROR] "
+        /**
+         * @brief Data label displaying.
+         */
+        #define D_DATA "[DATA]  "
+        /**
+         * @brief OK label displaying.
+         */
+        #define D_OK "[OK]    "
       
       #endif
     
@@ -492,7 +515,7 @@
     #define WIMOS_DEVICE_RF_MASK     ((uint8_t)0x20)
     
     /**
-     * @brief Internal RF mask.
+     * @brief Internal Debug mask.
      */
     #define WIMOS_DEVICE_DEBUG_MASK     ((uint8_t)0x40)
     
@@ -700,6 +723,7 @@
      * @brief Initialize WIMOS.
      */
     void initWimos(void);
+
     /**
      * @brief Initialize GPS.
      */
@@ -820,6 +844,35 @@
         void _test_n3UT39 (void);
         void _test_n3UT40 (void);
         void _test_n3UT41 (void);
+        void _test_n3UT42 (void);
+        void _test_n4UT01 (void);
+        void _test_n4UT02 (void);
+        void _test_n4UT03 (void);
+        void _test_n4UT04 (void);
+        void _test_n4UT05 (void);
+        #ifdef __SAM3X8E__
+          void _test_n4UT06 (void);
+          void _test_n4UT07 (void);
+          void _test_n4UT08 (void);
+          void _test_n4UT09 (void);
+          void _test_n4UT10 (void);
+        #endif
+        #ifdef __AVR_ATmega32U4__        
+          void _test_n4UT11 (void);
+        #endif
+        void _test_n4UT12 (void);
+        void _test_n4UT13 (void);
+        void _test_n4UT14 (void);
+        void _test_n4UT15 (void);
+        void _test_n4UT16 (void);
+        void _test_n4UT17 (void);
+        #ifdef __SAM3X8E__
+          void _test_n4UT18 (void);
+        #endif
+        #ifdef __AVR_ATmega32U4__        
+          void _test_n4UT19 (void);
+          void _test_n4UT20 (void);
+        #endif
       #endif
       
       #ifdef WIMOS_VALIDATION_TEST
