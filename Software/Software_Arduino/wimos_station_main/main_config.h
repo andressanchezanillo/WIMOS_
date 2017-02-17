@@ -30,7 +30,7 @@
 #ifndef MAIN_CONFIG_H_
 #define MAIN_CONFIG_H_
 
-
+    #define PACKAGE_SIZE_RF   0x04
     /***************************************************************
      * Debug interface definition:
      ***************************************************************/
@@ -38,10 +38,20 @@
     #define COMMAND_GET_GENERAL_INFO  0xA1
     #define COMMAND_GET_QUEUE_ALERT   0xA2
     #define BROADCAST_ID              0xFE
-    /**
-     * @brief Timeout ACK.
-     */
-    #define TIMEOUT_ACK 250
+    
+    #ifdef __SAM3X8E__ 
+      /**
+       * @brief Timeout ACK.
+       */
+      #define TIMEOUT_ACK 250
+    #endif
+    
+    #ifdef  __AVR_ATmega32U4__
+      /**
+       * @brief Timeout ACK.
+       */
+      #define TIMEOUT_ACK 250
+    #endif
     
     /**
      * @brief Date data struct.
