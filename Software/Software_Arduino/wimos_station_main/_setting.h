@@ -37,7 +37,8 @@
    */
   //#define WIMOS_DEBUG
   //#define WIMOS_UNIT_TEST
-  #define DEBUG_COMM
+  //#define DEBUG_COMM_RXTX
+  //#define DEBUG_COMM_STATUS
   //#define WIMOS_VALIDATION_TEST
   
   /**
@@ -224,6 +225,8 @@
   #ifdef __AVR_ATmega32U4__
   
     #define WIMOS_ID 0x00
+    
+    #define TIME_COMMAND_RATE 60000
     
       #if defined(WIMOS_UNIT_TEST) && defined(WIMOS_DEBUG)
         #define _WIMOS_COMMAND_LIST_SIZE 0x01 

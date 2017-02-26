@@ -53,11 +53,10 @@ uint8_t ucLastChecksum = 0;
 #define BUFFER_RF_SIZE  50
 uint8_t ucBufferRF[50] = {0x00};
 uint8_t ucBufferRFIndex = 0x00;
-uint8_t ucAutoTimeout = 0;
 
 uint8_t getChecksum(void* ptrDataInput, uint8_t ucDataInputSize);
 void clearBufferRF(void);
-void updateBufferRF(void);
+bool updateBufferRF(uint8_t);
 void sendACK(void);
 void waitACK(void);
 void sendResponse(void);
@@ -72,6 +71,7 @@ extern void (*communicationThread)(void);
     uint32_t ucCommandsSent = 0;
     uint32_t ucCommandsResponseReceived = 0;
     uint32_t ulTimeRate = 0;
+    uint32_t ulTimeCommandsRate = 0;
 #endif
 
 #ifdef WIMOS_UNIT_TEST
@@ -96,6 +96,7 @@ extern void initRF(void){
     #endif
     #ifdef __AVR_ATmega32U4__
       communicationThread = sendCommand;
+      ulTimeCommandsRate = millis();
       SERIAL_USB.begin(BAUDRATE_USB);
     #endif    
       SERIAL_RF.begin(BAUDRATE_RF);
@@ -129,6 +130,11 @@ void waitCommand(void){
       
       /*The checksum matchs.*/   
       if( stCommand.ucChecksum == getChecksum(&stCommand, sizeof(stCommand)-1) ){
+          
+          #ifdef DEBUG_COMM_STATUS
+            SERIAL_DEBUG.print(__FUNCTION__);
+            SERIAL_DEBUG.println(": Go to SendACK.");
+          #endif
         
           ucLastChecksum = (uint8_t)(stCommand.ucChecksum << 1) & 0xFF;
           communicationThread = sendACK;
@@ -136,15 +142,17 @@ void waitCommand(void){
           
       }else{
         
+        #ifdef DEBUG_COMM_STATUS
+          SERIAL_DEBUG.print(__FUNCTION__);
+          SERIAL_DEBUG.println(": Checksum Error");
+        #endif
+        
         /*Build the ACK-NOK message.*/
         stACK.ucBegin = 0xFF;
         stACK.ucFrameID = 0x03;
         stACK.ucMessageTo = stACK.ucMessageFrom;
         stACK.ucMessageFrom = WIMOS_ID;
         stACK.ucACK = 0x03;
-        
-        /*Clear RF Buffer.*/         
-        //clearBufferRF();
           
         /*Send ACK-NOK.*/
         sendFrame(&stACK,sizeof(stACK));
@@ -168,36 +176,26 @@ void waitCommand(void){
    * @return none.
    */
   void sendCommand(void){   
-    delay(100+ucAutoTimeout);
     stCommand = prtMessageArray[ucIndexCommand];
     stCommand.ucChecksum = getChecksum(&stCommand, (sizeof(stCommand)-1));
-    /*Clear RF buffer.*/
-    //1clearBufferRF();
     
     /*Send command*/
     sendFrame(&stCommand, sizeof(stCommand));
-
-    /*Validation for Center.*/
-    if(ucCommandsSent == 0){
-      ucCommandsResponseReceived = 0;
-      ulTimeRate = millis();
-    }
-    else if(ucCommandsResponseReceived == 100){
+    /*Calculate the Commands sent*/
+    ucCommandsSent++;
+    
+    /*Success Command Rate.*/
+    if(millis() - ulTimeCommandsRate >= TIME_COMMAND_RATE){
       SERIAL_USB.print("[INFO001]:");
       SERIAL_USB.print(" ");
-      SERIAL_USB.print((uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent))*100, HEX);
+      SERIAL_USB.print((uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100, HEX);
       SERIAL_USB.print(" ");
-      SERIAL_USB.print((uint32_t)((float)((float) ((millis()-ulTimeRate)/1000) / (float)ucCommandsResponseReceived) * 1000), HEX);
+      SERIAL_USB.print(((uint32_t)((float)((float) TIME_COMMAND_RATE / (float)ucCommandsResponseReceived))), HEX);
       SERIAL_USB.println(" OK");
-                
+      
+      ulTimeCommandsRate = millis();
       ucCommandsResponseReceived = 0;
       ucCommandsSent = 0;
-    }
-    else if(ucCommandsResponseReceived < 100){
-      ucCommandsSent++;
-    }
-    else{
-      
     }
     
     /*Calculate the next command.*/
@@ -208,7 +206,11 @@ void waitCommand(void){
     
     /*Go to wait ACK state.*/
     communicationThread = waitACK;
-    Serial.println("Command Sent");
+    
+    #ifdef DEBUG_COMM_STATUS
+      SERIAL_DEBUG.print(__FUNCTION__);
+      SERIAL_DEBUG.println(": Goto WaitACK");
+    #endif
     
     return;    
   }
@@ -229,9 +231,6 @@ void waitACK(void){
 
   if(bACKReceived == false){
     
-    /*Clear RF buffer.*/
-    //clearBufferRF();
-    
     /*Init the ACK received value.*/
     bACKReceived =  true;
     
@@ -246,7 +245,6 @@ void waitACK(void){
       
       /*Restart ACK received status.*/
       bACKReceived =  false;
-      DEBUG_OK("Timeout.");
       /*Restart ACK timeout value.*/
       ulTimeoutACK = 0;  
       
@@ -266,9 +264,13 @@ void waitACK(void){
       /*Send ACK-NOK.*/
       sendFrame(&stACK,sizeof(stACK));
       
+      #ifdef DEBUG_COMM_STATUS
+        SERIAL_DEBUG.print(__FUNCTION__);
+        SERIAL_DEBUG.println(": Timeout expired.");
+      #endif
+      
       /*Go to the previous State.*/
       #ifdef __AVR_ATmega32U4__
-        ucAutoTimeout = TIMEOUT_ACK * 2;
         communicationThread = sendCommand;
       #endif
       #ifdef __SAM3X8E__
@@ -298,11 +300,6 @@ void waitACK(void){
           /*Reset the timeout.*/
           ulTimeoutACK = 0x00;
           
-          char ucDebugRF[12];
-//          #ifdef __SAM3X8E__
-//          sprintf(ucDebugRF, "%d - %d", stACK.ucACK, ucLastChecksum);
-//          Serial.println(ucDebugRF);
-//          #endif
           /*ACK-OK*/          
           if( stACK.ucACK == ucLastChecksum){
             DEBUG_OK("ACK checksum matched.");
@@ -313,25 +310,35 @@ void waitACK(void){
             stACK.ucMessageTo = stACK.ucMessageFrom;
             stACK.ucMessageFrom = WIMOS_ID;
             stACK.ucACK = (uint8_t)(( ucLastChecksum << 1) & 0xFF);
-//            #ifdef __SAM3X8E__
-//            sprintf(ucDebugRF, "%d ", stACK.ucACK);
-//            Serial.println(ucDebugRF);
-//            #endif
+            
             /*Go to the next state.*/
             #ifdef __AVR_ATmega32U4__
+            
+              #ifdef DEBUG_COMM_STATUS
+                SERIAL_DEBUG.print(__FUNCTION__);
+                SERIAL_DEBUG.println(": Goto RunFunction.");
+              #endif
               communicationThread = runFunction;
+            
             #endif
+            
             #ifdef __SAM3X8E__
+            
+              #ifdef DEBUG_COMM_STATUS
+                SERIAL_DEBUG.print(__FUNCTION__);
+                SERIAL_DEBUG.println(": Goto WaitCommand.");
+              #endif
               communicationThread = waitCommand;
             #endif 
             
           /*ACK-NOK*/
           }else{
-            DEBUG_OK("ACK checksum not matched.");
             
-//            Serial.print(__FUNCTION__);
-//            Serial.print(":");
-//            Serial.println("NO-ACK");
+            #ifdef DEBUG_COMM_STATUS
+              SERIAL_DEBUG.print(__FUNCTION__);
+              SERIAL_DEBUG.println(": Checksum Error.");
+            #endif
+            
             /*Build the ACK-NOK message.*/
             stACK.ucBegin = 0xFF;
             stACK.ucFrameID = 0x03;
@@ -341,7 +348,6 @@ void waitACK(void){
             
             /*Restart state machine.*/
             #ifdef __AVR_ATmega32U4__
-              ucAutoTimeout = TIMEOUT_ACK * 2;
               communicationThread = sendCommand;
             #endif
             #ifdef __SAM3X8E__
@@ -350,16 +356,13 @@ void waitACK(void){
             
           }
           
-          /*Clear RF Buffer.*/         
-          //1clearBufferRF();
-          
           /*Send the ACK(OK or NOK) message.*/
           sendFrame(&stACK,sizeof(stACK));
           
           return;
           
         }else{
-          DEBUG_INFO("The message is not for me.");
+          
         }  
       } 
     }
@@ -395,9 +398,6 @@ void sendACK(void){
       stACK.ucMessageTo = stCommand.ucMessageTo;    
     #endif 
     stACK.ucACK = ucLastChecksum;
-    
-    /*Clear RF Buffer.*/         
-    //1clearBufferRF();
     
     /*Send the message*/
     sendFrame(&stACK, sizeof(stACK));
@@ -444,22 +444,21 @@ void sendACK(void){
       
       /*Send ACK-NOK.*/
       sendFrame(&stACK,sizeof(stACK));
-  
+            
+      #ifdef DEBUG_COMM_STATUS
+        SERIAL_DEBUG.print(__FUNCTION__);
+        SERIAL_DEBUG.println(": Timeout Expired.");
+      #endif
+      
       /*Go to first state.*/
       #ifdef __SAM3X8E__
         communicationThread = waitCommand;
       #endif
       #ifdef __AVR_ATmega32U4__
-//        Serial.println("sendACK: Timeout.");
           SERIAL_USB.println(" ACK-NOK");
-          ucAutoTimeout = TIMEOUT_ACK * 2;
           communicationThread = sendCommand;      
       #endif 
-      
-//      Serial.print(__FUNCTION__);
-//      Serial.print(":");
-//      Serial.println("timeout");
-      
+            
       return;
       
     /*The timeout was not excedded.*/
@@ -481,24 +480,33 @@ void sendACK(void){
           /*Reset the timeout counter.*/
           ulTimeoutACK = 0;   
           
-          /*Clear RF Buffer.*/         
-          //clearBufferRF();
           /*The checksum matchs.*/             
           if(stACK.ucACK == ucLastChecksum ){
             #ifdef __AVR_ATmega32U4__
-                    
-              /*Validation for Center.*/
-              if(ucCommandsResponseReceived < 100)
-                ucCommandsResponseReceived++;
               
+              #ifdef DEBUG_COMM_STATUS
+                SERIAL_DEBUG.print(__FUNCTION__);
+                SERIAL_DEBUG.println(": Goto SendCommand.");
+              #endif
+              
+              /*Success command rate.*/
+              ucCommandsResponseReceived++;
+
+              /*Print ACK-OK over USB.*/
               SERIAL_USB.println(" ACK-OK");
               
               /*Go to next state.*/
-              ucAutoTimeout = 0;
               communicationThread = sendCommand;
               
             #endif
+            
             #ifdef __SAM3X8E__
+            
+            
+              #ifdef DEBUG_COMM_STATUS
+                SERIAL_DEBUG.print(__FUNCTION__);
+                SERIAL_DEBUG.println(": Goto RunFunction.");
+              #endif
               communicationThread = runFunction;
             #endif 
             
@@ -528,19 +536,20 @@ void sendACK(void){
             
             /*Send ACK-NOK.*/
             sendFrame(&stACK,sizeof(stACK));
+            
+            #ifdef DEBUG_COMM_STATUS
+              SERIAL_DEBUG.print(__FUNCTION__);
+              SERIAL_DEBUG.println(": Checksum Error.");
+            #endif
+         
             /*Go to the first state.*/
             #ifdef __AVR_ATmega32U4__
               SERIAL_USB.println(" ACK-NOK");
-              ucAutoTimeout = TIMEOUT_ACK * 2;
               communicationThread = sendCommand;
             #endif
             #ifdef __SAM3X8E__
               communicationThread = waitCommand;
             #endif 
-            
-//            Serial.print(__FUNCTION__);
-//            Serial.print(":");
-//            Serial.println("NO-ACK");
             
             return;
           }
@@ -571,9 +580,6 @@ void runFunction(void){
       /*Clear first time variable.*/
       bFirstExec = false;
 
-      /*Clear the Buffer RF.*/
-      //1clearBufferRF();
-
     /*It is not the first time of execution.*/
     }
     
@@ -595,9 +601,6 @@ void runFunction(void){
   
           /*Calculate the checksum.*/
           ucLastChecksum = ((uint8_t)stGlobalWimosInfoMsg.ucChecksum << 1) & 0xFF ;  
-  
-          /*Clear buffer RF.*/
-          //1clearBufferRF();
   
           /*Send the general info response.*/
           sendFrame(&stGlobalWimosInfoMsg,sizeof(stGlobalWimosInfoMsg));
@@ -658,8 +661,10 @@ void runFunction(void){
         sendFrame(&stACK, sizeof(stACK));     
         
         /*Go to first state.*/
-        ucAutoTimeout = TIMEOUT_ACK * 2;
-        Serial.println("Timeout Error -A");
+        #ifdef DEBUG_COMM_STATUS
+          SERIAL_DEBUG.print(__FUNCTION__);
+          SERIAL_DEBUG.println(": Timeout Error");
+        #endif
         communicationThread = sendCommand;
         
         return;
@@ -667,32 +672,28 @@ void runFunction(void){
       }else{
         
         /*Process the command.*/
-        // TODO_-_-_//
         switch(stCommand.ucCommand){
-          
+          stWimosInfoMessage stWimosTestMsg;
           /*The command is a General Info request.*/
           case COMMAND_GET_GENERAL_INFO:
             /*If it receives a General info message.*/
-            if( receiveFrame(&stGlobalWimosInfoMsg, sizeof(stGlobalWimosInfoMsg),  5 ) ){ 
+            if( receiveFrame(&stWimosTestMsg, sizeof(stWimosTestMsg),  5 ) ){ 
               /*If the ACK message is for me and from the Command.*/
-              if(stGlobalWimosInfoMsg.ucMessageTo == WIMOS_ID && stGlobalWimosInfoMsg.ucMessageFrom == stCommand.ucMessageTo){
-                /*Clear buffer RF.*/
-                //clearBufferRF();
-                
+              if(stWimosTestMsg.ucMessageTo == WIMOS_ID && stWimosTestMsg.ucMessageFrom == stCommand.ucMessageTo){                
                 /* The checksum matched.*/
-                if( stGlobalWimosInfoMsg.ucChecksum  == getChecksum(&stGlobalWimosInfoMsg, (sizeof(stGlobalWimosInfoMsg)-1))){ 
+                if( stWimosTestMsg.ucChecksum  == getChecksum(&stWimosTestMsg, (sizeof(stWimosTestMsg)-1))){ 
                 
                   /*Calculate the ACK.*/
-                  ucLastChecksum = ((uint8_t)stGlobalWimosInfoMsg.ucChecksum << 1) & 0xFF ;  
+                  ucLastChecksum = ((uint8_t)stWimosTestMsg.ucChecksum << 1) & 0xFF ;  
                   
                   /*Frame to USB.*/
                   SERIAL_USB.print("FRAME");
                   SERIAL_USB.print(stCommand.ucCommand);
                   SERIAL_USB.print(":");
                       
-                  for(uint8_t i=0; i< sizeof(stGlobalWimosInfoMsg); i++ ){
+                  for(uint8_t i=0; i< sizeof(stWimosTestMsg); i++ ){
                     SERIAL_USB.print(" ");
-                    SERIAL_USB.print(((uint8_t*)&stGlobalWimosInfoMsg)[i], HEX);
+                    SERIAL_USB.print(((uint8_t*)&stWimosTestMsg)[i], HEX);
                   }
                   
                   /*Go to next state.*/
@@ -712,21 +713,23 @@ void runFunction(void){
                   stACK.ucMessageTo = stCommand.ucMessageTo;
                   stACK.ucACK = 0x01;
   
-                  /*Clear Buffer RF.*/                
-                  //1clearBufferRF();
-  
                   /*Send ACK-NOK.*/
                   sendFrame(&stACK, sizeof(stACK));
-                  Serial.println("Checksum Error -A");             
+                  #ifdef DEBUG_COMM_STATUS
+                    SERIAL_DEBUG.print(__FUNCTION__);
+                    SERIAL_DEBUG.println(": Checksum Error");
+                  #endif             
   
                   /*Go to the first state.*/
-                  ucAutoTimeout = TIMEOUT_ACK * 2;
                   communicationThread = sendCommand;          
                   
                   return;
                 }
               }else{
-                Serial.println("From or To Error -A");
+                #ifdef DEBUG_COMM_STATUS
+                  SERIAL_DEBUG.print(__FUNCTION__);
+                  SERIAL_DEBUG.println(": Address Error");
+                #endif
               }
             }
           break;
@@ -740,7 +743,6 @@ void runFunction(void){
           /*INPUT:#0x0020#*/
           default:
             DEBUG_ERROR("Unknow Command received.");
-            ucAutoTimeout = TIMEOUT_ACK * 2;
             communicationThread = sendCommand;
           break; 
         }
@@ -764,6 +766,7 @@ void runFunction(void){
  * @return none.
  */
 uint8_t getChecksum(void* ptrDataInput, uint8_t ucDataInputSize){
+  return 10;
   uint8_t ucRetValue = 0;
   if(ucDataInputSize > 0){
     ucRetValue = ((uint8_t*)ptrDataInput)[0];
@@ -789,7 +792,7 @@ uint8_t getChecksum(void* ptrDataInput, uint8_t ucDataInputSize){
  */
 void clearBufferRF(void){
   uint16_t usCurrentBufferStatus = 0x00;  
-
+  updateBufferRF(0);
   
   #ifndef WIMOS_UNIT_TEST
     while(SERIAL_RF.available()){
@@ -820,68 +823,69 @@ void clearBufferRF(void){
  * @param ucSize Data length for read.
  * @return none.
  */
-extern bool updateBufferRF(uint8_t ucSize){
+bool updateBufferRF(uint8_t ucSize){
   static bool bFound = false;
   uint8_t ucValueRF = 0x00;
   uint16_t usCurrentBufferStatus = 0x00;
-  
-  if(bFound == false){
-    
-    #ifndef WIMOS_UNIT_TEST
-      /*Wait the data entering.*/
-      do{
-        usCurrentBufferStatus = SERIAL_RF.available();
-        delay(5);
-      }while(usCurrentBufferStatus != SERIAL_RF.available());
-    #endif
 
+  if(ucSize == 0){
+    bFound = false;
+    return false;
     
-    #ifdef WIMOS_UNIT_TEST
-      /*Read RF buffer until buffer empty or receive the 0xFF token.*/
-      while(ucUnitTestInputIndex < ucUnitTestInputSize &&  ucValueRF != 0xFF ){
-        ucValueRF = ucUnitTestInput[ucUnitTestInputIndex++];
-      }
-    #else
-      /*Read RF buffer until buffer empty or receive the 0xFF token.*/
-      while(SERIAL_RF.available() &&  ucValueRF != 0xFF ){
-        ucValueRF = SERIAL_RF.read();
-      }
-    #endif
-        
-    /*The token was not received.*/
-    if(ucValueRF != 0xFF){
-      bFound = false;
-      
-    /*The token was received.*/
-    }else{
-      bFound = true;      
-    }    
-  }
-  
-  /*If the token was received.*/
-  if(bFound == true){    
-    /*If Serial buffer available equal than ucSize.*/
-    /* (ucSize - 1) =  Data without token.*/
-    #ifdef WIMOS_UNIT_TEST
-      if( (ucUnitTestInputSize - (ucUnitTestInputIndex - 1)) >= (ucSize - 1) ){
-    #else
-      if( SERIAL_RF.available() >= (ucSize - 1) ){
-    #endif
-      /* Set as not found, for the next iteration. */
-      bFound = false;
-      /* Returns found.*/
-      return true;
-      
-    /*If Serial buffer available lower than ucSize.*/
-    }else{
-      /*Set as found.*/
-      bFound = true;
-      /*Returns not found.*/
-      return false;        
-    }    
   }else{
-    /*Returns not found.*/
-    return false;  
+    
+    if(bFound == false){
+      
+      #ifndef WIMOS_UNIT_TEST
+        /*Wait the data entering.*/
+        do{
+          usCurrentBufferStatus = SERIAL_RF.available();
+          delay(5);
+        }while(usCurrentBufferStatus != SERIAL_RF.available());
+      #endif
+
+      #ifdef WIMOS_UNIT_TEST
+        /*Read RF buffer until buffer empty or receive the 0xFF token.*/
+        while(ucUnitTestInputIndex < ucUnitTestInputSize &&  ucValueRF != 0xFF ){
+          ucValueRF = ucUnitTestInput[ucUnitTestInputIndex++];
+        }
+      #else
+        /*Read RF buffer until buffer empty or receive the 0xFF token.*/
+        while(SERIAL_RF.available() &&  ucValueRF != 0xFF ){
+          ucValueRF = SERIAL_RF.read();
+        }
+      #endif
+          
+      /*The token was not received.*/
+      if(ucValueRF != 0xFF){
+        bFound = false;
+        return false;
+      /*The token was received.*/
+      }else{
+        bFound = true;   
+        return false;   
+      }    
+    }else{    
+      /*If Serial buffer available equal than ucSize.*/
+      /* (ucSize - 1) =  Data without token.*/
+      #ifdef WIMOS_UNIT_TEST
+        if( (ucUnitTestInputSize - (ucUnitTestInputIndex - 1)) >= (ucSize - 1) ){
+      #else
+        if( SERIAL_RF.available() >= (ucSize - 1) ){
+      #endif
+          /* Set as not found, for the next iteration. */
+          bFound = false;
+          /* Returns found.*/
+          return true;
+        
+      /*If Serial buffer available lower than ucSize.*/
+        }else{
+          /*Set as found.*/
+          bFound = true;
+          /*Returns not found.*/
+          return false;        
+        }    
+      }
   }
 }
 
@@ -898,32 +902,26 @@ extern bool updateBufferRF(uint8_t ucSize){
 bool receiveFrame( void* pData, uint8_t ucSize, uint8_t ucFrameSize){
   uint8_t i=0;
   bool bFound = false;
-  
-  #ifndef WIMOS_UNIT_TEST
-    if(SERIAL_RF.available() >= 32){
-      //clearBufferRF();
-    }
-  #endif
-  
+    
   bFound = updateBufferRF(ucSize);
   
   if(bFound){
-    
+        
     ((uint8_t*)pData)[0] =  0xFF;
     #ifdef WIMOS_UNIT_TEST
       ((uint8_t*)pData)[1] =   ucUnitTestInput[ucUnitTestInputIndex++];
     #else
       ((uint8_t*)pData)[1] =   SERIAL_RF.read();
     #endif
-    if( ((uint8_t*)pData)[1] != ucFrameSize ){
+    if( ((uint8_t*)pData)[1] != ucFrameSize  || SERIAL_RF.available() < (ucSize - 2)){
       return false;
     }else{
-      #ifdef DEBUG_COMM
-        Serial.print("RX: ");
-        Serial.print(((uint8_t*)pData)[0],HEX);
-        Serial.print(" ");
-        Serial.print(((uint8_t*)pData)[1],HEX);
-        Serial.print(" ");
+      #ifdef DEBUG_COMM_RXTX
+        SERIAL_DEBUG.print("RX: ");
+        SERIAL_DEBUG.print(((uint8_t*)pData)[0],HEX);
+        SERIAL_DEBUG.print(" ");
+        SERIAL_DEBUG.print(((uint8_t*)pData)[1],HEX);
+        SERIAL_DEBUG.print(" ");
       #endif
       for(i=2; i < ucSize; i++){
         #ifdef WIMOS_UNIT_TEST
@@ -932,14 +930,14 @@ bool receiveFrame( void* pData, uint8_t ucSize, uint8_t ucFrameSize){
           ((uint8_t*)pData)[i] =  SERIAL_RF.read();
         #endif
         
-      #ifdef DEBUG_COMM
-        Serial.print(((uint8_t*)pData)[i],HEX);
-        Serial.print(" ");
+      #ifdef DEBUG_COMM_RXTX
+        SERIAL_DEBUG.print(((uint8_t*)pData)[i],HEX);
+        SERIAL_DEBUG.print(" ");
       #endif
       }
       clearBufferRF();
-      #ifdef DEBUG_COMM
-        Serial.println();
+      #ifdef DEBUG_COMM_RXTX
+        SERIAL_DEBUG.println();
       #endif
     }
   }
@@ -962,8 +960,8 @@ void sendFrame(const void* pData, uint8_t ucSize){
     uint8_t i = 0;
     char ucDebug[10];
     clearBufferRF();
-    #ifdef DEBUG_COMM
-      Serial.print("TX: ");
+    #ifdef DEBUG_COMM_RXTX
+      SERIAL_DEBUG.print("TX: ");
     #endif
     for(i=0; i<ucSize/PACKAGE_SIZE_RF; i++){
       for(uint8_t j=0; j<PACKAGE_SIZE_RF; j++){
@@ -971,9 +969,9 @@ void sendFrame(const void* pData, uint8_t ucSize){
       #ifdef WIMOS_UNIT_TEST
         ucUnitTestOutput[i] = ((uint8_t*)pData)[(i*PACKAGE_SIZE_RF)+j];
       #else
-        #ifdef DEBUG_COMM
-          Serial.print(((uint8_t*)pData)[(i*PACKAGE_SIZE_RF)+j],HEX);
-          Serial.print(" ");
+        #ifdef DEBUG_COMM_RXTX
+          SERIAL_DEBUG.print(((uint8_t*)pData)[(i*PACKAGE_SIZE_RF)+j],HEX);
+          SERIAL_DEBUG.print(" ");
         #endif
         SERIAL_RF.write(((uint8_t*)pData)[(i*PACKAGE_SIZE_RF)+j]);
         /*Go to the first state.*/
@@ -988,9 +986,9 @@ void sendFrame(const void* pData, uint8_t ucSize){
     }
     if(ucSize % PACKAGE_SIZE_RF > 0){
       for(i=0; i< (ucSize % PACKAGE_SIZE_RF); i++){
-        #ifdef DEBUG_COMM
-          Serial.print(((uint8_t*)pData)[((ucSize / PACKAGE_SIZE_RF)*PACKAGE_SIZE_RF)+i],HEX);
-          Serial.print(" ");
+        #ifdef DEBUG_COMM_RXTX
+          SERIAL_DEBUG.print(((uint8_t*)pData)[((ucSize / PACKAGE_SIZE_RF)*PACKAGE_SIZE_RF)+i],HEX);
+          SERIAL_DEBUG.print(" ");
         #endif
         SERIAL_RF.write(((uint8_t*)pData)[((ucSize / PACKAGE_SIZE_RF)*PACKAGE_SIZE_RF)+i]);
         /*Go to the first state.*/
@@ -1002,9 +1000,9 @@ void sendFrame(const void* pData, uint8_t ucSize){
         #endif   
       }
       for(i=0; i< PACKAGE_SIZE_RF - (ucSize % PACKAGE_SIZE_RF); i++){
-        #ifdef DEBUG_COMM
-          Serial.print(0x00 ,HEX);
-          Serial.print(" ");
+        #ifdef DEBUG_COMM_RXTX
+          SERIAL_DEBUG.print(0x00 ,HEX);
+          SERIAL_DEBUG.print(" ");
         #endif
         SERIAL_RF.write((uint8_t)0x00);
         /*Go to the first state.*/
@@ -1020,8 +1018,8 @@ void sendFrame(const void* pData, uint8_t ucSize){
       
     }
     
-    #ifdef DEBUG_COMM
-      Serial.println();
+    #ifdef DEBUG_COMM_RXTX
+      SERIAL_DEBUG.println();
     #endif
   #endif
   return;
@@ -1876,7 +1874,6 @@ void sendFrame(const void* pData, uint8_t ucSize){
       communicationThread = runFunction;
       stCommand.ucCommand = COMMAND_GET_GENERAL_INFO;
       stGlobalWimosInfoMsg.ucChecksum = getChecksum(&stGlobalWimosInfoMsg, sizeof(stGlobalWimosInfoMsg)-1);
-      //stWimosInfoMessage;
       /*Send the ACK*/
       runFunction();
       

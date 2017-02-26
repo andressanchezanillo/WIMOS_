@@ -235,15 +235,16 @@
      * @brief Core Wimos function.
      */
     void coreWimos(void);
-    /**
-     * @brief Initialize WIMOS.
-     */
-    void initWimos(void);
     
     /**
      * @brief Initialize Debug.
      */
     void initDebug(void);
+    
+    /**
+     * @brief Initialize WIMOS.
+     */
+    void initWimos(void);
     
     /**
      * @brief Initialize the internal peripherals.
@@ -279,8 +280,6 @@
      */
     #define _NEXT_STEP ((int8_t)1)
 
-
-  #ifdef WIMOS_DEBUG
     #ifdef __AVR_ATmega32U4__  
       /**
        * @brief DEBUG Serial interface.
@@ -298,7 +297,6 @@
       #define DEBUG_VALID(x,data,cond) SERIAL_DEBUG.print(x);SERIAL_DEBUG.print(data);SERIAL_DEBUG.println(cond?"\t\tOK":"\t\tERROR"); 
         
     #endif
-  #endif
 
   
   #ifdef __SAM3X8E__  
@@ -315,8 +313,7 @@
      * @brief DEBUG Serial baudrate.
      */
     #define BAUDRATE_DEBUG (115200)
-
-    
+        
     #ifdef WIMOS_DEBUG
     
       #ifdef DEBUG_COLOR
@@ -401,9 +398,7 @@
        * @brief Debug Macro for Test.
        */
       #define DEBUG_VALID(x,data,cond) sprintf(pDebug,x,data); debugUTest(__func__, (cond?D_OK:D_ERROR) ,pDebug,(cond?eOK:eERROR));sprintf(pDebug,"") 
-      
-      void initDebug(void);
-      
+            
       void debugCommand(void);
     
     #else
@@ -729,6 +724,11 @@
      * @brief Core Wimos function.
      */
     void coreWimos(void);
+    
+    /**
+     * @brief Initialize Debug.
+     */
+    void initDebug(void);
     /**
      * @brief Initialize WIMOS.
      */
@@ -935,7 +935,7 @@
     /**
      * @brief RF Serial baudrate.
      */
-    #define BAUDRATE_RF (115200)
+    #define BAUDRATE_RF (57600)
 
     
     
