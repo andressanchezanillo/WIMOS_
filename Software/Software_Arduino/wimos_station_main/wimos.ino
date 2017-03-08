@@ -165,7 +165,6 @@ extern void initWimos(void){
         _test_n3VT01();
         _test_n3VT02();
         _test_n3VT03();
-        _test_n3VT04();
         _test_n3VT05();
         _test_n3VT06();
         _test_n3VT07();
@@ -174,6 +173,10 @@ extern void initWimos(void){
         _test_n3VT10();
         _test_n3VT11();
       #endif
+      #ifdef __AVR_ATmega32U4__  
+        _test_n4VT01();
+      #endif
+      
       while(true);
     #else
       initWimosService();

@@ -80,6 +80,10 @@ extern void (*communicationThread)(void);
   uint8_t ucUnitTestInputIndex;
   uint8_t ucUnitTestInputSize;
 #endif
+
+#ifdef WIMOS_VALIDATION_TEST
+  bool bValidationOnGoing = true;
+#endif
 /**
  * @brief Communication initialization.
  *
@@ -186,16 +190,19 @@ void waitCommand(void){
     
     /*Success Command Rate.*/
     if(millis() - ulTimeCommandsRate >= TIME_COMMAND_RATE){
-      SERIAL_USB.print("[INFO001]:");
-      SERIAL_USB.print(" ");
-      SERIAL_USB.print((uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100, HEX);
-      SERIAL_USB.print(" ");
-      SERIAL_USB.print(((uint32_t)((float)((float) TIME_COMMAND_RATE / (float)ucCommandsResponseReceived))), HEX);
-      SERIAL_USB.println(" OK");
-      
-      ulTimeCommandsRate = millis();
-      ucCommandsResponseReceived = 0;
-      ucCommandsSent = 0;
+      #ifndef WIMOS_VALIDATION_TEST
+        SERIAL_USB.print("[INFO001]:");
+        SERIAL_USB.print(" ");
+        SERIAL_USB.print((uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100, HEX);
+        SERIAL_USB.print(" ");
+        SERIAL_USB.print(((uint32_t)((float)((float) TIME_COMMAND_RATE / (float)ucCommandsResponseReceived))), HEX);
+        SERIAL_USB.println(" OK");      
+        ulTimeCommandsRate = millis();
+        ucCommandsResponseReceived = 0;
+        ucCommandsSent = 0;
+      #else
+        bValidationOnGoing = false;
+      #endif
     }
     
     /*Calculate the next command.*/
@@ -611,8 +618,22 @@ void runFunction(void){
         break;
   
         /*The command is an alert request.*/
-        case COMMAND_GET_QUEUE_ALERT:
-          /*TODO: make a Alert Queue.*/
+        case COMMAND_GET_ALERT_LIST:
+          
+          /*Build a general info message.*/
+          stGlobalWimosAlertMsg.ucBegin = 0xFF;
+          stGlobalWimosAlertMsg.ucFrameID = 0x06;
+          stGlobalWimosAlertMsg.ucMessageTo = 0x00;
+          stGlobalWimosAlertMsg.ucMessageFrom = 0x10; 
+          stGlobalWimosAlertMsg.ucChecksum  = getChecksum(&stGlobalWimosAlertMsg, (sizeof(stGlobalWimosAlertMsg)-1));
+  
+          /*Calculate the checksum.*/
+          ucLastChecksum = ((uint8_t)stGlobalWimosAlertMsg.ucChecksum << 1) & 0xFF ;  
+  
+          /*Send the general info response.*/
+          sendFrame(&stGlobalWimosAlertMsg,sizeof(stGlobalWimosAlertMsg));
+  
+          /*Go to next state.*/
           communicationThread = waitACK;
         
         break;
@@ -734,10 +755,64 @@ void runFunction(void){
             }
           break;
           
-          case COMMAND_GET_QUEUE_ALERT:
-            /*TODO: make a Alert Queue.*/
-            communicationThread = waitACK;
-          
+          case COMMAND_GET_ALERT_LIST: /*If it receives a General info message.*/
+            stAlertMessage stLocalWimosAlertMsg;
+            
+            if( receiveFrame(&stLocalWimosAlertMsg, sizeof(stAlertMessage),  6 ) ){ 
+              /*If the ACK message is for me and from the Command.*/
+              if(stLocalWimosAlertMsg.ucMessageTo == WIMOS_ID && stLocalWimosAlertMsg.ucMessageFrom == stCommand.ucMessageTo){                
+                /* The checksum matched.*/
+                if( stLocalWimosAlertMsg.ucChecksum  == getChecksum(&stLocalWimosAlertMsg, (sizeof(stLocalWimosAlertMsg)-1))){ 
+                
+                  /*Calculate the ACK.*/
+                  ucLastChecksum = ((uint8_t)stLocalWimosAlertMsg.ucChecksum << 1) & 0xFF ;  
+                  
+                  /*Frame to USB.*/
+                  SERIAL_USB.print("FRAME");
+                  SERIAL_USB.print(stCommand.ucCommand);
+                  SERIAL_USB.print(":");
+                      
+                  for(uint8_t i=0; i< sizeof(stLocalWimosAlertMsg); i++ ){
+                    SERIAL_USB.print(" ");
+                    SERIAL_USB.print(((uint8_t*)&stLocalWimosAlertMsg)[i], HEX);
+                  }
+                  
+                  /*Go to next state.*/
+                  communicationThread = sendACK;
+                  
+                  /*Clear first execution value.*/
+                  bFirstExec = true;
+                  
+                  return;
+                /*The checksum not matched.*/
+                }else{
+                                  
+                  /*Build the ACK error message.*/
+                  stACK.ucBegin = 0xFF;
+                  stACK.ucFrameID= 0x03;                
+                  stACK.ucMessageFrom = WIMOS_ID;
+                  stACK.ucMessageTo = stCommand.ucMessageTo;
+                  stACK.ucACK = 0x01;
+  
+                  /*Send ACK-NOK.*/
+                  sendFrame(&stACK, sizeof(stACK));
+                  #ifdef DEBUG_COMM_STATUS
+                    SERIAL_DEBUG.print(__FUNCTION__);
+                    SERIAL_DEBUG.println(": Checksum Error");
+                  #endif             
+  
+                  /*Go to the first state.*/
+                  communicationThread = sendCommand;          
+                  
+                  return;
+                }
+              }else{
+                #ifdef DEBUG_COMM_STATUS
+                  SERIAL_DEBUG.print(__FUNCTION__);
+                  SERIAL_DEBUG.println(": Address Error");
+                #endif
+              }
+            }          
           break;
           /*DON'T ERASE THIS COMMENT.*/
           /*INPUT:#0x0020#*/
@@ -1985,6 +2060,31 @@ void sendFrame(const void* pData, uint8_t ucSize){
 
   #ifdef WIMOS_VALIDATION_TEST
   
-
+      #ifdef __AVR_ATmega32U4__
+        /**
+         * @brief Wimos test n3.VT03.
+         *
+         * Unit test n4.VT01 function.
+         * @verbatim like this@endverbatim 
+         * @param none.
+         * @return none.
+         */
+        extern void _test_n4VT01 (void){
+          const char* testName = "n4.VT01 = %ld";     
+          
+          ulTimeCommandsRate = millis();     
+          communicationThread = sendCommand;
+          /*Body_TEST:*/    
+          do{
+            communicationThread();
+          }while(bValidationOnGoing == false);
+          DEBUG_VALID(testName , 
+                     ((uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100), 
+                     ((((uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100)>= 85 ) &&
+                     (((uint32_t)((float)((float) TIME_COMMAND_RATE / (float)ucCommandsResponseReceived))) <= 333 ) ));
+          /*End_Body_TEST:*/
+        } 
+        
+    #endif
   #endif
 #endif

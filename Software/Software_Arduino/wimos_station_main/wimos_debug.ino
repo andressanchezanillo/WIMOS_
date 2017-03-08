@@ -30,7 +30,7 @@
 #include "main_config.h"
   
 extern void initDebug(void){
-  #if defined(WIMOS_DEBUG) or defined(DEBUG_COMM_RXTX) or defined(DEBUG_COMM_STATUS) 
+  #if defined(WIMOS_DEBUG) or defined(DEBUG_COMM_RXTX) or defined(DEBUG_COMM_STATUS) or defined(DEBUG_ANALOG_A5)
     #ifdef __SAM3X8E__
       stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_DEBUG_MASK;
     #endif

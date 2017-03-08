@@ -41,6 +41,13 @@ stWimosPortValuesMessage stGlobalWimosPortMsg;
  */
 stWimosInfoMessage stGlobalWimosInfoMsg;
 
+/**
+ * @brief Global variable for Wimos Alert.
+ */
+stAlertMessage stGlobalWimosAlertMsg;
+
+
+
 char pDebug[150];
 
 /**

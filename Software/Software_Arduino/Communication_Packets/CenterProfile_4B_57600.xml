@@ -22,7 +22,7 @@
       <setting command="SE">E8</setting>
       <setting command="DE">E8</setting>
       <setting command="CI">11</setting>
-      <setting command="PL">4</setting>
+      <setting command="PL">0</setting>
       <setting command="PM">1</setting>
       <setting command="EE">0</setting>
       <setting command="EO">0</setting>
