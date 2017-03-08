@@ -27,9 +27,10 @@
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 
-#ifdef __SAM3X8E__
   #include "_setting.h"
   #include "main_config.h"
+  
+#ifdef __SAM3X8E__
   
   
   
@@ -111,13 +112,97 @@
       stWimosPort->usPortA4 = analogRead(WIMOS_A4_PORT);   
     #endif
     #ifdef _EN_WIMOS_PORT_A5
-      stWimosPort->usPort5A1 = analogRead(WIMOS_A5_1_PORT); 
-      stWimosPort->usPort5A2 = analogRead(WIMOS_A5_2_PORT); 
-      stWimosPort->usPort5A3 = analogRead(WIMOS_A5_3_PORT); 
-    
+      float fPort5A = 0.0f;
+      uint8_t ucAlertLevel = 0;
+      static float fAveragePort5A = 0.0f;
+      static uint8_t ucPort5AIndex = 2;
+      static uint32_t ulTimerAlertA5 = millis();
+      
+      stWimosPort->usPort5A1 = (uint16_t)(((float)analogRead(WIMOS_A5_1_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
+      stWimosPort->usPort5A1 = abs(stWimosPort->usPort5A1 + _WIMOS_5A1_OFFSET_1); 
+      stWimosPort->usPort5A1 = abs(stWimosPort->usPort5A1 * _WIMOS_5A1_COEFICIENT_1) ; 
+      stWimosPort->usPort5A1 = abs(stWimosPort->usPort5A1 + _WIMOS_5A1_OFFSET_2); 
+      stWimosPort->usPort5A1 = abs(stWimosPort->usPort5A1 * _WIMOS_5A1_COEFICIENT_2) ; 
+      
+      stWimosPort->usPort5A2 = (uint16_t)(((float)analogRead(WIMOS_A5_2_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
+      stWimosPort->usPort5A2 = abs(stWimosPort->usPort5A2 + _WIMOS_5A2_OFFSET_1); 
+      stWimosPort->usPort5A2 = abs(stWimosPort->usPort5A2 * _WIMOS_5A2_COEFICIENT_1) ; 
+      stWimosPort->usPort5A2 = abs(stWimosPort->usPort5A2 + _WIMOS_5A2_OFFSET_2); 
+      stWimosPort->usPort5A2 = abs(stWimosPort->usPort5A2 * _WIMOS_5A2_COEFICIENT_2) ; 
+      
+      stWimosPort->usPort5A3 = (uint16_t)(((float)analogRead(WIMOS_A5_3_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
+      stWimosPort->usPort5A3 = abs(stWimosPort->usPort5A3 + _WIMOS_5A3_OFFSET_1); 
+      stWimosPort->usPort5A3 = abs(stWimosPort->usPort5A3 * _WIMOS_5A3_COEFICIENT_1) ; 
+      stWimosPort->usPort5A3 = abs(stWimosPort->usPort5A3 + _WIMOS_5A3_OFFSET_2); 
+      stWimosPort->usPort5A3 = abs(stWimosPort->usPort5A3 * _WIMOS_5A3_COEFICIENT_2) ; 
+      
+      fPort5A = _WIMOS_5A_OPERATOR_JOINT(stWimosPort->usPort5A1,stWimosPort->usPort5A2,stWimosPort->usPort5A3);
+
+      MATH_MOVING_AVERAGE(fAveragePort5A, fPort5A, ucPort5AIndex, (_WIMOS_5A_AVERAGE_SIZE/5));
+      
+      ucAlertLevel = _WIMOS_5A_DETECTION(fPort5A);
+      if(ucAlertLevel > 0){
+        if(stGlobalWimosAlertMsg.stAlert.ucAlertA5 < ucAlertLevel){
+            stGlobalWimosAlertMsg.stAlert.ucAlertA5 = ucAlertLevel;
+            ulTimerAlertA5 = millis();
+        }
+      }else if (millis() - ulTimerAlertA5 >= _WIMOS_ALERT_TIMEOUT){
+        stGlobalWimosAlertMsg.stAlert.ucAlertA5 = 0;          
+      }
     #endif
   }
-  
+
+  #ifdef _EN_WIMOS_PORT_A5
+    uint8_t detectionA5Default(float fInputValue){
+      static float fLastValue = 0.0f;
+      static float flA5Average = 0.0f;
+      static uint8_t ucA5Index = 2;
+      bool bDetectionPos = false;
+      bool bDetectionNeg = false;
+      uint8_t ucAlert = 0;
+      
+      _WIMOS_5A_PROCESSOR(flA5Average, fInputValue, ucA5Index); 
+      
+      for(uint8_t i=1; i<(_WIMOS_5A_OFFSET_MAX_SIZE+1); i++){
+        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fLastValue, flA5Average, (_WIMOS_5A_AVERAGE_OFFSET*i)) == false); 
+        bDetectionPos &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA5Average, (_WIMOS_5A_AVERAGE_OFFSET*i)) == true);
+        
+        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fLastValue, flA5Average, -(_WIMOS_5A_AVERAGE_OFFSET*i)) == false); 
+        bDetectionNeg &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA5Average, -(_WIMOS_5A_AVERAGE_OFFSET*i)) == true);
+
+        #ifdef DEBUG_ANALOG_A5
+          
+          SERIAL_DEBUG.print(flA5Average+(_WIMOS_5A_AVERAGE_OFFSET*i));
+          SERIAL_DEBUG.print(" ");
+          SERIAL_DEBUG.print(flA5Average-(_WIMOS_5A_AVERAGE_OFFSET*i));
+          SERIAL_DEBUG.print(" ");
+
+        #endif
+        
+        if(bDetectionNeg || bDetectionPos){
+          ucAlert = i;
+        }
+      }
+      
+      #ifdef DEBUG_ANALOG_A5
+      
+        
+        SERIAL_DEBUG.print(abs(fInputValue));      
+        SERIAL_DEBUG.print(" ");
+        SERIAL_DEBUG.println((uint8_t) ucAlert);
+      #endif
+      
+      flA5Average  = fInputValue;
+      
+      return ucAlert;
+    }
+    
+    uint8_t detectionA5Custom(float fInputValue){
+      /*TODO: Implementation Custom*/
+      return 0;
+    }
+
+  #endif
   
   
   #ifdef WIMOS_DEBUG

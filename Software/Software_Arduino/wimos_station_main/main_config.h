@@ -36,7 +36,7 @@
      ***************************************************************/
     
     #define COMMAND_GET_GENERAL_INFO  0xA1
-    #define COMMAND_GET_QUEUE_ALERT   0xA2
+    #define COMMAND_GET_ALERT_LIST    0xA2
     #define BROADCAST_ID              0xFE
     
     #ifdef __SAM3X8E__ 
@@ -230,20 +230,46 @@
       uint8_t ucCommand; /**< Command value. */
       uint8_t ucChecksum; /**< Checksum value. */
     } stCommandMessage;
+
+    
+    typedef struct __attribute__((packed)) _WimosAlert{ 
+      stWimosDateTime stDateTime; /**< Internal. */
+      uint32_t ulInternalTime; /**< Alert level A1. */
+      uint8_t ucAlertA1;/**< Alert level A1. */
+      uint8_t ucAlertA2;/**< Alert level A2. */
+      uint8_t ucAlertA3;/**< Alert level A3. */
+      uint8_t ucAlertA4;/**< Alert level A4. */
+      uint8_t ucAlertA5;/**< Alert level A5. */
+    } stWimosAlert;
+
+    
+    typedef struct __attribute__((packed)) _AlertMessage{ 
+      uint8_t ucBegin; /**< Constant frame begin value. */
+      uint8_t ucFrameID; /**< Const size value. */
+      
+      uint8_t ucMessageFrom;/**< Address of system what send the message . */
+      uint8_t ucMessageTo;/**< The message is for this address . */
+      
+      stWimosAlert stAlert; /**< Alert value. */
+      uint8_t ucChecksum; /**< Checksum value. */
+    } stAlertMessage;
+
+    
     
     /**
      * @brief Core Wimos function.
      */
     void coreWimos(void);
-    /**
-     * @brief Initialize WIMOS.
-     */
-    void initWimos(void);
     
     /**
      * @brief Initialize Debug.
      */
     void initDebug(void);
+    
+    /**
+     * @brief Initialize WIMOS.
+     */
+    void initWimos(void);
     
     /**
      * @brief Initialize the internal peripherals.
@@ -279,8 +305,6 @@
      */
     #define _NEXT_STEP ((int8_t)1)
 
-
-  #ifdef WIMOS_DEBUG
     #ifdef __AVR_ATmega32U4__  
       /**
        * @brief DEBUG Serial interface.
@@ -298,7 +322,6 @@
       #define DEBUG_VALID(x,data,cond) SERIAL_DEBUG.print(x);SERIAL_DEBUG.print(data);SERIAL_DEBUG.println(cond?"\t\tOK":"\t\tERROR"); 
         
     #endif
-  #endif
 
   
   #ifdef __SAM3X8E__  
@@ -315,8 +338,7 @@
      * @brief DEBUG Serial baudrate.
      */
     #define BAUDRATE_DEBUG (115200)
-
-    
+        
     #ifdef WIMOS_DEBUG
     
       #ifdef DEBUG_COLOR
@@ -401,9 +423,7 @@
        * @brief Debug Macro for Test.
        */
       #define DEBUG_VALID(x,data,cond) sprintf(pDebug,x,data); debugUTest(__func__, (cond?D_OK:D_ERROR) ,pDebug,(cond?eOK:eERROR));sprintf(pDebug,"") 
-      
-      void initDebug(void);
-      
+            
       void debugCommand(void);
     
     #else
@@ -641,12 +661,31 @@
      * Math Constants definition:
      ***************************************************************/
     
-     #define VCC_LOGIC                          3300
-     #define ADC_MAX_VALUE                      1024
-     #define ADC_VOLTAGE_TO_BAT_VOLTAGE         4
-     #define VCC_MAX_BATTERY                    13000       
-     #define VCC_MIN_BATTERY                    7150
+     #define VCC_LOGIC                          (3300U)
+     #define ADC_MAX_VALUE                      (65535U)
+     #define ADC_VOLTAGE_TO_BAT_VOLTAGE         (4U)
+     #define VCC_MAX_BATTERY                    (13000U)       
+     #define VCC_MIN_BATTERY                    (7150U)    
+     #define GRAVITY_MM_S2                      ((float)9806.65f)
+     #define MATH_VECTOR3D_LENGHT(x,y,z)        (float)(sqrt((x*x)+(y*y)+(z*z)));
+     #define MATH_AVERAGE3D(x,y,z)              (float)((x+y+z)/3U);
+     #define MATH_VECTOR2D_LENGHT(x,y)          (float)sqrt((x*x)+(y*y));
+     #define MATH_AVERAGE2D(x,y)                (float)((x+y)/2U);
+     
+     #define MATH_MOVING_AVERAGE(lastAverage, inputValue, currentIndex, maxIndex)       {\
+                                                                                            lastAverage = ((lastAverage * currentIndex) - lastAverage)/(currentIndex-1);\
+                                                                                            lastAverage = ((lastAverage * (currentIndex-1)) + inputValue)/currentIndex;\
+                                                                                            if(currentIndex < maxIndex)currentIndex++;\
+                                                                                        }
+     
+     #define MATH_DEFAULT_THRESHOLD(inputValue, inputThreshold, inputOffset)           ((inputOffset >= 0)?(inputValue >= (inputThreshold + inputOffset)):(inputValue <= (inputThreshold+inputOffset)))        
+
     
+    uint8_t detectionA5Custom(float fInputValue);
+    uint8_t detectionA5Default(float fInputValue);
+
+
+
     
     /***************************************************************
      * Memory definition:
@@ -729,6 +768,11 @@
      * @brief Core Wimos function.
      */
     void coreWimos(void);
+    
+    /**
+     * @brief Initialize Debug.
+     */
+    void initDebug(void);
     /**
      * @brief Initialize WIMOS.
      */
@@ -889,7 +933,6 @@
         void _test_n3VT01 (void);
         void _test_n3VT02 (void);
         void _test_n3VT03 (void);
-        void _test_n3VT04 (void);
         void _test_n3VT05 (void);
         void _test_n3VT06 (void);
         void _test_n3VT07 (void);
@@ -897,6 +940,9 @@
         void _test_n3VT09 (void);
         void _test_n3VT10 (void);
         void _test_n3VT11 (void);
+        #ifdef __AVR_ATmega32U4__    
+          void _test_n4VT01 (void);
+        #endif
       #endif
     #endif
   #endif
@@ -935,7 +981,7 @@
     /**
      * @brief RF Serial baudrate.
      */
-    #define BAUDRATE_RF (115200)
+    #define BAUDRATE_RF (57600)
 
     
     

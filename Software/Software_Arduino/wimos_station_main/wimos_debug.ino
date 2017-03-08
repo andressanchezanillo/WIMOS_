@@ -26,18 +26,26 @@
  * Wimos is a Framework for easy IoT development.
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
-
+#include "_setting.h"
+#include "main_config.h"
+  
+extern void initDebug(void){
+  #if defined(WIMOS_DEBUG) or defined(DEBUG_COMM_RXTX) or defined(DEBUG_COMM_STATUS) or defined(DEBUG_ANALOG_A5)
+    #ifdef __SAM3X8E__
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_DEBUG_MASK;
+    #endif
+    SERIAL_DEBUG.begin(BAUDRATE_DEBUG);
+    while(!SERIAL_DEBUG);
+    delay(1000);
+  #else
+    #ifdef __SAM3X8E__
+      stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_DEBUG_MASK;
+    #endif
+  #endif
+}
 
 #ifdef WIMOS_DEBUG  //~(eINFO | eDATA);
-
-#ifndef __AVR_ATmega32U4__
-
-  #include "_setting.h"
-  #include "main_config.h"
-  
-  
-  
-    
+#ifndef __AVR_ATmega32U4__      
     /**
      * @brief Debug buffer.
      */
@@ -45,24 +53,8 @@
     
     
     static uint8_t ucCurrentDebugMode = ~(eINFO | eDATA);
- 
- #endif 
- 
-    extern void initDebug(void){
-      #ifdef WIMOS_DEBUG
-        #ifdef __SAM3X8E__
-          stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_DEBUG_MASK;
-        #endif
-        SERIAL_DEBUG.begin(BAUDRATE_DEBUG);
-        while(!SERIAL_DEBUG);
-        delay(1000);
-      #else
-        stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_DEBUG_MASK;
-      #endif
-    }
 
- 
-#ifndef __AVR_ATmega32U4__
+    
 
     extern void debug_print(const char* pFunction, const char* pLabel, const char* pData){
       uint8_t i=0;
@@ -83,7 +75,7 @@
     
     
     extern void debug(const char* pFunction, const char* pLabel, const char* pData, eDebugMode eMode){
-      //#if !defined(WIMOS_UNIT_TEST) and !defined(WIMOS_VALIDATION_TEST)
+      #if !defined(WIMOS_UNIT_TEST) and !defined(WIMOS_VALIDATION_TEST) and !defined(DEBUG_COMM_RXTX) and !defined(DEBUG_COMM_STATUS)
         if( eMode == eERROR || eMode == eOK ){
           debug_print(pFunction,pLabel,pData);
         }else{
@@ -91,7 +83,7 @@
             debug_print(pFunction,pLabel,pData);
           }
         }
-      //#endif
+      #endif
     }
     
     

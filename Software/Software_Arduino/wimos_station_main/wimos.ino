@@ -55,14 +55,15 @@ extern uint32_t coreWimosTimer1000ms = 0;
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 void initWimosService(void){
-      #ifdef WIMOS_DEBUG
-        #ifdef __AVR_ATmega32U4__
-          initDebug();
-        #endif
-        #ifdef __SAM3X8E__
-          initDebug();
-        #endif
+      
+      #ifdef __AVR_ATmega32U4__
+        initDebug();
       #endif
+      
+      #ifdef __SAM3X8E__
+        initDebug();
+      #endif
+      
       initInterPeriph();
       #ifdef __SAM3X8E__
         initExterPeriph(); 
@@ -164,7 +165,6 @@ extern void initWimos(void){
         _test_n3VT01();
         _test_n3VT02();
         _test_n3VT03();
-        _test_n3VT04();
         _test_n3VT05();
         _test_n3VT06();
         _test_n3VT07();
@@ -173,6 +173,10 @@ extern void initWimos(void){
         _test_n3VT10();
         _test_n3VT11();
       #endif
+      #ifdef __AVR_ATmega32U4__  
+        _test_n4VT01();
+      #endif
+      
       while(true);
     #else
       initWimosService();
@@ -247,8 +251,8 @@ extern void coreWimos(void){
     if((millis() - coreWimosTimer100ms) > 100){
       coreWimosTimer100ms = millis();
       readSensorsWimos();
-      /*sendFrame(void* pData, uint8_t ucSize);*/
     }
+    communicationThread();
     if((millis() - coreWimosTimer1000ms) > 250){
       coreWimosTimer1000ms = millis();
       updateInfoWimos();

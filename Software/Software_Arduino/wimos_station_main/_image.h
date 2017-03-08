@@ -1,5 +1,5 @@
 #ifdef __SAM3X8E__
-  //Byte array of bitmap of 320 x 240 px:
+  /*Byte array of bitmap of 320 x 240 px:*/
   
   #define MAIN_WINDOWS_SIZE 9600
   #define SCREEN_SIZE_X 320
