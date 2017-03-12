@@ -1,87 +1,139 @@
 import sys
-from PyQt4 import QtGui
+from PyQt4 import QtCore, QtGui
+from NetworkList import QNetworkList
+from NetworkGraph import QNetworkGraph
+from random import randint
 from datetime import datetime
+import serial
 
-class QNetworkItem (QtGui.QWidget):
-    def __init__ (self, parent = None):
-        super(QCustomQWidget, self).__init__(parent)
-        
-        self.MainLayout = QtGui.QHBoxLayout()
-        self.InfoLayout = QtGui.QVBoxLayout()   
-        
-        #Device Type Image
-        self.DeviceImage = QtGui.QLabel()
-        self.DeviceImage.setPixmap(QtGui.QPixmap("../images/Center_device.png"))
-        self.MainLayout.addWidget(self.DeviceImage)
 
-        #Device Battery State.
-        self.DeviceBattery = QtGui.QLabel()
-        self.DeviceBattery.setPixmap(QtGui.QPixmap('../images/battery100.ico').scaledToWidth(32))
-        self.MainLayout.addWidget(self.DeviceBattery)
-        self.MainLayout.addLayout(self.InfoLayout)
-             
-        #Device ID
-        self.DeviceID = QtGui.QLabel()
-        self.DeviceID.setText("<b>ID:</b> 0x01")
-        self.InfoLayout.addWidget(self.DeviceID)
-
-        self.DeviceType = QtGui.QLabel()
-        self.DeviceType.setText("<b>Type:</b> Center")
-        self.InfoLayout.addWidget(self.DeviceType)
-
-        #Status Layout              
-        self.StatusLayout = QtGui.QVBoxLayout()
-        self.MainLayout.addLayout(self.StatusLayout)
+class QNetworkWindows(QtGui.QWidget):
+    def __init__ (self):
+        super(QNetworkWindows, self).__init__()
+        self.NetworkLayout = QtGui.QHBoxLayout(self)
+        self.NetworkListLayout = QtGui.QVBoxLayout(self)
+        self.NetworkListScroll = QNetworkList(self)
+        self.NetworkInfo = QNetworkGraph()
+        self.NetworkButton = QtGui.QPushButton()
+        self.NetworkButton.setText("Connect")
+        self.NetworkButton.clicked.connect(self.startSerial)      
         
+        self.NetworkListLayout.addWidget(self.NetworkListScroll)
+        self.NetworkListLayout.addWidget(self.NetworkButton)
+        self.NetworkLayout.addLayout(self.NetworkListLayout)
+        self.NetworkLayout.addWidget(self.NetworkInfo)
+        self.setLayout(self.NetworkLayout)
+
+        self.TimerRefresh = QtCore.QTimer(self)
+        self.TimerRefresh.setInterval(250)
+        self.TimerRefresh.setSingleShot(False)
+        self.TimerRefresh.timeout.connect(self.refresh)
+        self.TimerRefresh.start(250)
+
+        self.TimerSerial = QtCore.QTimer(self)
+        self.TimerSerial.setInterval(10)
+        self.TimerSerial.setSingleShot(False)
+        self.TimerSerial.timeout.connect(self.processSerial)
+
+        self.Serial = {}
+                
+
+        self.startThreshold = 0
+        self.noThreshold = 0
+        self.lowThreshold = 1
+        self.mediumThreshold = 6
+        self.highThreshold = 10
+        self.endThreshold = 10
+
+
+    def startSerial(self):
+        self.NetworkButton.setText("Disconnect");
+        self.NetworkButton.clicked.connect(self.stopSerial)
+        self.TimerSerial.start(10)
+        self.Serial = serial.Serial(port='COM6',\
+                                    baudrate=115200,\
+                                    parity=serial.PARITY_NONE,\
+                                    stopbits=serial.STOPBITS_ONE,\
+                                    bytesize=serial.EIGHTBITS,\
+                                    timeout=1)
+
+    def stopSerial(self):
+        self.TimerSerial.stop()
+        self.NetworkButton.setText("Connect");
+        self.NetworkButton.clicked.connect(self.startSerial)
+        self.Serial.close()
+
+
         
-        #Device Last Package timestamp.
-        self.LastPackageTimestap = QtGui.QLabel()
-        self.LastPackageTimestap.setText("<b>Timestamp:</b> 2017-03-08 22:13:12   ")
-        self.InfoLayout.addWidget(self.LastPackageTimestap)
+
+    def processSerial(self):
+        line = self.Serial.readline()
+        if len(line) > 0:
+            print line
+            #values = line.split(' ')
+            #if len(values) > 0 :
+                #if values[-1] is "ACK-OK":
+                    #if values[0] is "Frame-125":
+                        
+                    #elif values[0] is "Frame-125":
+                        
+                    #elif values[0] is "Frame-125":
+            
+        print "Processing..."
     
-        #Device Image DataIn.
-        self.DeviceDatain = QtGui.QLabel()
-        self.DeviceDatain.setPixmap(QtGui.QPixmap('../images/led_red.png').scaledToWidth(16))
-        self.StatusLayout.addWidget(self.DeviceDatain)
+    def addInfo(self,
+                _FrameID, _FrameName,
+                _IdCenter, _IdHost,
+                _SystemDate, _SystemTime,
+                _GpsLatitude, _GpsLongitude,
+                _Memory, _Battery, _Status,
+                _CurrentDateTime):
 
-        #Build the main widget
-        self.setLayout(self.MainLayout)
+        self.NetworkListScroll.addInfo(_IdHost, 'Host', _Battery )
+        
+        self.NetworkInfo.addInfo(_FrameID, _FrameName,
+                                _IdCenter, _IdHost,
+                                _SystemDate, _SystemTime,
+                                _GpsLatitude, _GpsLongitude,
+                                _Memory, _Battery, _Status,
+                                _CurrentDateTime)
 
-    def addInfo(self, idDevice, typeDevice, batteryDevice, alertDevice):
-        # ID device
-        self.DeviceID.setText("<b>ID:</b> "+idDevice)
+    def addAlert(self,
+                _FrameID, _FrameName,
+                _IdCenter, _IdHost,
+                _SystemDate, _SystemTime,
+                _AlertA1, _AlertA2, _AlertA3,
+                _AlertA4, _AlertA5,
+                _CurrentDateTime):
 
-        # Type device
-        if(typeDevice is 'Center'):
-            self.DeviceType.setText("<b>Type:</b> "+typeDevice)
-            self.DeviceImage.setPixmap(QtGui.QPixmap("../images/Center_device.png"))
-        elif(typeDevice is 'Host'):
-            self.DeviceType.setText("<b>Type:</b> "+typeDevice)
-            self.DeviceImage.setPixmap(QtGui.QPixmap("../images/Host_device.png"))
+        Alert = max(int(_AlertA1), int(_AlertA2),
+                    int(_AlertA3), int(_AlertA4),
+                    int(_AlertA5))
+        AlertLevel = 'none'
 
-        if(batteryDevice is '100'):
-            self.DeviceBattery.setPixmap(QtGui.QPixmap('../images/battery100.ico').scaledToWidth(32))
-        elif(batteryDevice is '75'):
-            self.DeviceBattery.setPixmap(QtGui.QPixmap('../images/battery75.ico').scaledToWidth(32))
-        elif(batteryDevice is '50'):
-            self.DeviceBattery.setPixmap(QtGui.QPixmap('../images/battery50.ico').scaledToWidth(32))
-        elif(batteryDevice is '25'):
-            self.DeviceBattery.setPixmap(QtGui.QPixmap('../images/battery25.ico').scaledToWidth(32))
-
-        if(alertDevice is 'none'):
-            self.DeviceDatain.setPixmap(QtGui.QPixmap('../images/led_no.png').scaledToWidth(16))
-        elif(alertDevice is 'low'):
-            self.DeviceDatain.setPixmap(QtGui.QPixmap('../images/led_green.png').scaledToWidth(16))
-        elif(alertDevice is 'medium'):
-            self.DeviceDatain.setPixmap(QtGui.QPixmap('../images/led_orange.png').scaledToWidth(16))
-        elif(alertDevice is 'high'):
-            self.DeviceDatain.setPixmap(QtGui.QPixmap('../images/led_red.png').scaledToWidth(16))
+        if(Alert < self.startThreshold or Alert > self.endThreshold):
+            AlertLevel = 'none'
+        elif(Alert >= self.startThreshold and Alert <= self.noThreshold):
+            AlertLevel = 'none'
+        elif(Alert > self.noThreshold and Alert <= self.lowThreshold):
+            AlertLevel = 'low'
+        elif(Alert > self.lowThreshold and Alert <= self.mediumThreshold):
+            AlertLevel = 'medium'
+        elif(Alert >= self.mediumThreshold and Alert <= self.highThreshold):
+            AlertLevel = 'high'
         else:
-            self.DeviceDatain.setPixmap(QtGui.QPixmap('../images/led_no.png').scaledToWidth(16))
-        
+            AlertLevel = 'none'
 
-        self.LastPackageTimestap.setText("<b>Timestamp:</b> 07/03/2017 - 22:13:12.4   ")
+        self.NetworkListScroll.addAlert(_IdHost, AlertLevel)
         
-        self.LastPackageTimestap.setText("<b>Timestamp:</b> "+ datetime.now().strftime('%Y-%m-%d %H:%M:%S')+"   ")
+        self.NetworkInfo.addAlert(_FrameID, _FrameName,
+                                    _IdCenter, _IdHost,
+                                    _SystemDate, _SystemTime,
+                                    _AlertA1, _AlertA2, _AlertA3,
+                                    _AlertA4, _AlertA5, AlertLevel,
+                                    _CurrentDateTime)
+    def refresh(self):
+        self.NetworkListScroll.refresh()
+        #self.NetworkInfo.refresh()
         
-
+        
