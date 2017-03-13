@@ -1,6 +1,7 @@
 import sys
 from PyQt4 import QtCore, QtGui
 from NetworkItem import QNetworkItem
+from NetworkGraph import QNetworkGraph
 from random import randint
 import time, threading
 
@@ -8,59 +9,140 @@ class QNetworkList (QtGui.QWidget):
 
     def __init__ (self, parent = None):
         super(QNetworkList, self).__init__(parent)
-        #self.NetworkList = QtGui.QListWidget(self)
         QtGui.QWidget.__init__(self)
-        self.mygroupbox = QtGui.QGroupBox()
-        self.myform = QtGui.QFormLayout()
-        self.NetworkItemArray = []
 
+        # List object.
+        self.mygroupbox = QtGui.QGroupBox(self)
+        self.myform = QtGui.QFormLayout(self)  
         self.mygroupbox.setLayout(self.myform)
-        self.scroll = QtGui.QScrollArea()
+        self.scroll = QtGui.QScrollArea(self)
         self.scroll.setWidget(self.mygroupbox)
         self.scroll.setWidgetResizable(True)
         self.scroll.setFixedWidth(355)
         self.scroll.setMinimumHeight(440)
-        self.layout = QtGui.QVBoxLayout(self)
-        self.layout.addWidget(self.scroll)
 
+        # Add a network Graph.
+        self.NetworkGraph = QNetworkGraph()        
+        
+        # Layout Scroll.
+        self.layout = QtGui.QHBoxLayout(self)
+        self.layout.addWidget(self.scroll)
+        self.layout.addWidget(self.NetworkGraph)
+
+        # Network item set.
+        self.NetworkItemArray = []
         self.timeoutDataIn = 250
         self.timeoutConnection = 5000
 
-        #self.displayControl()
+        # Settings for threshold.
+        self.startThreshold = 0
+        self.noThreshold = 0
+        self.lowThreshold = 1
+        self.mediumThreshold = 6
+        self.highThreshold = 10
+        self.endThreshold = 10
+
+        # Timer refresh thread
+        self.TimerRefresh = QtCore.QTimer(self)
+        self.TimerRefresh.setInterval(250)
+        self.TimerRefresh.setSingleShot(False)
+        self.TimerRefresh.timeout.connect(self.refresh)
+        self.TimerRefresh.start(250)
         
-    def addInfo(self, idDevice, typeD, batteryD):
+        
+    def addInfo(self,
+                _FrameID, _FrameName,
+                _IdCenter, _IdHost,
+                _SystemDate, _SystemTime,
+                _GpsLatitude, _GpsLongitude,
+                _Memory, _Battery, _Status,
+                _CurrentDateTime):
         varFound = False
 
+        # Update the item list.
         for item in self.NetworkItemArray:
-            if(item.getID() == int(idDevice)):
-                item.addInfo(idDevice,typeD,batteryD)
+            if(item.getID() == int(_IdHost)):
+                item.addInfo(_IdHost,'Host',_Battery)
                 varFound = True
 
+        #Add the new item.
         if not varFound:
+
+            # Add new Line.
             line = QtGui.QFrame();
             line.setFrameShape(QtGui.QFrame.HLine)
             line.setFrameShadow(QtGui.QFrame.Sunken)
+
+            # Enter the new Item.
             self.NetworkItemArray.append(QNetworkItem())            
-            self.NetworkItemArray[-1].addInfo(idDevice,typeD,batteryD)
+            self.NetworkItemArray[-1].addInfo(_IdHost,'Host',_Battery)
+            
+            # Add the Item and the Separator line.
             self.myform.addRow(self.NetworkItemArray[-1])
             self.myform.addRow(line)
 
+        #Send the information to Network Graph.
+        self.NetworkGraph.addInfo(_FrameID, _FrameName,
+                                 _IdCenter, _IdHost,
+                                 _SystemDate, _SystemTime,
+                                 _GpsLatitude, _GpsLongitude,
+                                 _Memory, _Battery, _Status,
+                                 _CurrentDateTime)
+
         
-    def addAlert(self, idDevice, alertDevice):
+    def addAlert(self,
+                _FrameID, _FrameName,
+                _IdCenter, _IdHost,
+                _SystemDate, _SystemTime,
+                _AlertA1, _AlertA2, _AlertA3,
+                _AlertA4, _AlertA5,
+                _CurrentDateTime):
+
+        Alert = max(int(_AlertA1), int(_AlertA2),
+                    int(_AlertA3), int(_AlertA4),
+                    int(_AlertA5))
+        AlertLevel = 'none'
+
+        if(Alert < self.startThreshold or Alert > self.endThreshold):
+            AlertLevel = 'none'
+        elif(Alert >= self.startThreshold and Alert <= self.noThreshold):
+            AlertLevel = 'none'
+        elif(Alert > self.noThreshold and Alert <= self.lowThreshold):
+            AlertLevel = 'low'
+        elif(Alert > self.lowThreshold and Alert <= self.mediumThreshold):
+            AlertLevel = 'medium'
+        elif(Alert >= self.mediumThreshold and Alert <= self.highThreshold):
+            AlertLevel = 'high'
+        else:
+            AlertLevel = 'none'
+        
+        # Add the alert to the Device list if it exists.
         for item in self.NetworkItemArray:
-            if(item.getID() == int(idDevice)):
-                item.addAlert(idDevice,alertDevice)
+            if(item.getID() == int(_IdHost)):
+                item.addAlert(_IdHost,AlertLevel)
+
+        # Send the alert to Network Graph.
+        self.NetworkGraph.addAlert(_FrameID, _FrameName,
+                                    _IdCenter, _IdHost,
+                                    _SystemDate, _SystemTime,
+                                    _AlertA1, _AlertA2, _AlertA3,
+                                    _AlertA4, _AlertA5, AlertLevel,
+                                    _CurrentDateTime)
             
             
     def refresh(self):
-        for item in self.NetworkItemArray:        
-
+        # Check each item.
+        for item in self.NetworkItemArray:
+            
+            # If the timeout of datain is expired.
             if (int(round(time.time() * 1000)) - item.getLastUpdateTime()) > self.timeoutDataIn:
                 item.addAlert(item.getID(), 'none', True)
-                
+            
+            # If the timeout of connection is expired.    
             if (int(round(time.time() * 1000)) - item.getLastUpdateTime()) > self.timeoutConnection:
                 if item.getStatus():
                     item.enable = False
                     item.disconnect()
+                    self.NetworkGraph.disconnect(item.getID())
 
 

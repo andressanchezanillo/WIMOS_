@@ -1,6 +1,5 @@
 import sys
 from PyQt4 import QtCore, QtGui
-from NetworkList import QNetworkList
 from random import randint
 from datetime import datetime
 import os
@@ -11,7 +10,7 @@ class QNetworkText(QtGui.QWidget):
         self.NetworkLayout = QtGui.QVBoxLayout(self)
         self.NetworkOption = QtGui.QHBoxLayout(self)
         self.NetworkInfo = QtGui.QTextEdit()
-        self.NetworkInfo.setFixedWidth(600)
+        self.NetworkInfo.setMinimumWidth(600)
         self.NetworkInfo.setReadOnly(True)
         self.NetworkAutoScroll = QtGui.QCheckBox("Autoscroll")
         self.NetworkLogger = QtGui.QCheckBox("Logger")
@@ -44,7 +43,7 @@ class QNetworkText(QtGui.QWidget):
                 _GpsLatitude, _GpsLongitude,
                 _Memory, _Battery, _Status,
                 _CurrentDateTime):
-        bodyText = "<b>Frame:</b> "+_FrameName+"("+_FrameID+") - "+_CurrentDateTime
+        bodyText = "<br><b>Frame:</b> "+_FrameName+"("+_FrameID+") - "+_CurrentDateTime
         bodyText += "<ul>"
         bodyText += "<li><b>[Center] Station ID:</b> "+_IdCenter+"</li>"
         bodyText += "<li><b>[Host] Station ID:</b> "+_IdHost+"</li>"
@@ -59,7 +58,7 @@ class QNetworkText(QtGui.QWidget):
         bodyText += "</ul>"		
         bodyText += "<li><b>[Host]<b> End </li>"
         bodyText += "</ul>"
-        bodyText += "<b>Frame</b> End <br><br>"
+        bodyText += "<b>Frame</b> End <br>"
 
         
         if(self.NetworkAutoScroll.isChecked()):
@@ -81,7 +80,7 @@ class QNetworkText(QtGui.QWidget):
                 _AlertA4, _AlertA5,
                 _CurrentDateTime):
 
-        bodyText = "<b>[Frame] Frame ID:</b> "+_FrameName+"("+_FrameID+") - "+_CurrentDateTime+""
+        bodyText = "<br><b>[Frame] Frame ID:</b> "+_FrameName+"("+_FrameID+") - "+_CurrentDateTime+""
         bodyText += "<ul>"
         bodyText += "<li><b>[Center] Station ID:</b> "+_IdCenter+"</li>"
         bodyText += "<li><b>[Host] Station ID:</b> "+_IdHost+"</li>"
@@ -99,7 +98,7 @@ class QNetworkText(QtGui.QWidget):
         bodyText += "</ul>"		
         bodyText += "<li><b>[Host]</b> End </li>"
         bodyText += "</ul>"
-        bodyText += "<b>Frame</b> End <br><br>"
+        bodyText += "<b>Frame</b> End <br>"
 
         
         if(self.NetworkAutoScroll.isChecked()):
@@ -113,9 +112,9 @@ class QNetworkText(QtGui.QWidget):
         self.logger(bodyText)
 
     def disconnect(self, idDevice):
-        bodyText = "<b>[Frame] Frame ERROR:</b> "
+        bodyText = "<br><b>[Frame] Frame ERROR:</b> "
         bodyText += "<ul>"
-        bodyText += "<li><b>[Host] Host ID: "+idDevice+" Disconnection.</b> "
+        bodyText += "<li><b>[Host] Host ID: "+str(idDevice)+" Disconnection.</b> "
         bodyText += "</ul>"
         bodyText += "<b>Frame</b> End <br><br>"
 

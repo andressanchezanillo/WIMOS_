@@ -2,7 +2,6 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
-from NetworkList import QNetworkList
 from random import randint
 from datetime import datetime
 import sys
@@ -14,7 +13,17 @@ maphtml = '''
 
 <body>
 
-<div id="map" style="height:410px;width:100%"></div>
+
+    <style>
+        html, body, #map {
+        height:100%;
+        width:100%;
+        margin: 0px;
+        padding: 0px
+        }
+    </style>
+    
+<div id="map"></div>
 
 <script>
 
@@ -145,7 +154,7 @@ class QNetworkGPS(QWidget):
         QWidget.__init__(self)
 
         self.web = QWebView(self)
-        self.web.setFixedWidth(600)
+        self.web.setMinimumWidth(600)
         self.FrameGPS = self.web.page().mainFrame()
         self.FrameGPS.addToJavaScriptWindowObject('self', self)
         self.web.setHtml(maphtml)
@@ -170,7 +179,11 @@ class QNetworkGPS(QWidget):
         
        
         
-    def disconnect(self, idDevice):        
+    def disconnect(self, idDevice):
         self.FrameGPS.evaluateJavaScript("eraseAlert("+str(idDevice)+")")
         self.FrameGPS.evaluateJavaScript("eraseMark("+str(idDevice)+")")
+
+        
+    def eraseAlert(self, idDevice):        
+        self.FrameGPS.evaluateJavaScript("eraseAlert("+str(idDevice)+")")
                 

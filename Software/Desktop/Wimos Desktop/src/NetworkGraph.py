@@ -84,12 +84,12 @@ class QNetworkGraph(QtGui.QWidget):
 
 
 
-    def refresh(self):
-        print "Refresh"
-        #for idDev, lastTime in self.timeoutList:
-            #if (int(round(time.time() * 1000)) - lastTime) > self.timeoutConnection:
-                #self.NetworkGPS.disconnect(idDev)
-                #self.NetworkText.disconnect(idDev)
+    def disconnect(self, idDevice):
+        self.NetworkGPS.disconnect(idDevice)
+        self.NetworkText.disconnect(idDevice)
+
+    def eraseAlert(self):
+        self.NetworkGPS.eraseAlert(idDevice)
 
         
         
