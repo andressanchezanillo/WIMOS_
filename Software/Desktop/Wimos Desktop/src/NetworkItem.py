@@ -56,13 +56,52 @@ class QNetworkItem (QtGui.QWidget):
         self.LastUpdateAlert = int(round(time.time() * 1000))
         self.enable = True
         self.data = False
+
+        self.setStatusTip(self.DType+": "+ str(self.myID))
+
+
+    def addCenter(self, _CenterID,
+                        _CurrentDateTime,
+                        _messageRatio = None,
+                        _messageTime = None,
+                        _timeout = False):
+        #set the internal ID
+        self.myID = int(_CenterID)
+        
+        # ID device
+        self.DeviceID.setText("<b>ID:</b> "+str(_CenterID))
+
+        # Type device
+        if _timeout:
+            self.enable = False
+            self.DType = 'Center'
+            self.DeviceType.setText("<b>Type:</b> "+self.DType+" (Disconnected)")
+            self.DeviceImage.setPixmap(QtGui.QPixmap("../images/Center_device.png"))
+            #self.DeviceDatain.setPixmap(QtGui.QPixmap('../images/coverage_level.png').scaledToWidth(16))
+        else:
+            self.enable = True
+            self.LastUpdate = int(round(time.time() * 1000))
+            self.DType = 'Center'
+            self.DeviceType.setText("<b>Type:</b> "+self.DType)
+            self.DeviceImage.setPixmap(QtGui.QPixmap("../images/Center_device.png"))
+            #if _messageRatio is not None and _messageTime is not None:
+                #self.DeviceDatain.setPixmap(QtGui.QPixmap('../images/coverage_level.png').scaledToWidth(16))
+        
+
+        self.DeviceBattery.setPixmap(QtGui.QPixmap('../images/battery100.ico').scaledToWidth(32))
+        self.LastPackageTimestap.setText("<b>Timestamp:</b> "+ _CurrentDateTime+"   ")
+        
+        self.setStatusTip(self.DType+": "+ str(self.myID))
+
+            
+
         
     def addInfo(self, idDevice, typeDevice, batteryDevice, timeout = False):
         #set the internal ID
         self.myID = int(idDevice)
         
         # ID device
-        self.DeviceID.setText("<b>ID:</b> "+idDevice)
+        self.DeviceID.setText("<b>ID:</b> "+str(idDevice))
 
         # Type device
         if(typeDevice is 'Center'):
@@ -142,6 +181,7 @@ class QNetworkItem (QtGui.QWidget):
             
             self.LastUpdate = int(round(time.time() * 1000))
             self.LastUpdateAlert = int(round(time.time() * 1000))
+            self.setStatusTip(self.DType+": "+ str(self.myID))
 
     
     def disconnect(self):
@@ -154,6 +194,8 @@ class QNetworkItem (QtGui.QWidget):
         else:
             self.DeviceType.setText("<b>Type:</b> "+self.DType+" <b>(Disconnected)</b>")
             self.DeviceImage.setPixmap(QtGui.QPixmap("../images/Uknown_device.png"))
+        
+        self.setStatusTip("[Disconnected]"+self.DType+": "+ str(self.myID))
 
 
     def getID(self):

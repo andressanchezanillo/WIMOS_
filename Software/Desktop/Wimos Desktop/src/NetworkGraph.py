@@ -16,7 +16,10 @@ class QNetworkGraph(QtGui.QWidget):
         self.NetworkGraph.setTabPosition(QtGui.QTabWidget.South)
 
         self.NetworkGPS = QNetworkGPS()
+        self.NetworkGPS.setStatusTip("Text display")
+
         self.NetworkText = QNetworkText()
+        self.NetworkText.setStatusTip("Map display")
         
         self.NetworkGraph.addTab(self.NetworkGPS,"Graph Mode")
         self.NetworkGraph.addTab(self.NetworkText,"Text Mode")
@@ -29,6 +32,16 @@ class QNetworkGraph(QtGui.QWidget):
         
         self.setLayout(self.layout)
 
+    def addCenter(self,
+                  _FrameName, _CenterID,
+                  _CurrentDateTime,
+                  _messageRatio, _messageTime):
+        
+        self.NetworkText.addCenter(_FrameName, _CenterID,
+                                   _CurrentDateTime,
+                                   _messageRatio, _messageTime)
+        
+
     def addInfo(self,
                 _FrameID, _FrameName,
                 _IdCenter, _IdHost,
@@ -36,6 +49,7 @@ class QNetworkGraph(QtGui.QWidget):
                 _GpsLatitude, _GpsLongitude,
                 _Memory, _Battery, _Status,
                 _CurrentDateTime):
+        
         found = False;
         self.NetworkText.addInfo(_FrameID, _FrameName,
                                 _IdCenter, _IdHost,
@@ -74,15 +88,6 @@ class QNetworkGraph(QtGui.QWidget):
                                 _CurrentDateTime)
 
         self.NetworkGPS.addAlert(_IdHost, _AlertLevel)
-        
-        for idDev, lastTime in self.timeoutList:
-            if(idDev is _IdHost):
-                lastTime = int(round(time.time() * 1000))
-
-        if not found:
-            self.timeoutList.append((_IdHost, int(round(time.time() * 1000))))
-
-
 
     def disconnect(self, idDevice):
         self.NetworkGPS.disconnect(idDevice)

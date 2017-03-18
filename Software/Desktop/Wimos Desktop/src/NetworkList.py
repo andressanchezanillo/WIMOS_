@@ -31,14 +31,14 @@ class QNetworkList (QtGui.QWidget):
 
         # Network item set.
         self.NetworkItemArray = []
-        self.timeoutDataIn = 250
+        self.timeoutDataIn = 300
         self.timeoutConnection = 5000
 
         # Settings for threshold.
         self.startThreshold = 0
         self.noThreshold = 0
-        self.lowThreshold = 1
-        self.mediumThreshold = 6
+        self.lowThreshold = 4
+        self.mediumThreshold = 8
         self.highThreshold = 10
         self.endThreshold = 10
 
@@ -48,6 +48,47 @@ class QNetworkList (QtGui.QWidget):
         self.TimerRefresh.setSingleShot(False)
         self.TimerRefresh.timeout.connect(self.refresh)
         self.TimerRefresh.start(250)
+
+    def addCenter(self, _FrameName, _CenterID,
+                          _CurrentDateTime,
+                          _messageRatio = None,
+                          _messageTime = None):
+
+        varFound = False
+        # Update the item list.
+        for item in self.NetworkItemArray:
+            if(item.getID() == int(_CenterID)):
+                item.addCenter(   _CenterID,
+                                  _CurrentDateTime,
+                                  _messageRatio,
+                                  _messageTime)
+                varFound = True
+
+        #Add the new item.
+        if not varFound:
+
+            # Add new Line.
+            line = QtGui.QFrame();
+            line.setFrameShape(QtGui.QFrame.HLine)
+            line.setFrameShadow(QtGui.QFrame.Sunken)
+
+            # Enter the new Item.
+            self.NetworkItemArray.append(QNetworkItem())            
+            self.NetworkItemArray[-1].addCenter(  _CenterID,
+                                                  _CurrentDateTime,
+                                                  _messageRatio,
+                                                  _messageTime)
+            
+            # Add the Item and the Separator line.
+            self.myform.addRow(self.NetworkItemArray[-1])
+            self.myform.addRow(line)
+        
+        #Send the information to Network Graph.
+        if _messageRatio is not None and _messageTime is not None:
+            self.NetworkGraph.addCenter(_FrameName, _CenterID,
+                                        _CurrentDateTime,
+                                        _messageRatio, _messageTime )
+
         
         
     def addInfo(self,
@@ -57,8 +98,10 @@ class QNetworkList (QtGui.QWidget):
                 _GpsLatitude, _GpsLongitude,
                 _Memory, _Battery, _Status,
                 _CurrentDateTime):
-        varFound = False
+        
+        self.addCenter(_FrameName, _IdCenter, _CurrentDateTime)
 
+        varFound = False
         # Update the item list.
         for item in self.NetworkItemArray:
             if(item.getID() == int(_IdHost)):
@@ -97,6 +140,8 @@ class QNetworkList (QtGui.QWidget):
                 _AlertA1, _AlertA2, _AlertA3,
                 _AlertA4, _AlertA5,
                 _CurrentDateTime):
+        
+        self.addCenter(_FrameName, _IdCenter, _CurrentDateTime)
 
         Alert = max(int(_AlertA1), int(_AlertA2),
                     int(_AlertA3), int(_AlertA4),

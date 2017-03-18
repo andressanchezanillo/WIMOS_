@@ -129,6 +129,7 @@ function eraseAlert(_id) {
 	for (i=0;i<listMark.length;i++){
 		station = listMark[i];
 		if (station.id === _id){
+                        addAlert(_id, "#FFFFFF", 1);
 			station.alert.setMap(null);
 			return;
 		}
@@ -158,6 +159,7 @@ class QNetworkGPS(QWidget):
         self.FrameGPS = self.web.page().mainFrame()
         self.FrameGPS.addToJavaScriptWindowObject('self', self)
         self.web.setHtml(maphtml)
+        self.web.setStatusTip("GPS map display")
 
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.web)
@@ -165,17 +167,17 @@ class QNetworkGPS(QWidget):
         self.setLayout(self.layout)
 
     def addInfo(self, idDevice, latitudeDevice, longitudeDevice, infoDevice):
-        self.FrameGPS.evaluateJavaScript("addInfo("+str(idDevice)+","+latitudeDevice+","+longitudeDevice+",\""+infoDevice+"\")")
+        self.FrameGPS.evaluateJavaScript("addInfo("+str(idDevice)+","+str(latitudeDevice)+","+str(longitudeDevice)+",\""+infoDevice+"\")")
         
     def addAlert(self, idDevice, alertLevel):        
         if (alertLevel is 'none'):
             self.FrameGPS.evaluateJavaScript("eraseAlert("+str(idDevice)+")")
         elif (alertLevel is 'low'):
-            self.FrameGPS.evaluateJavaScript("addAlert("+str(idDevice)+",\"#01DF01\",1000)")
+            self.FrameGPS.evaluateJavaScript("addAlert("+str(idDevice)+",\"#01DF01\",10000)")
         elif (alertLevel is 'medium'):
-            self.FrameGPS.evaluateJavaScript("addAlert("+str(idDevice)+",\"#FFBF00\",2000)")
+            self.FrameGPS.evaluateJavaScript("addAlert("+str(idDevice)+",\"#FFBF00\",20000)")
         elif (alertLevel is 'high'):
-            self.FrameGPS.evaluateJavaScript("addAlert("+str(idDevice)+",\"#DF0101\",4000)")
+            self.FrameGPS.evaluateJavaScript("addAlert("+str(idDevice)+",\"#DF0101\",40000)")
         
        
         
