@@ -1,0 +1,67 @@
+import sys
+from PyQt4 import QtCore, QtGui
+from random import randint
+from datetime import datetime
+import urllib2
+import os
+
+
+class QUpdateWindows(QtGui.QWidget):
+    def __init__ (self):
+        super(QUpdateWindows, self).__init__()
+        
+        self.UpdateLayout = QtGui.QVBoxLayout(self)
+        self.SelectUpdate = QtGui.QComboBox()
+        self.ButtonUpdate = QtGui.QPushButton("Download")
+        self.ReleaseListItems = []
+
+        ReleaseList = urllib2.urlopen('https://raw.githubusercontent.com/andressanchezanillo/WIMOS_/master/Releases/reg.ini.txt')
+        fileList = ReleaseList.read()
+
+        for releaseItem in fileList.split("\n"):
+            infoRelease = releaseItem.split(" ")
+            if infoRelease[0] == "Release":
+                self.ReleaseListItems.append(["["+infoRelease[3]+"] - Wimos_"+infoRelease[1],infoRelease[4]])
+
+        #self.SelectUpdate.addItem("Select a release for update")
+        
+        #for item in self.ReleaseListItems:
+            #self.SelectUpdate.addItem(item[0])
+
+        
+        model = QtGui.QStandardItemModel()
+        self.layout = QtGui.QVBoxLayout(self)
+
+        for releaseItem in self.ReleaseListItems:                  
+            item = QtGui.QStandardItem(releaseItem[0])
+            item.setCheckable(True)
+            model.appendRow(item)
+
+
+        self.view = QtGui.QListView()
+        self.view.setModel(model)
+                       
+        self.UpdateLayout.addWidget(self.view)
+        self.UpdateLayout.addWidget(self.ButtonUpdate)
+        self.setLayout(self.UpdateLayout)
+
+        self.path = "workspace/releases/"
+
+        self.ButtonUpdate.clicked.connect(self.downloadRelease)
+
+    def downloadRelease(self):
+        if self.SelectUpdate.currentIndex() > 0:
+            
+            if not os.path.exists(self.path):
+                os.makedirs(self.path)
+                
+            url = self.ReleaseListItems[self.SelectUpdate.currentIndex()-1][-1]
+            fileName = url.split("/")[-1].split(".rar")[0]
+            fileName += ".rar"
+            fileName = self.path+fileName
+            
+            ReleaseFile = urllib2.urlopen(url)
+            data = ReleaseFile.read()
+            with open(fileName, "wb") as code:
+                code.write(data)
+        

@@ -1,1 +1,0 @@
-Release v001 "LastRelease" 2017/03/18 https://github.com/andressanchezanillo/WIMOS_/blob/master/Releases/FW_WIMOS_v001.rar?raw=true

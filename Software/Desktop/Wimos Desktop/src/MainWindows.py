@@ -1,6 +1,7 @@
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from NetworkWindows import QNetworkWindows
+from UpdateWindows import QUpdateWindows
 from random import randint
 from datetime import datetime
 import os
@@ -20,7 +21,7 @@ class QMainWindows(QtGui.QWidget):
         self.SettingMain = QtGui.QWidget()
         self.SettingMain.setStatusTip("Setting view")
 
-        self.UpdateMain = QtGui.QWidget()
+        self.UpdateMain = QUpdateWindows()
         self.UpdateMain.setStatusTip("Update view")
         
         self.MainTabs.addTab(self.NetworkMain,QtGui.QIcon('../images/network.png'),"Network")
