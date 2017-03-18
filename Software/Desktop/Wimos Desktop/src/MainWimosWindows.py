@@ -10,6 +10,7 @@ class QMainWimosWindows(QMainWindow):
     def __init__(self):
         super(QMainWimosWindows, self).__init__()
         self.setWindowTitle(self.tr('Wimos Desktop 1.0.1'))
+        self.setWindowIcon(QIcon("../images/wimosApp.png"))   
         self.setMinimumSize(1000,550)
 
         #Central Windows - NetWork
