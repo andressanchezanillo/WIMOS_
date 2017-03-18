@@ -1,133 +1,33 @@
-import folium
+from PyQt4 import QtCore
+from PyQt4 import QtGui
+from NetworkWindows import QNetworkWindows
+from random import randint
+from datetime import datetime
+import os
+import time
 import sys
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
 
-
-class MainWimos(QMainWindow):
-    
+class QMainWindows(QtGui.QWidget):
     def __init__(self):
-        super(MainWimos, self).__init__()
-        self.setWindowTitle(self.tr('Wimos Desktop 1.0.1'))
-        self.setMinimumSize(1000,400)
+        QtGui.QWidget.__init__(self)
 
-        #Central Windows - NetWork
-        wNetworkList = QListView(self)
-        self.setCentralWidget(wNetworkList)
+        self.MainTabs = QtGui.QTabWidget()
+        self.MainTabs.setTabPosition(QtGui.QTabWidget.West)
+
+        self.NetworkMain = QNetworkWindows()
+        self.NetworkMain.setStatusTip("Network view")
+
+        self.SettingMain = QtGui.QWidget()
+        self.SettingMain.setStatusTip("Setting view")
+
+        self.UpdateMain = QtGui.QWidget()
+        self.UpdateMain.setStatusTip("Update view")
         
+        self.MainTabs.addTab(self.NetworkMain,QtGui.QIcon('../images/network.png'),"Network")
+        self.MainTabs.addTab(self.SettingMain,QtGui.QIcon('../images/setting.png'),"Settings")
+        self.MainTabs.addTab(self.UpdateMain,QtGui.QIcon('../images/update.png'),"Update")
+
+        self.layout = QtGui.QVBoxLayout(self)
+        self.layout.addWidget(self.MainTabs)
         
-        
-        #QAction - File
-        self.aNew = QAction("New",self)
-        self.aNew.setIcon(QIcon('../images/new.ico'))
-        self.aNew.setShortcut("Ctrl+N")
-        self.aNew.setStatusTip("Create a new setting")
-                
-        self.aLoad = QAction("Load...",self)
-        self.aLoad.setIcon(QIcon('../images/load.ico'))
-        self.aLoad.setShortcut("Ctrl+L")
-        self.aLoad.setStatusTip("Load a setting file")
-                
-        self.aSave = QAction("Save...",self)
-        self.aSave.setIcon(QIcon('../images/save.ico'))
-        self.aSave.setShortcut("Ctrl+S")
-        self.aSave.setStatusTip("Save the setting file")
-            
-        self.aSaveAs = QAction("Save as...",self)
-        self.aSaveAs.setShortcut("Ctrl+Shift+S")
-        self.aSaveAs.setStatusTip("Save the current setting as...")
-        
-        self.aExit = QAction("Exit",self)
-        self.aExit.setIcon(QIcon('../images/exit.ico'))
-        self.aExit.setShortcut("Ctrl+Q")
-        self.aExit.setStatusTip("Close the program")
-
-
-        #QAction - Edit
-                
-        self.aCut = QAction("Cut",self)
-        self.aCut.setShortcut("Ctrl+X")
-        self.aCut.setStatusTip("Cut content")
-
-        self.aCopy = QAction("Copy",self)
-        self.aCopy.setShortcut("Ctrl+C")
-        self.aCopy.setStatusTip("Copy content")
-        
-        self.aClear = QAction("Clear",self)
-        self.aClear.setShortcut("Ctrl+E")
-        self.aClear.setStatusTip("Erase content")
-
-
-        #QAction - Tool
-                
-        self.aNetwork = QAction("Network",self)
-        self.aNetwork.setIcon(QIcon('../images/network.ico'))
-        self.aNetwork.setStatusTip("Go to Network Tab")
-        
-        self.aSetting = QAction("Setting Module",self)
-        self.aSetting.setIcon(QIcon("../images/setting.ico"))
-        self.aSetting.setStatusTip("Go to Setting Tab")
-        
-        self.aUpdate = QAction("Update",self)
-        self.aUpdate.setIcon(QIcon('../images/update.ico'))
-        self.aUpdate.setStatusTip("Go to Update Tab")
-        
-        self.aPreferences = QAction("Preferences",self)
-        self.aPreferences.setStatusTip("Tool preferences")
-
-        
-        #QAction - Help
-                
-        self.aAbout = QAction("About",self)
-        self.aAbout.setStatusTip("Tool Information")
-
-
-        #Status Bar
-        self.setStatusBar(QStatusBar())
-
-        #Tool Bar
-        self.toolBar = QToolBar(self)
-        self.toolBar.setIconSize(QSize(40,40))
-        self.toolBar.layout().setSpacing(10)
-        self.toolBar.setMovable(False)
-        
-        self.toolBar.addAction(self.aNetwork)
-        self.toolBar.addAction(self.aSetting)
-        self.toolBar.addAction(self.aUpdate)
-        self.addToolBar(Qt.LeftToolBarArea, self.toolBar)
-        
-        #Menu
-        menu = self.menuBar()
-
-        mFile = menu.addMenu("&File")
-        mFile.addAction(self.aNew)
-        mFile.addAction(self.aLoad)
-        mFile.addAction(self.aSave)
-        mFile.addAction(self.aSaveAs)
-        mFile.addAction(self.aExit)
-        
-        mEdit = menu.addMenu("&Edit")
-        mEdit.addAction(self.aCut)
-        mEdit.addAction(self.aCopy)
-        mEdit.addAction(self.aClear)
-
-        mTool = menu.addMenu("&Tool")
-        mTool.addAction(self.aNetwork)
-        mTool.addAction(self.aSetting)
-        mTool.addAction(self.aUpdate)
-        mTool.addAction(self.aPreferences)
-        
-        mHelp = menu.addMenu("&Help")
-        mHelp.addAction(self.aAbout)
-
-def main():
-    import sys
-    app = QApplication(sys.argv)
-    w = MainWimos()
-    w.show()
-    
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()
+        self.setLayout(self.layout)
