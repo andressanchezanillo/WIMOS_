@@ -41,6 +41,7 @@
   //#define DEBUG_COMM_STATUS
   #define DEBUG_ANALOG_A5
   //#define WIMOS_VALIDATION_TEST
+  #define DEBUG_COLOR
   
   /**
    * @brief Label for RF activation.
@@ -53,10 +54,6 @@
     #define WIMOS_ID 0x10
     
     #define _WIMOS_IMU
-    /**
-     * @brief Label Debug for colour terminal activation.
-     */
-    #define DEBUG_COLOR
     /**
      * @brief Label for GPS activation.
      */
@@ -246,6 +243,12 @@
       
     #endif
   #endif
+  
+  
+  
+  
+  
+  
   #ifdef __AVR_ATmega32U4__
   
     #define WIMOS_ID 0x00

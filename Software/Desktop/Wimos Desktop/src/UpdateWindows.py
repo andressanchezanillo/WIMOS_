@@ -11,17 +11,16 @@ class QUpdateWindows(QtGui.QWidget):
         super(QUpdateWindows, self).__init__()
         
         self.UpdateLayout = QtGui.QVBoxLayout(self)
-        self.SelectUpdate = QtGui.QComboBox()
         self.ButtonUpdate = QtGui.QPushButton("Download")
         self.ReleaseListItems = []
 
-        ReleaseList = urllib2.urlopen('https://raw.githubusercontent.com/andressanchezanillo/WIMOS_/master/Releases/reg.ini.txt')
+        ReleaseList = urllib2.urlopen('https://raw.githubusercontent.com/andressanchezanillo/WIMOS_/master/Releases/reg.ini')
         fileList = ReleaseList.read()
 
         for releaseItem in fileList.split("\n"):
-            infoRelease = releaseItem.split(" ")
+            infoRelease = releaseItem.split(";")
             if infoRelease[0] == "Release":
-                self.ReleaseListItems.append(["["+infoRelease[3]+"] - Wimos_"+infoRelease[1],infoRelease[4]])
+                self.ReleaseListItems.append([[infoRelease[0],infoRelease[1],infoRelease[2],infoRelease[3]],infoRelease[4]])
 
         #self.SelectUpdate.addItem("Select a release for update")
         
@@ -33,8 +32,9 @@ class QUpdateWindows(QtGui.QWidget):
         self.layout = QtGui.QVBoxLayout(self)
 
         for releaseItem in self.ReleaseListItems:                  
-            item = QtGui.QStandardItem(releaseItem[0])
+            item = QtGui.QStandardItem(releaseItem[0][3]+"\t\tWIMOS_"+releaseItem[0][1]+"\t\t\t"+releaseItem[0][2])
             item.setCheckable(True)
+            item.setEditable(False)
             model.appendRow(item)
 
 
@@ -50,12 +50,19 @@ class QUpdateWindows(QtGui.QWidget):
         self.ButtonUpdate.clicked.connect(self.downloadRelease)
 
     def downloadRelease(self):
-        if self.SelectUpdate.currentIndex() > 0:
+        downloadList = []
+        model = self.view.model()
+        for row in range(model.rowCount()):
+            item = model.item(row)
+            if item.checkState() == QtCore.Qt.Checked:                
+                downloadList.append(self.ReleaseListItems[row][-1])
+
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
             
-            if not os.path.exists(self.path):
-                os.makedirs(self.path)
-                
-            url = self.ReleaseListItems[self.SelectUpdate.currentIndex()-1][-1]
+        for itemDownload in downloadList:                      
+            
+            url = itemDownload
             fileName = url.split("/")[-1].split(".rar")[0]
             fileName += ".rar"
             fileName = self.path+fileName
