@@ -32,10 +32,12 @@
   
   #include "_setting.h"
   #include "main_config.h"
-  
-  stWimosI2CRegister stWimosI2CConfig[_WIMOS_PORT_I2C_CONFIG_SIZE] = _WIMOS_I2C_CONFIG;
-  
-  stWimosI2CRegister stWimosI2CData[_WIMOS_PORT_I2C_DATA_SIZE] = _WIMOS_I2C_DATA;
+
+
+  #ifdef _EN_WIMOS_PORT_I2C
+    stWimosI2CRegister stWimosI2CConfig[_WIMOS_PORT_I2C_CONFIG_SIZE] = _WIMOS_I2C_CONFIG;  
+    stWimosI2CRegister stWimosI2CData[_WIMOS_PORT_I2C_DATA_SIZE] = _WIMOS_I2C_DATA;
+  #endif
   
   void I2CWrite(uint8_t ucDeviceAddress, uint8_t ucRegisterAddress, uint8_t ucValue);
   uint8_t I2CRead(uint8_t ucDeviceAddress, uint16_t ucRegisterAddress);
@@ -75,10 +77,12 @@
    * @return _stWimosInfo It returns the I2C devices values updated into stWimosInfo struct .
    */
   extern void readPortI2C(stWimosPortValues* stWimosPort){
-    for(uint8_t i=0; i<_WIMOS_PORT_I2C_DATA_SIZE; i++){
-      stWimosPort->ucPortI2C[i] = I2CRead(stWimosI2CData[i].ucDeviceAddress, stWimosI2CData[i].ucRegisterAddress);
-    }
-    return;
+    #ifdef _EN_WIMOS_PORT_I2C
+      for(uint8_t i=0; i<_WIMOS_PORT_I2C_DATA_SIZE; i++){
+        stWimosPort->ucPortI2C[i] = I2CRead(stWimosI2CData[i].ucDeviceAddress, stWimosI2CData[i].ucRegisterAddress);
+      }
+      return;
+    #endif
   }
   
   
@@ -102,60 +106,58 @@
   
   
   
-  #ifdef WIMOS_DEBUG
-    #ifdef WIMOS_UNIT_TEST
-  
-      /**
-       * @brief Wimos test n3.UT33.
-       *
-       * Unit test n3.UT33 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n3UT33 (void){
-        const char* testName = "n3.UT33 = %d";
-        /*TODO: do a Port I2C initializer.*/
-          DEBUG_VALID(testName , 
-                     (true), 
-                     (true));
-      } 
-  
-  
-      /**
-       * @brief Wimos test n3.UT34.
-       *
-       * Unit test n3.UT34 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n3UT34 (void){
-        const char* testName = "n3.UT34 = %d";
-        /*TODO: I2C writer.*/
-          DEBUG_VALID(testName , 
-                     (true), 
-                     (true));
-      } 
-  
-  
-      /**
-       * @brief Wimos test n3.UT35.
-       *
-       * Unit test n3.UT35 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n3UT35 (void){
-        const char* testName = "n3.UT35 = %d";
-        /*TODO: I2C reader.*/
-          DEBUG_VALID(testName , 
-                     (true), 
-                     (true));
-      } 
-  
-      
+    #ifdef WIMOS_DEBUG
+      #ifdef WIMOS_UNIT_TEST
+    
+        /**
+         * @brief Wimos test n3.UT33.
+         *
+         * Unit test n3.UT33 function.
+         * @verbatim like this@endverbatim 
+         * @param none.
+         * @return none.
+         */
+         extern void _test_n3UT33 (void){
+          const char* testName = "n3.UT33 = %d";
+          /*TODO: do a Port I2C initializer.*/
+            DEBUG_VALID(testName , 
+                       (true), 
+                       (true));
+        } 
+    
+    
+        /**
+         * @brief Wimos test n3.UT34.
+         *
+         * Unit test n3.UT34 function.
+         * @verbatim like this@endverbatim 
+         * @param none.
+         * @return none.
+         */
+         extern void _test_n3UT34 (void){
+          const char* testName = "n3.UT34 = %d";
+          /*TODO: I2C writer.*/
+            DEBUG_VALID(testName , 
+                       (true), 
+                       (true));
+        } 
+    
+    
+        /**
+         * @brief Wimos test n3.UT35.
+         *
+         * Unit test n3.UT35 function.
+         * @verbatim like this@endverbatim 
+         * @param none.
+         * @return none.
+         */
+         extern void _test_n3UT35 (void){
+          const char* testName = "n3.UT35 = %d";
+          /*TODO: I2C reader.*/
+            DEBUG_VALID(testName , 
+                       (true), 
+                       (true));
+        } 
     #endif
     
     #ifdef WIMOS_VALIDATION_TEST
