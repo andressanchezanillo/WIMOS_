@@ -62,6 +62,7 @@ void waitACK(void);
 void sendResponse(void);
 void clearBuffer(void);
 void runFunction(void);
+void noOperation(void);
 bool receiveFrame( void* pData, uint8_t ucSize, uint8_t ucFrameID);
 void sendFrame(const void* ptrData, uint8_t ucSize);
 extern void (*communicationThread)(void);
@@ -826,7 +827,9 @@ void runFunction(void){
   #endif
 }
 
-
+void noOperation(void){
+  
+}
 
 
 
