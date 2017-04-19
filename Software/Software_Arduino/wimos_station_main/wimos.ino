@@ -39,11 +39,11 @@ extern void (*coreWimosDisplay)(void);
 /**
  * @brief The Time of TV begin.
  */
-extern uint32_t coreWimosTimer100ms = 0;
+extern uint32_t coreWimosCriticalTimer = 0;
 /**
  * @brief The Time of TV begin.
  */
-extern uint32_t coreWimosTimer1000ms = 0;
+extern uint32_t coreWimosInfoTimer = 0;
 
 /**
  * @brief Wimos initialization service.
@@ -67,9 +67,9 @@ void initWimosService(void){
       initInterPeriph();
       #ifdef __SAM3X8E__
         initExterPeriph(); 
-        coreWimosTimer1000ms = millis();
+        coreWimosInfoTimer = millis();
       #endif 
-      coreWimosTimer100ms = millis();
+      coreWimosCriticalTimer = millis();
 }
 
 /**
@@ -248,13 +248,13 @@ extern void coreWimos(void){
     #ifdef WIMOS_DEBUG
       debugCommand();
     #endif
-    if((millis() - coreWimosTimer100ms) > 100){
-      coreWimosTimer100ms = millis();
+    if((millis() - coreWimosCriticalTimer) > CRITICAL_REFRESH_MS){
+      coreWimosCriticalTimer = millis();
       readSensorsWimos();
     }
     communicationThread();
-    if((millis() - coreWimosTimer1000ms) > 250){
-      coreWimosTimer1000ms = millis();
+    if((millis() - coreWimosInfoTimer) > INFO_REFRESH_MS){
+      coreWimosInfoTimer = millis();
       updateInfoWimos();
     }
   #endif

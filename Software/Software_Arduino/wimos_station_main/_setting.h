@@ -46,12 +46,18 @@
   /**
    * @brief Label for RF activation.
    */
-  #define _EN_WIMOS_RF
-  
+  #define _EN_WIMOS_RF  
   
   #ifdef __SAM3X8E__  
   
     #define WIMOS_ID 0x10
+
+    /*
+    * @brief time to refresh setting.
+    */
+    #define CRITICAL_REFRESH_MS    100
+    #define INFO_REFRESH_MS        250
+
     
     #define _WIMOS_IMU
     /**

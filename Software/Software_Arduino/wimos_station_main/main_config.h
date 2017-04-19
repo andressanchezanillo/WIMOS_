@@ -52,6 +52,17 @@
        */
       #define TIMEOUT_ACK 250
     #endif
+
+    
+    #ifndef CRITICAL_REFRESH_MS
+      #define CRITICAL_REFRESH_MS     100
+    #endif
+    
+    #ifndef INFO_REFRESH_MS
+      #define INFO_REFRESH_MS         250
+    #endif
+    
+    
     
     /**
      * @brief Date data struct.
