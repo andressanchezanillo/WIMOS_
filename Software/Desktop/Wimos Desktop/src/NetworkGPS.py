@@ -6,6 +6,7 @@ from random import randint
 from datetime import datetime
 import sys
 import os
+import urllib2
 
 maphtml = '''
 <!DOCTYPE html>
@@ -158,8 +159,16 @@ class QNetworkGPS(QWidget):
         self.web.setMinimumWidth(600)
         self.FrameGPS = self.web.page().mainFrame()
         self.FrameGPS.addToJavaScriptWindowObject('self', self)
-        self.web.setHtml(maphtml)
-        self.web.setStatusTip("GPS map display")
+        try:
+            
+            ReleaseList = urllib2.urlopen('https://www.google.es')
+
+            self.web.setHtml(maphtml)
+            self.web.setStatusTip("GPS map display")
+
+        except urllib2.URLError, e:
+            print "[ERROR] - HTTP CONNECTION - "
+            
 
         self.layout = QVBoxLayout(self)
         self.layout.addWidget(self.web)

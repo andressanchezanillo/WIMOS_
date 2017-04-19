@@ -14,20 +14,28 @@ class QUpdateWindows(QtGui.QWidget):
         self.ButtonUpdate = QtGui.QPushButton("Download")
         self.ReleaseListItems = []
 
-        ReleaseList = urllib2.urlopen('https://raw.githubusercontent.com/andressanchezanillo/WIMOS_/master/Releases/reg.ini')
-        fileList = ReleaseList.read()
+        try:
+            ReleaseList = urllib2.urlopen('https://raw.githubusercontent.com/andressanchezanillo/WIMOS_/master/Releases/reg.ini')
+            fileList = ReleaseList.read()
 
-        for releaseItem in fileList.split("\n"):
-            infoRelease = releaseItem.split(";")
-            if infoRelease[0] == "Release":
-                self.ReleaseListItems.append([[infoRelease[0],infoRelease[1],infoRelease[2],infoRelease[3]],infoRelease[4]])
-
-        #self.SelectUpdate.addItem("Select a release for update")
-        
-        #for item in self.ReleaseListItems:
-            #self.SelectUpdate.addItem(item[0])
+            for releaseItem in fileList.split("\n"):
+                infoRelease = releaseItem.split(";")
+                if infoRelease[0] == "Release":
+                    self.ReleaseListItems.append([[infoRelease[0],infoRelease[1],infoRelease[2],infoRelease[3]],infoRelease[4]])
 
         
+        except urllib2.URLError, e:
+            msg = QtGui.QMessageBox()
+            msg.setIcon(QtGui.QMessageBox.Critical)
+            msg.setInformativeText("Click show details for more information")
+            msg.setWindowTitle("HTTP connection error")
+            msg.setText("Check you connection and restart the app\t\t.")
+            msg.setDetailedText("Your system has lost the Internet connection, it lose these services:\n \t- Auto Update Releases. \n\t- GPS map displayment.")
+            msg.setStandardButtons(QtGui.QMessageBox.Ok)
+            msg.exec_()
+
+
+            
         model = QtGui.QStandardItemModel()
         self.layout = QtGui.QVBoxLayout(self)
 
@@ -40,7 +48,7 @@ class QUpdateWindows(QtGui.QWidget):
 
         self.view = QtGui.QListView()
         self.view.setModel(model)
-                       
+                           
         self.UpdateLayout.addWidget(self.view)
         self.UpdateLayout.addWidget(self.ButtonUpdate)
         self.setLayout(self.UpdateLayout)

@@ -49,8 +49,8 @@ class QSettingWindows(QtGui.QWidget):
         self.DeviceSectionLabel = QtGui.QLabel("Select a Device:")
 
         self.CenterDevice = QtGui.QRadioButton("Center Device")
-        self.CenterDevice.toggled.connect(self.selectCenter)
         self.CenterDevice.setChecked(True)
+        self.CenterDevice.toggled.connect(self.selectCenter)
         
         self.HostDevice = QtGui.QRadioButton("Host Device")
         self.HostDevice.toggled.connect(self.selectHost)
