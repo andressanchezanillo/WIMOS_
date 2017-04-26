@@ -408,13 +408,22 @@
    */
   extern void updateGPS(stWimosInfo* _stWimosInfo){
     #ifdef _EN_WIMOS_GPS
-      uint8_t ret;
-      DEBUG_INFO("GPS update function.");
-      ret = machineStateGPS(_stWimosInfo);
-      if(ret == _OK){
-        DEBUG_OK("GPS updated.");
-      }  
-      return;  
+      #ifdef DEBUG_GPS
+        _stWimosInfo->stGpsPosition.stLatitude.ucDegree = 41;
+        _stWimosInfo->stGpsPosition.stLatitude.slMinute = 653189;
+        
+        _stWimosInfo->stGpsPosition.stLongitude.ucDegree = 4;
+        _stWimosInfo->stGpsPosition.stLongitude.slMinute = -731384;
+        return;
+      #else
+        uint8_t ret;
+        DEBUG_INFO("GPS update function.");
+        ret = machineStateGPS(_stWimosInfo);
+        if(ret == _OK){
+          DEBUG_OK("GPS updated.");
+        }  
+        return;  
+      #endif
     #endif
   }
   

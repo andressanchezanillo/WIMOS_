@@ -39,9 +39,10 @@
   //#define WIMOS_UNIT_TEST
   //#define DEBUG_COMM_RXTX
   //#define DEBUG_COMM_STATUS
-  #define DEBUG_ANALOG_A5
+  #define DEBUG_GPS
+  //#define DEBUG_ANALOG_A5
   //#define WIMOS_VALIDATION_TEST
-  #define DEBUG_COLOR
+  //#define DEBUG_COLOR
   
   /**
    * @brief Label for RF activation.
@@ -225,13 +226,12 @@
     #define _WIMOS_5A_OPERATOR_JOINT(x,y,z)     MATH_VECTOR3D_LENGHT(x,y,z)
     
     #define _WIMOS_5A_AVERAGE_SIZE              ((uint8_t)50)
-    #define _WIMOS_5A_AVERAGE_OFFSET            ((uint8_t)120)
+    #define _WIMOS_5A_AVERAGE_OFFSET            ((uint8_t)83)
     #define _WIMOS_5A_OFFSET_MAX_SIZE           ((uint8_t)10)
     
     #define _WIMOS_5A_PROCESSOR(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_5A_AVERAGE_SIZE)
     
     #define _WIMOS_5A_DETECTION(inputValue)     detectionA5Default(inputValue)
-    #define _WIMOS_ALERT_TIMEOUT                ((uint32_t)0x1388u)
     #ifdef _EN_WIMOS_TV
       /**
        * @brief Define to element 1 to display over TV signal.

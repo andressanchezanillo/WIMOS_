@@ -43,7 +43,12 @@
       /**
        * @brief Timeout ACK.
        */
-      #define TIMEOUT_ACK 250
+      #define TIMEOUT_ACK             250
+      
+      /**
+       * @brief Timeout Alert.
+       */
+      #define _WIMOS_ALERT_TIMEOUT    ((uint32_t)0x0FA0u)
     #endif
     
     #ifdef  __AVR_ATmega32U4__
@@ -658,6 +663,16 @@
      * @brief External digital port.
      */
     #define WIMOS_D5_1_PORT   (6)
+    
+    /**
+     * @brief External digital port.
+     */
+    #define WIMOS_LED_PORT   (9)
+    
+    /**
+     * @brief Label for Digital LED Port Mode.
+     */
+    #define _WIMOS_PORT_MODE_LED INPUT
     
     
     /**

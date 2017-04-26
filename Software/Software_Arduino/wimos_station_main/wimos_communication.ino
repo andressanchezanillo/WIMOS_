@@ -192,11 +192,17 @@ void waitCommand(void){
     /*Success Command Rate.*/
     if(millis() - ulTimeCommandsRate >= TIME_COMMAND_RATE){
       #ifndef WIMOS_VALIDATION_TEST
+        char ucDataOutput[4];
         SERIAL_USB.print("[INFO001]:");
+        
         SERIAL_USB.print(" ");
-        SERIAL_USB.print((uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100, HEX);
+        sprintf(ucDataOutput,"%02x",(uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100);
+        SERIAL_USB.print(ucDataOutput);
+        
         SERIAL_USB.print(" ");
-        SERIAL_USB.print(((uint32_t)((float)((float) TIME_COMMAND_RATE / (float)ucCommandsResponseReceived))), HEX);
+        sprintf(ucDataOutput,"%02x",((uint32_t)((float)((float) TIME_COMMAND_RATE / (float)ucCommandsResponseReceived))));
+        SERIAL_USB.print(ucDataOutput);
+        
         SERIAL_USB.println(" OK");      
         ulTimeCommandsRate = millis();
         ucCommandsResponseReceived = 0;
@@ -714,8 +720,10 @@ void runFunction(void){
                   SERIAL_USB.print(":");
                       
                   for(uint8_t i=0; i< sizeof(stWimosTestMsg); i++ ){
+                    char ucDataOutput[4];
                     SERIAL_USB.print(" ");
-                    SERIAL_USB.print(((uint8_t*)&stWimosTestMsg)[i], HEX);
+                    sprintf(ucDataOutput,"%02x",((uint8_t*)&stWimosTestMsg)[i]);
+                    SERIAL_USB.print(ucDataOutput);
                   }
                   
                   /*Go to next state.*/
@@ -774,8 +782,10 @@ void runFunction(void){
                   SERIAL_USB.print(":");
                       
                   for(uint8_t i=0; i< sizeof(stLocalWimosAlertMsg); i++ ){
+                    char ucDataOutput[4];
                     SERIAL_USB.print(" ");
-                    SERIAL_USB.print(((uint8_t*)&stLocalWimosAlertMsg)[i], HEX);
+                    sprintf(ucDataOutput,"%02x",((uint8_t*)&stLocalWimosAlertMsg)[i]);
+                    SERIAL_USB.print(ucDataOutput);
                   }
                   
                   /*Go to next state.*/
