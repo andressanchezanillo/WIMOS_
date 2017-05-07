@@ -1,20 +1,20 @@
 /****************************************************************************
  * Copyright (C) 2015 by Andrés Sánchez Anillo                              *
  *                                                                          *
- * This file is part of Box.                                                *
+ * This file is part of Wimos Firmware.                                                *
  *                                                                          *
- *   Box is free software: you can redistribute it and/or modify it         *
+ *   Wimos Firmware is free software: you can redistribute it and/or modify it         *
  *   under the terms of the GNU Lesser General Public License as published  *
  *   by the Free Software Foundation, either version 3 of the License, or   *
  *   (at your option) any later version.                                    *
  *                                                                          *
- *   Box is distributed in the hope that it will be useful,                 *
+ *   Wimos Firmware is distributed in the hope that it will be useful,                 *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
  *   GNU Lesser General Public License for more details.                    *
  *                                                                          *
  *   You should have received a copy of the GNU Lesser General Public       *
- *   License along with Box.  If not, see <http://www.gnu.org/licenses/>.   *
+ *   License along with Wimos Firmware.  If not, see <http://www.gnu.org/licenses/>.   *
  ****************************************************************************/
 
 /**
@@ -154,7 +154,47 @@ extern void initWimos(void){
       #ifdef __AVR_ATmega32U4__  
         _test_n4UT19 ();
         _test_n4UT20 ();
-      #endif      
+      #endif    
+      #ifdef __SAM3X8E__
+        _test_n5UT01();
+        _test_n5UT02();
+        _test_n5UT03();
+        _test_n5UT04();
+        _test_n5UT05();
+        _test_n5UT06();
+        _test_n5UT07();
+        _test_n5UT08();
+        _test_n5UT09();
+        _test_n5UT10();
+        _test_n5UT11();
+        _test_n5UT12();
+        _test_n5UT13();
+        _test_n5UT14();
+        _test_n5UT15();
+        _test_n5UT16();
+        _test_n5UT17();
+        _test_n5UT18();
+        _test_n5UT19();
+        _test_n5UT20();
+        _test_n5UT21();
+        _test_n5UT22();
+        _test_n5UT23();
+        _test_n5UT24();
+        _test_n5UT25();
+        _test_n5UT26();
+        _test_n5UT27();
+        _test_n5UT28();
+        _test_n5UT29();
+        _test_n5UT30();
+        _test_n5UT31();
+        _test_n5UT32();
+        _test_n5UT33();
+        _test_n5UT34();
+        _test_n5UT35();
+        _test_n5UT36();
+        _test_n5UT37();
+        _test_n5UT38();
+      #endif
       
       while(true);
   #else 

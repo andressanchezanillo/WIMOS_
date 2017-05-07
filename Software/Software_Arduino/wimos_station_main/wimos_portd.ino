@@ -1,20 +1,20 @@
 /****************************************************************************
  * Copyright (C) 2015 by Andrés Sánchez Anillo                              *
  *                                                                          *
- * This file is part of Box.                                                *
+ * This file is part of Wimos Firmware.                                                *
  *                                                                          *
- *   Box is free software: you can redistribute it and/or modify it         *
+ *   Wimos Firmware is free software: you can redistribute it and/or modify it         *
  *   under the terms of the GNU Lesser General Public License as published  *
  *   by the Free Software Foundation, either version 3 of the License, or   *
  *   (at your option) any later version.                                    *
  *                                                                          *
- *   Box is distributed in the hope that it will be useful,                 *
+ *   Wimos Firmware is distributed in the hope that it will be useful,                 *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
  *   GNU Lesser General Public License for more details.                    *
  *                                                                          *
  *   You should have received a copy of the GNU Lesser General Public       *
- *   License along with Box.  If not, see <http://www.gnu.org/licenses/>.   *
+ *   License along with Wimos Firmware.  If not, see <http://www.gnu.org/licenses/>.   *
  ****************************************************************************/
 
 /**
@@ -33,7 +33,7 @@
   #include "main_config.h"
   
   
-  
+  uint32_t ulTimerLed = 0;
   
   /**
    * @brief Digital Port Initialization.
@@ -101,6 +101,11 @@
       stGlobalWimosInfoMsg.stInfo.stStatus.usPortStatus &= ~WIMOS_PORT_D5_MASK;
       DEBUG_INFO("Digital port 5 not initialized.");
     #endif
+    
+    pinMode(WIMOS_LED_PORT,_WIMOS_PORT_MODE_LED);
+    digitalWrite(WIMOS_LED_PORT, HIGH);
+    ulTimerLed = millis();
+      
   }
   
   
@@ -132,6 +137,26 @@
     stWimosPort->usPortD5 = (digitalRead(WIMOS_D4_1_PORT) );
     
     #endif
+    
+    if (( stGlobalWimosAlertMsg.stAlert.ucAlertA1 + 
+          stGlobalWimosAlertMsg.stAlert.ucAlertA2 + 
+          stGlobalWimosAlertMsg.stAlert.ucAlertA3 + 
+          stGlobalWimosAlertMsg.stAlert.ucAlertA4 + 
+          stGlobalWimosAlertMsg.stAlert.ucAlertA5) > 0)
+    {
+      if( millis() - ulTimerLed >= 250 ){
+        digitalWrite(WIMOS_LED_PORT, !digitalRead(WIMOS_LED_PORT));
+        ulTimerLed = millis();
+      }
+      
+    }else if(stGlobalWimosInfoMsg.stInfo.ucPercentBattery < 25){
+      if( millis() - ulTimerLed >= 2000 ){
+        digitalWrite(WIMOS_LED_PORT, !digitalRead(WIMOS_LED_PORT));
+        ulTimerLed = millis();
+      }      
+    }else{
+      digitalWrite(WIMOS_LED_PORT, HIGH);
+    }
   }
   
   
