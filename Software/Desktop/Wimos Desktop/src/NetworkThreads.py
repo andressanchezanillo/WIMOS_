@@ -2,6 +2,7 @@ from random import randint
 from datetime import datetime
 from PyQt4 import QtCore, QtGui
 from NetworkList import QNetworkList
+import numpy
 import threading, Queue
 import serial
 import sys
@@ -138,23 +139,31 @@ class QNetworkThreads(QtGui.QWidget):
                 
                 
     def processGPSValues(self, datainput):
+        print datainput
         # Calculate the latitude.
         LatitudeDegree = int(datainput[11], 16)
-        LatitudeMinutes = int(datainput[12]+datainput[13]+datainput[14]+datainput[15], 16)
+        LatitudeMinutes = int(datainput[15]+datainput[14]+datainput[13]+datainput[12], 16)
+        print str(LatitudeDegree) + " -- " + str(LatitudeMinutes)
 
         if LatitudeMinutes > 2147483647:
             LatitudeMinutes -= 4294967294
+            LatitudeMinutes = LatitudeMinutes * -1
             LatitudeDegree = LatitudeDegree * -1
         Latitude =  str(LatitudeDegree)+"."+str(LatitudeMinutes)
+        print str(Latitude)
 
         # Calculate the longitude.
         LongitudeDegree = int(datainput[16], 16)
-        LongitudeMinutes = int(datainput[17]+datainput[18]+datainput[19]+datainput[20], 16)
+        LongitudeMinutes = int(datainput[20]+datainput[19]+datainput[18]+datainput[17], 16)
+        print str(LongitudeDegree) + " -- " + str(LongitudeMinutes)
         
         if LongitudeMinutes > 2147483647:
             LongitudeMinutes -= 4294967294
+            LongitudeMinutes = LongitudeMinutes * -1
             LongitudeDegree = LongitudeDegree * -1
         Longitude =  str(LongitudeDegree)+"."+str(LongitudeMinutes)
+        print str(Longitude)
+        
 
         
         return Latitude, Longitude

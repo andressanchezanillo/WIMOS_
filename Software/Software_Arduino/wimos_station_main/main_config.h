@@ -1,20 +1,20 @@
 /****************************************************************************
  * Copyright (C) 2015 by Andrés Sánchez Anillo                              *
  *                                                                          *
- * This file is part of Box.                                                *
+ * This file is part of Wimos Firmware.                                                *
  *                                                                          *
- *   Box is free software: you can redistribute it and/or modify it         *
+ *   Wimos Firmware is free software: you can redistribute it and/or modify it         *
  *   under the terms of the GNU Lesser General Public License as published  *
  *   by the Free Software Foundation, either version 3 of the License, or   *
  *   (at your option) any later version.                                    *
  *                                                                          *
- *   Box is distributed in the hope that it will be useful,                 *
+ *   Wimos Firmware is distributed in the hope that it will be useful,                 *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
  *   GNU Lesser General Public License for more details.                    *
  *                                                                          *
  *   You should have received a copy of the GNU Lesser General Public       *
- *   License along with Box.  If not, see <http://www.gnu.org/licenses/>.   *
+ *   License along with Wimos Firmware.  If not, see <http://www.gnu.org/licenses/>.   *
  ****************************************************************************/
 
 /**
@@ -43,7 +43,12 @@
       /**
        * @brief Timeout ACK.
        */
-      #define TIMEOUT_ACK 250
+      #define TIMEOUT_ACK             250
+      
+      /**
+       * @brief Timeout Alert.
+       */
+      #define _WIMOS_ALERT_TIMEOUT    ((uint32_t)0x0FA0u)
     #endif
     
     #ifdef  __AVR_ATmega32U4__
@@ -52,7 +57,96 @@
        */
       #define TIMEOUT_ACK 250
     #endif
+
     
+    #ifndef CRITICAL_REFRESH_MS
+      #define CRITICAL_REFRESH_MS     100
+    #endif
+    
+    #ifndef INFO_REFRESH_MS
+      #define INFO_REFRESH_MS         250
+    #endif
+    
+    
+    
+    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+      #undef _WIMOS_1A_OFFSET_1
+      #define _WIMOS_1A_OFFSET_1                 0x10
+      
+      #undef _WIMOS_1A_COEFICIENT_1             
+      #define _WIMOS_1A_COEFICIENT_1             0x02
+      
+      #undef _WIMOS_1A_OFFSET_2                 
+      #define _WIMOS_1A_OFFSET_2                 0x20
+      
+      #undef _WIMOS_1A_COEFICIENT_2             
+      #define _WIMOS_1A_COEFICIENT_2             0x04
+      
+      #undef _WIMOS_2A_OFFSET_1
+      #define _WIMOS_2A_OFFSET_1                 0x10
+      
+      #undef _WIMOS_2A_COEFICIENT_1             
+      #define _WIMOS_2A_COEFICIENT_1             0x02
+      
+      #undef _WIMOS_2A_OFFSET_2                 
+      #define _WIMOS_2A_OFFSET_2                 0x20
+      
+      #undef _WIMOS_2A_COEFICIENT_2             
+      #define _WIMOS_2A_COEFICIENT_2             0x04
+      
+      #undef _WIMOS_3A_OFFSET_1
+      #define _WIMOS_3A_OFFSET_1                 0x10
+      
+      #undef _WIMOS_3A_COEFICIENT_1             
+      #define _WIMOS_3A_COEFICIENT_1             0x02
+      
+      #undef _WIMOS_3A_OFFSET_2                 
+      #define _WIMOS_3A_OFFSET_2                 0x20
+      
+      #undef _WIMOS_3A_COEFICIENT_2             
+      #define _WIMOS_3A_COEFICIENT_2             0x04
+      
+      #undef _WIMOS_4A_OFFSET_1
+      #define _WIMOS_4A_OFFSET_1                 0x10
+      
+      #undef _WIMOS_4A_COEFICIENT_1             
+      #define _WIMOS_4A_COEFICIENT_1             0x02
+      
+      #undef _WIMOS_4A_OFFSET_2                 
+      #define _WIMOS_4A_OFFSET_2                 0x20
+      
+      #undef _WIMOS_4A_COEFICIENT_2             
+      #define _WIMOS_4A_COEFICIENT_2             0x04
+
+      #undef _WIMOS_5A1_OFFSET_1
+      #define _WIMOS_5A1_OFFSET_1                 (- VCC_LOGIC / 2)
+      #undef _WIMOS_5A1_COEFICIENT_1
+      #define _WIMOS_5A1_COEFICIENT_1             (float)(GRAVITY_MM_S2/(VCC_LOGIC/5))
+      #undef _WIMOS_5A1_OFFSET_2
+      #define _WIMOS_5A1_OFFSET_2                 0x00
+      #undef _WIMOS_5A1_COEFICIENT_2
+      #define _WIMOS_5A1_COEFICIENT_2             0x01
+
+      #undef _WIMOS_5A2_OFFSET_1
+      #define _WIMOS_5A2_OFFSET_1                 (- VCC_LOGIC / 2)
+      #undef _WIMOS_5A2_COEFICIENT_1
+      #define _WIMOS_5A2_COEFICIENT_1             (float)(GRAVITY_MM_S2/(VCC_LOGIC/5))
+      #undef _WIMOS_5A2_OFFSET_2
+      #define _WIMOS_5A2_OFFSET_2                 0x00
+      #undef _WIMOS_5A2_COEFICIENT_2
+      #define _WIMOS_5A2_COEFICIENT_2             0x01
+
+      #undef _WIMOS_5A3_OFFSET_1
+      #define _WIMOS_5A3_OFFSET_1                 (- VCC_LOGIC / 2)
+      #undef _WIMOS_5A3_COEFICIENT_1
+      #define _WIMOS_5A3_COEFICIENT_1             (float)(GRAVITY_MM_S2/(VCC_LOGIC/5))
+      #undef _WIMOS_5A3_OFFSET_2
+      #define _WIMOS_5A3_OFFSET_2                 0x00
+      #undef _WIMOS_5A3_COEFICIENT_2
+      #define _WIMOS_5A3_COEFICIENT_2             0x01
+
+    #endif
+      
     /**
      * @brief Date data struct.
      */
@@ -150,16 +244,16 @@
         int8_t usInternalIMUGyrosY; /**< Internal IMU module value. */
       #endif
       #ifdef _EN_WIMOS_PORT_A1
-        int16_t usPortA1; /**< Analog port 1 value. */
+        int16_t usPort1A; /**< Analog port 1 value. */
       #endif
       #ifdef _EN_WIMOS_PORT_A2
-        int16_t usPortA2; /**< Analog port 2 value. */
+        int16_t usPort2A; /**< Analog port 2 value. */
       #endif
       #ifdef _EN_WIMOS_PORT_A3
-        int16_t usPortA3; /**< Analog port 3 value. */
+        int16_t usPort3A; /**< Analog port 3 value. */
       #endif
       #ifdef _EN_WIMOS_PORT_A4
-        int16_t usPortA4; /**< Analog port 4 value. */
+        int16_t usPort4A; /**< Analog port 4 value. */
       #endif
       #ifdef _EN_WIMOS_PORT_A5
         int16_t usPort5A1; /**< Analog port 5 pin 1 value. */
@@ -648,6 +742,16 @@
      */
     #define WIMOS_D5_1_PORT   (6)
     
+    /**
+     * @brief External digital port.
+     */
+    #define WIMOS_LED_PORT   (9)
+    
+    /**
+     * @brief Label for Digital LED Port Mode.
+     */
+    #define _WIMOS_PORT_MODE_LED INPUT
+    
     
     /**
      * @brief Internal Battery Reader mask.
@@ -680,6 +784,18 @@
      
      #define MATH_DEFAULT_THRESHOLD(inputValue, inputThreshold, inputOffset)           ((inputOffset >= 0)?(inputValue >= (inputThreshold + inputOffset)):(inputValue <= (inputThreshold+inputOffset)))        
 
+    
+    uint8_t detectionA1Custom(float fInputValue);
+    uint8_t detectionA1Default(float fInputValue);
+    
+    uint8_t detectionA2Custom(float fInputValue);
+    uint8_t detectionA2Default(float fInputValue);
+    
+    uint8_t detectionA3Custom(float fInputValue);
+    uint8_t detectionA3Default(float fInputValue);
+    
+    uint8_t detectionA4Custom(float fInputValue);
+    uint8_t detectionA4Default(float fInputValue);
     
     uint8_t detectionA5Custom(float fInputValue);
     uint8_t detectionA5Default(float fInputValue);
@@ -926,6 +1042,46 @@
         #ifdef __AVR_ATmega32U4__        
           void _test_n4UT19 (void);
           void _test_n4UT20 (void);
+        #endif
+        #ifdef __SAM3X8E__
+          void _test_n5UT01 (void);
+          void _test_n5UT02 (void);
+          void _test_n5UT03 (void);
+          void _test_n5UT04 (void);
+          void _test_n5UT05 (void);
+          void _test_n5UT06 (void);
+          void _test_n5UT07 (void);
+          void _test_n5UT08 (void);
+          void _test_n5UT09 (void);
+          void _test_n5UT10 (void);
+          void _test_n5UT11 (void);
+          void _test_n5UT12 (void);
+          void _test_n5UT13 (void);
+          void _test_n5UT14 (void);
+          void _test_n5UT15 (void);
+          void _test_n5UT16 (void);
+          void _test_n5UT17 (void);
+          void _test_n5UT18 (void);
+          void _test_n5UT19 (void);
+          void _test_n5UT20 (void);
+          void _test_n5UT21 (void);
+          void _test_n5UT22 (void);
+          void _test_n5UT23 (void);
+          void _test_n5UT24 (void);
+          void _test_n5UT25 (void);
+          void _test_n5UT26 (void);
+          void _test_n5UT27 (void);
+          void _test_n5UT28 (void);
+          void _test_n5UT29 (void);
+          void _test_n5UT30 (void);
+          void _test_n5UT31 (void);
+          void _test_n5UT32 (void);
+          void _test_n5UT33 (void);
+          void _test_n5UT34 (void);
+          void _test_n5UT35 (void);
+          void _test_n5UT36 (void);
+          void _test_n5UT37 (void);
+          void _test_n5UT38 (void);
         #endif
       #endif
       

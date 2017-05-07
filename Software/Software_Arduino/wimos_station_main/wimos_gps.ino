@@ -1,20 +1,20 @@
 /****************************************************************************
  * Copyright (C) 2015 by Andrés Sánchez Anillo                              *
  *                                                                          *
- * This file is part of Box.                                                *
+ * This file is part of Wimos Firmware.                                                *
  *                                                                          *
- *   Box is free software: you can redistribute it and/or modify it         *
+ *   Wimos Firmware is free software: you can redistribute it and/or modify it         *
  *   under the terms of the GNU Lesser General Public License as published  *
  *   by the Free Software Foundation, either version 3 of the License, or   *
  *   (at your option) any later version.                                    *
  *                                                                          *
- *   Box is distributed in the hope that it will be useful,                 *
+ *   Wimos Firmware is distributed in the hope that it will be useful,                 *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
  *   GNU Lesser General Public License for more details.                    *
  *                                                                          *
  *   You should have received a copy of the GNU Lesser General Public       *
- *   License along with Box.  If not, see <http://www.gnu.org/licenses/>.   *
+ *   License along with Wimos Firmware.  If not, see <http://www.gnu.org/licenses/>.   *
  ****************************************************************************/
 
 /**
@@ -408,13 +408,22 @@
    */
   extern void updateGPS(stWimosInfo* _stWimosInfo){
     #ifdef _EN_WIMOS_GPS
-      uint8_t ret;
-      DEBUG_INFO("GPS update function.");
-      ret = machineStateGPS(_stWimosInfo);
-      if(ret == _OK){
-        DEBUG_OK("GPS updated.");
-      }  
-      return;  
+      #ifdef DEBUG_GPS
+        _stWimosInfo->stGpsPosition.stLatitude.ucDegree = 41;
+        _stWimosInfo->stGpsPosition.stLatitude.slMinute = 653189;
+        
+        _stWimosInfo->stGpsPosition.stLongitude.ucDegree = 4;
+        _stWimosInfo->stGpsPosition.stLongitude.slMinute = -731384;
+        return;
+      #else
+        uint8_t ret;
+        DEBUG_INFO("GPS update function.");
+        ret = machineStateGPS(_stWimosInfo);
+        if(ret == _OK){
+          DEBUG_OK("GPS updated.");
+        }  
+        return;  
+      #endif
     #endif
   }
   

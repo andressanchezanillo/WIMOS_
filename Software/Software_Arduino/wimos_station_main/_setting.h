@@ -1,20 +1,20 @@
 /****************************************************************************
  * Copyright (C) 2015 by Andrés Sánchez Anillo                              *
  *                                                                          *
- * This file is part of Box.                                                *
+ * This file is part of Wimos Firmware.                                                *
  *                                                                          *
- *   Box is free software: you can redistribute it and/or modify it         *
+ *   Wimos Firmware is free software: you can redistribute it and/or modify it         *
  *   under the terms of the GNU Lesser General Public License as published  *
  *   by the Free Software Foundation, either version 3 of the License, or   *
  *   (at your option) any later version.                                    *
  *                                                                          *
- *   Box is distributed in the hope that it will be useful,                 *
+ *   Wimos Firmware is distributed in the hope that it will be useful,                 *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
  *   GNU Lesser General Public License for more details.                    *
  *                                                                          *
  *   You should have received a copy of the GNU Lesser General Public       *
- *   License along with Box.  If not, see <http://www.gnu.org/licenses/>.   *
+ *   License along with Wimos Firmware.  If not, see <http://www.gnu.org/licenses/>.   *
  ****************************************************************************/
 
 /**
@@ -35,28 +35,32 @@
   /**
    * @brief Label Debug traces activation.
    */
-  //#define WIMOS_DEBUG
-  //#define WIMOS_UNIT_TEST
+  #define WIMOS_DEBUG
+  #define DEBUG_COLOR
+  #define WIMOS_UNIT_TEST
   //#define DEBUG_COMM_RXTX
   //#define DEBUG_COMM_STATUS
-  #define DEBUG_ANALOG_A5
+  //#define DEBUG_GPS
+  //#define DEBUG_ANALOG_A5
   //#define WIMOS_VALIDATION_TEST
   
   /**
    * @brief Label for RF activation.
    */
-  #define _EN_WIMOS_RF
-  
+  #define _EN_WIMOS_RF  
   
   #ifdef __SAM3X8E__  
   
     #define WIMOS_ID 0x10
+
+    /*
+    * @brief time to refresh setting.
+    */
+    #define CRITICAL_REFRESH_MS    100
+    #define INFO_REFRESH_MS        250
+
     
     #define _WIMOS_IMU
-    /**
-     * @brief Label Debug for colour terminal activation.
-     */
-    #define DEBUG_COLOR
     /**
      * @brief Label for GPS activation.
      */
@@ -203,7 +207,68 @@
                               (stWimosI2CRegister) { .eRegisterType = eDataRead, .ucDeviceAddress = 0x68,  .ucRegisterAddress = 0x00, .ucRegisterValue = 0x01 }, \
                               (stWimosI2CRegister) { .eRegisterType = eDataRead, .ucDeviceAddress = 0x68,  .ucRegisterAddress = 0x01, .ucRegisterValue = 0x02 }  \                                                                   
                             }
-                            
+    
+    #define _WIMOS_1A_OFFSET_1                 0x00
+    #define _WIMOS_1A_COEFICIENT_1             0x01
+    #define _WIMOS_1A_OFFSET_2                 0x00
+    #define _WIMOS_1A_COEFICIENT_2             0x01
+      
+    #define _WIMOS_1A_AVERAGE_SIZE              ((uint8_t)50)
+    #define _WIMOS_1A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_1A_OFFSET_MAX_SIZE           ((uint8_t)10)
+        
+    #define _WIMOS_1A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_1A_AVERAGE_SIZE)
+    #define _WIMOS_1A_PROCESSOR(lastValue, inputValue, currentIndex, sizeValue)      MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, sizeValue)
+    
+    #define _WIMOS_1A_DETECTION(inputValue)     detectionA1Default(inputValue)
+    
+
+    #define _WIMOS_2A_OFFSET_1                 0x00
+    #define _WIMOS_2A_COEFICIENT_1             0x01
+    #define _WIMOS_2A_OFFSET_2                 0x00
+    #define _WIMOS_2A_COEFICIENT_2             0x01
+      
+    #define _WIMOS_2A_AVERAGE_SIZE              ((uint8_t)50)
+    #define _WIMOS_2A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_2A_OFFSET_MAX_SIZE           ((uint8_t)10)
+    
+    #define _WIMOS_2A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_2A_AVERAGE_SIZE)
+    #define _WIMOS_2A_PROCESSOR(lastValue, inputValue, currentIndex, sizeVal)        MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, sizeVal)
+    
+    #define _WIMOS_2A_DETECTION(inputValue)     detectionA2Default(inputValue)
+    
+    
+    #define _WIMOS_3A_OFFSET_1                 0x00
+    #define _WIMOS_3A_COEFICIENT_1             0x01
+    #define _WIMOS_3A_OFFSET_2                 0x00
+    #define _WIMOS_3A_COEFICIENT_2             0x01
+      
+    #define _WIMOS_3A_AVERAGE_SIZE              ((uint8_t)50)
+    #define _WIMOS_3A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_3A_OFFSET_MAX_SIZE           ((uint8_t)10)
+    
+    #define _WIMOS_3A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_3A_AVERAGE_SIZE)
+    #define _WIMOS_3A_PROCESSOR(lastValue, inputValue, currentIndex, sizeVal)        MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, sizeVal)
+    
+    #define _WIMOS_3A_DETECTION(inputValue)     detectionA3Default(inputValue)
+
+    
+    #define _WIMOS_4A_OFFSET_1                 0x00
+    #define _WIMOS_4A_COEFICIENT_1             0x01
+    #define _WIMOS_4A_OFFSET_2                 0x00
+    #define _WIMOS_4A_COEFICIENT_2             0x01
+      
+    #define _WIMOS_4A_AVERAGE_SIZE              ((uint8_t)50)
+    #define _WIMOS_4A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_4A_OFFSET_MAX_SIZE           ((uint8_t)10)
+    
+    #define _WIMOS_4A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_4A_AVERAGE_SIZE)
+    #define _WIMOS_4A_PROCESSOR(lastValue, inputValue, currentIndex, sizeVal)        MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, sizeVal)
+    
+    #define _WIMOS_4A_DETECTION(inputValue)     detectionA4Default(inputValue)
+
+
+    
     #define _WIMOS_5A1_OFFSET_1                 (- VCC_LOGIC / 2)
     #define _WIMOS_5A1_COEFICIENT_1             (float)(GRAVITY_MM_S2/(VCC_LOGIC/5))
     #define _WIMOS_5A1_OFFSET_2                 0x00
@@ -222,13 +287,14 @@
     #define _WIMOS_5A_OPERATOR_JOINT(x,y,z)     MATH_VECTOR3D_LENGHT(x,y,z)
     
     #define _WIMOS_5A_AVERAGE_SIZE              ((uint8_t)50)
-    #define _WIMOS_5A_AVERAGE_OFFSET            ((uint8_t)120)
+    #define _WIMOS_5A_AVERAGE_OFFSET            ((uint8_t)83)
     #define _WIMOS_5A_OFFSET_MAX_SIZE           ((uint8_t)10)
     
-    #define _WIMOS_5A_PROCESSOR(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_5A_AVERAGE_SIZE)
+    #define _WIMOS_5A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_5A_AVERAGE_SIZE)
+    #define _WIMOS_5A_PROCESSOR(lastValue, inputValue, currentIndex, sizeVal)        MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, sizeVal)
     
     #define _WIMOS_5A_DETECTION(inputValue)     detectionA5Default(inputValue)
-    #define _WIMOS_ALERT_TIMEOUT                ((uint32_t)0x1388u)
+    
     #ifdef _EN_WIMOS_TV
       /**
        * @brief Define to element 1 to display over TV signal.
@@ -246,6 +312,12 @@
       
     #endif
   #endif
+  
+  
+  
+  
+  
+  
   #ifdef __AVR_ATmega32U4__
   
     #define WIMOS_ID 0x00

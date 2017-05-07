@@ -1,20 +1,20 @@
 /****************************************************************************
  * Copyright (C) 2015 by Andrés Sánchez Anillo                              *
  *                                                                          *
- * This file is part of Box.                                                *
+ * This file is part of Wimos Firmware.                                                *
  *                                                                          *
- *   Box is free software: you can redistribute it and/or modify it         *
+ *   Wimos Firmware is free software: you can redistribute it and/or modify it         *
  *   under the terms of the GNU Lesser General Public License as published  *
  *   by the Free Software Foundation, either version 3 of the License, or   *
  *   (at your option) any later version.                                    *
  *                                                                          *
- *   Box is distributed in the hope that it will be useful,                 *
+ *   Wimos Firmware is distributed in the hope that it will be useful,                 *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          *
  *   GNU Lesser General Public License for more details.                    *
  *                                                                          *
  *   You should have received a copy of the GNU Lesser General Public       *
- *   License along with Box.  If not, see <http://www.gnu.org/licenses/>.   *
+ *   License along with Wimos Firmware.  If not, see <http://www.gnu.org/licenses/>.   *
  ****************************************************************************/
 
 /**
@@ -62,6 +62,7 @@ void waitACK(void);
 void sendResponse(void);
 void clearBuffer(void);
 void runFunction(void);
+void noOperation(void);
 bool receiveFrame( void* pData, uint8_t ucSize, uint8_t ucFrameID);
 void sendFrame(const void* ptrData, uint8_t ucSize);
 extern void (*communicationThread)(void);
@@ -191,11 +192,17 @@ void waitCommand(void){
     /*Success Command Rate.*/
     if(millis() - ulTimeCommandsRate >= TIME_COMMAND_RATE){
       #ifndef WIMOS_VALIDATION_TEST
+        char ucDataOutput[4];
         SERIAL_USB.print("[INFO001]:");
+        
         SERIAL_USB.print(" ");
-        SERIAL_USB.print((uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100, HEX);
+        sprintf(ucDataOutput,"%02x",(uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100);
+        SERIAL_USB.print(ucDataOutput);
+        
         SERIAL_USB.print(" ");
-        SERIAL_USB.print(((uint32_t)((float)((float) TIME_COMMAND_RATE / (float)ucCommandsResponseReceived))), HEX);
+        sprintf(ucDataOutput,"%02x",((uint32_t)((float)((float) TIME_COMMAND_RATE / (float)ucCommandsResponseReceived))));
+        SERIAL_USB.print(ucDataOutput);
+        
         SERIAL_USB.println(" OK");      
         ulTimeCommandsRate = millis();
         ucCommandsResponseReceived = 0;
@@ -713,8 +720,10 @@ void runFunction(void){
                   SERIAL_USB.print(":");
                       
                   for(uint8_t i=0; i< sizeof(stWimosTestMsg); i++ ){
+                    char ucDataOutput[4];
                     SERIAL_USB.print(" ");
-                    SERIAL_USB.print(((uint8_t*)&stWimosTestMsg)[i], HEX);
+                    sprintf(ucDataOutput,"%02x",((uint8_t*)&stWimosTestMsg)[i]);
+                    SERIAL_USB.print(ucDataOutput);
                   }
                   
                   /*Go to next state.*/
@@ -773,8 +782,10 @@ void runFunction(void){
                   SERIAL_USB.print(":");
                       
                   for(uint8_t i=0; i< sizeof(stLocalWimosAlertMsg); i++ ){
+                    char ucDataOutput[4];
                     SERIAL_USB.print(" ");
-                    SERIAL_USB.print(((uint8_t*)&stLocalWimosAlertMsg)[i], HEX);
+                    sprintf(ucDataOutput,"%02x",((uint8_t*)&stLocalWimosAlertMsg)[i]);
+                    SERIAL_USB.print(ucDataOutput);
                   }
                   
                   /*Go to next state.*/
@@ -826,7 +837,9 @@ void runFunction(void){
   #endif
 }
 
-
+void noOperation(void){
+  
+}
 
 
 
