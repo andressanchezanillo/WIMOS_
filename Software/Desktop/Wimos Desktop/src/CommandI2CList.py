@@ -167,9 +167,9 @@ class QCommandI2CList(QtGui.QWidget):
         sizeData = 0
 
         if self.EnableInterface.isChecked():
-            stringBuild += "#define _EN_WIMOS_PORT_I2C"
+            stringBuild += "#define _EN_WIMOS_PORT_I2C\n"
         else:
-            stringBuild += "#undef _EN_WIMOS_PORT_I2C"
+            stringBuild += "#undef _EN_WIMOS_PORT_I2C\n"
             
         for row in range(self.CommandI2CListModel.rowCount()):
             item = self.CommandI2CListModel.item(row)

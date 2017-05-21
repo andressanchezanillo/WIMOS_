@@ -17,3 +17,11 @@ class QNetworkWindows(QtGui.QWidget):
         self.setLayout(self.NetworkLayout)
 
 
+
+    def TestUTs(self):
+        
+        self.NetworkThread.TestUTs()
+
+    def TestVT(self):
+        
+        self.NetworkThread.TestVT()

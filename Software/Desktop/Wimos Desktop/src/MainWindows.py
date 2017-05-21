@@ -34,6 +34,8 @@ class QMainWindows(QtGui.QWidget):
         
         self.setLayout(self.layout)
 
+        self.MainTabs.currentChanged.connect(self.SettingMain.updateReleaseList)
+
     def TestUTs(self):
         print("--- Unitaty Test Started ---")
         
@@ -46,6 +48,7 @@ class QMainWindows(QtGui.QWidget):
 
         self.UpdateMain.TestUTs()
         self.SettingMain.TestUTs()
+        self.NetworkMain.TestUTs()
         
         msg = QtGui.QMessageBox()
         msg.setIcon(QtGui.QMessageBox.Information)
@@ -56,7 +59,23 @@ class QMainWindows(QtGui.QWidget):
 
     def TestVT(self):
         print("--- Unitaty Test Started ---")
+        
+        msg = QtGui.QMessageBox()
+        msg.setIcon(QtGui.QMessageBox.Information)
+        msg.setText("Validation Tests are running.\n Please don't touch anything.")
+        msg.setWindowTitle("Validation Test")
+        msg.setStandardButtons(QtGui.QMessageBox.Ok)
+        msg.exec_()
+        
         self.UpdateMain.TestVT()
         self.SettingMain.TestVT()
+        self.NetworkMain.TestVT()
+        
+        msg = QtGui.QMessageBox()
+        msg.setIcon(QtGui.QMessageBox.Information)
+        msg.setText("Validation Tests has finished.")
+        msg.setWindowTitle("Validation Test Finished")
+        msg.setStandardButtons(QtGui.QMessageBox.Ok)
+        msg.exec_()
 
     

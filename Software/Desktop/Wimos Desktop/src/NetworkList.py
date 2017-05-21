@@ -190,4 +190,25 @@ class QNetworkList (QtGui.QWidget):
                     item.disconnect()
                     self.NetworkGraph.disconnect(item.getID())
 
+    def TestUTs(self):
+
+##        resultn8UT01 = self.n8UT01()
+##        if ( resultn8UT01 == 100):
+##            print("[TEST] n8UT01\t[OK]\tn8.UT01 = 100%")
+##        else:
+##            print("[TEST] n8UT01\t[ERROR]\tn8.UT01 = "+(str(resultn8UT01))+"%")
+        print("In progress..")
+        NewtorkItem = QNetworkItem()
+        
+        NewtorkItem.TestUTs()
+        self.NetworkGraph.TestUTs()
+        
+
+    def TestVT(self):
+        print("In progress..")
+        NewtorkItem = QNetworkItem()
+        
+        NewtorkItem.TestVT()
+        self.NetworkGraph.TestVT()
+
 

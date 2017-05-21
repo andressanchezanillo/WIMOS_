@@ -124,7 +124,7 @@ class QAnalogValueSetting(QtGui.QWidget):
         if self.AnalogCoeficient1TextEdit.toPlainText() == "NULL":            
             stringBuild += "#define _WIMOS_"+analogName+"_COEFICIENT_1 \t (uint8_t)(1)\n"
         else:
-            stringBuild += "#define _WIMOS_"+analogName+"_COEFICIENT_1  \t "+self.AnalogCoeficient1TextEdit.toPlainText()+"\n"
+            stringBuild += "#define _WIMOS_"+analogName+"_COEFICIENT_1 \t "+self.AnalogCoeficient1TextEdit.toPlainText()+"\n"
         
         if self.AnalogOffset2TextEdit.toPlainText() == "NULL":            
             stringBuild += "#define _WIMOS_"+analogName+"_OFFSET_2 \t (uint8_t)(0)\n"

@@ -8,6 +8,8 @@ import urllib2
 import os
 import re
 import glob
+import zipfile
+import shutil
 
 
 class QSettingWindows(QtGui.QWidget):
@@ -34,11 +36,7 @@ class QSettingWindows(QtGui.QWidget):
         self.SelectRelease.setFixedWidth(250)
         self.SelectRelease.addItem("--- Select Release Version ---")
         # Get File list.
-        self.path = "workspace/releases/"
-        self.pathProyects = "workspace/src/"
-        fileList = glob.glob(self.path+"*.rar")              
-        for file_ in fileList:
-            self.SelectRelease.addItem(file_.split('\\')[-1])
+        self.updateReleaseList()
         # Save the Release widget.
         self.DeviceLayoutLeft.addWidget(self.ProyectNameLabel)
         self.DeviceLayoutLeft.addWidget(self.ProyectNameTextEdit) 
@@ -302,6 +300,15 @@ class QSettingWindows(QtGui.QWidget):
         # Set the Global Layout as default layout.
         self.setLayout(self.SettingLayout)
 
+    def updateReleaseList(self, index = 0):
+        self.path = "workspace/releases/"
+        self.pathProyects = "workspace/src/"
+        fileList = glob.glob(self.path+"*.zip")
+        self.SelectRelease.clear()        
+        self.SelectRelease.addItem("--- Select Release Version ---")
+        for file_ in fileList:
+            self.SelectRelease.addItem(file_.split('\\')[-1])
+
     def selectCenter(self):
         self.SectionCenterOptions.show()
         self.SectionHostOptions.hide()
@@ -563,8 +570,8 @@ class QSettingWindows(QtGui.QWidget):
             
             if not os.path.exists(self.pathProyects):
                 os.makedirs(self.pathProyects)
-
-            proyectFolder = os.path.join(self.pathProyects, self.ProyectNameTextEdit.toPlainText())
+                
+            proyectFolder = os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText()))
             if not os.path.exists(proyectFolder):
                 os.makedirs(proyectFolder)
 
@@ -572,10 +579,19 @@ class QSettingWindows(QtGui.QWidget):
             if os.path.exists(settingPath):
                 file = open(settingPath, 'w+')
             else:
-                ## UNZIP PROYECT.. Testing with new Release
+                releasePath = os.path.join(self.path, str(self.SelectRelease.currentText()))
+                zip_ref = zipfile.ZipFile(releasePath, 'r')
+                zip_ref.extractall(proyectFolder)
+                zip_ref.close()
+                
                 file = open(settingPath, 'w+')
             file.write(settingValues)
             file.close()
+            
+            self.BuildStatusProyectLabel.setText("<div style=\"color:#90FFA1\"><b>PASS<><\div>")
+        else:
+            self.BuildStatusProyectLabel.setText("<div style=\"color:#FF0000\"><b>NOT PASS<\b><\div>")
+            
             
 
 
@@ -868,8 +884,12 @@ class QSettingWindows(QtGui.QWidget):
         testCount += 1
         if self.MessageListModel.item(0).text() == "Address=0x0A Command=0x0B":
             testSuccess+=1
-
-            
+        
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+        
+        self.delNewCommand()
             
         return (testSuccess/testCount)*100
 
@@ -897,6 +917,12 @@ class QSettingWindows(QtGui.QWidget):
         testCount += 1
         if self.MessageListModel.rowCount() == 0:
             testSuccess+=1            
+
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+        
+        self.delNewCommand()
             
         return (testSuccess/testCount)*100
                 
@@ -919,6 +945,12 @@ class QSettingWindows(QtGui.QWidget):
         testCount += 1
         if self.CheckStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
             testSuccess+=1        
+        
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+        
+        self.delNewCommand()
             
         return (testSuccess/testCount)*100
                 
@@ -944,6 +976,12 @@ class QSettingWindows(QtGui.QWidget):
         testCount += 1
         if self.CheckStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
             testSuccess+=1        
+
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+        
+        self.delNewCommand()
             
         return (testSuccess/testCount)*100
 
@@ -967,6 +1005,12 @@ class QSettingWindows(QtGui.QWidget):
         testCount += 1
         if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FF0000\"><b>NOT PASS<><\div>":
             testSuccess+=1        
+        
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+        
+        self.delNewCommand()
             
         return (testSuccess/testCount)*100
                 
@@ -989,7 +1033,13 @@ class QSettingWindows(QtGui.QWidget):
         
         testCount += 1
         if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FF0000\"><b>NOT PASS<><\div>":
-            testSuccess+=1        
+            testSuccess+=1
+            
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)  
+        
+        self.delNewCommand()
             
         return (testSuccess/testCount)*100
                 
@@ -1014,6 +1064,12 @@ class QSettingWindows(QtGui.QWidget):
         if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FF0000\"><b>NOT PASS<><\div>":
             testSuccess+=1        
             
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+        
+        self.delNewCommand()
+            
         return (testSuccess/testCount)*100
                 
 
@@ -1036,8 +1092,14 @@ class QSettingWindows(QtGui.QWidget):
         
         testCount += 1
         if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
-            testSuccess+=1        
+            testSuccess+=1
             
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+
+        self.delNewCommand()
+        
         return (testSuccess/testCount)*100
     
     def n7UT17(self):        
@@ -1060,6 +1122,12 @@ class QSettingWindows(QtGui.QWidget):
         if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
             testSuccess+=1        
             
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+
+        self.delNewCommand()
+        
         return (testSuccess/testCount)*100
     
     def n7UT18(self):        
@@ -1165,6 +1233,7 @@ class QSettingWindows(QtGui.QWidget):
     def n7UT22(self):        
         testCount = 0
         testSuccess = 0
+        self.updateReleaseList()
 
         self.ProyectNameTextEdit.setPlainText("UTs_Testing")
         self.SelectRelease.setCurrentIndex(1)
@@ -1179,25 +1248,553 @@ class QSettingWindows(QtGui.QWidget):
         self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
         self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
         
-        self.checkProyect()
+        self.buildProyect()
         
         testCount += 1
         if self.CheckStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
             testSuccess+=1
+        
+        testCount += 1
+        if self.BuildStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
+            testSuccess+=1
+           
+        testCount += 1
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testSuccess+=1
 
-        self.buildProyect()
-        
-        testCount += 1
-        if self.BuildStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
-            testSuccess+=1
-        
-        testCount += 1
-        if self.BuildStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
-            testSuccess+=1
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            shutil.rmtree(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())))
 
             
         return (testSuccess/testCount)*100
                 
+
+                
+    def n7UT23(self):        
+        testCount = 0
+        testSuccess = 0
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("256")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+        
+        self.buildProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
+            testSuccess+=1
+        
+        testCount += 1
+        if self.BuildStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
+            testSuccess+=1
+           
+        testCount += 1
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testSuccess+=1
+            
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            shutil.rmtree(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())))
+
+            
+        return (testSuccess/testCount)*100
+
+    
+                
+
+                
+    def n7UT24(self):        
+        testCount = 0
+        testSuccess = 0
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing?")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("256")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+        
+        self.buildProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FF0000\"><b>NOT PASS<><\div>":
+            testSuccess+=1
+        
+        testCount += 1
+        if self.BuildStatusProyectLabel.text() == "<div style=\"color:#FF0000\"><b>NOT PASS<><\div>":
+            testSuccess+=1
+           
+        testCount += 1
+        if not os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testSuccess+=1
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            shutil.rmtree(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())))
+            
+        return (testSuccess/testCount)*100
+
+    
+    def n7VT03(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+        
+        self.buildProyect()
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#ifndef __AVR_ATmega32U4__' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#error "You should select the Center Board"' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+
+		
+    def n7VT04(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x20")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        
+        self.buildProyect()
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define WIMOS_ID 32' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0                
+
+		
+    def n7VT05(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(2)
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        
+        self.buildProyect()
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            strCheck = '(stCommandMessage) { .ucBegin = COMMAND_BEGIN_BYTE_CONST, .ucFrameID = COMMAND_SIZE_BYTE_CONST, .ucMessageFrom = WIMOS_ID, .ucMessageTo = 10, .ucCommand = 11, .ucChecksum = 0x00 }'
+            if strCheck in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0               
+
+		
+    def n7VT06(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(2)
+
+        self.CenterModeModel.item(0).setCheckState(QtCore.Qt.Checked)
+        
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define WIMOS_UNIT_TEST' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+                               
+
+		
+    def n7VT07(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(2)
+
+        self.CenterModeModel.item(1).setCheckState(QtCore.Qt.Checked)
+        
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define WIMOS_VALIDATION_TEST' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+        
+    def n7VT08(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+
+        self.CenterModeModel.item(0).setCheckState(QtCore.Qt.Checked)
+        
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define WIMOS_DEBUG' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+        
+    def n7VT09(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+
+        self.CenterModeModel.item(1).setCheckState(QtCore.Qt.Checked)
+        
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define DEBUG_COMM_RXTX' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+        
+    def n7VT10(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+
+        self.CenterModeModel.item(2).setCheckState(QtCore.Qt.Checked)
+        
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define DEBUG_COMM_STATUS' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+        
+    def n7VT11(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#ifndef __SAM3X8E__' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#error "You should select the Host Board"' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+        
+    def n7VT12(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+
+        
+        self.A2Setting.EnableCheck.setCheckState(QtCore.Qt.Unchecked) 
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define _EN_WIMOS_PORT_A1' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#undef _EN_WIMOS_PORT_A2' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+        
+    def n7VT13(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("20")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("25")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("35")
+
+        
+        self.A2Setting.EnableCheck.setCheckState(QtCore.Qt.Unchecked) 
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define _WIMOS_1A_AVERAGE_SIZE 	 20' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#define _WIMOS_1A_AVERAGE_OFFSET  	 25' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#define _WIMOS_1A_OFFSET_MAX_SIZE 	 35' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return (testSuccess/testCount)*100
+        else:
+            return 0
+                
+        
+    def n7VT14(self):
+        testCount = 0
+        testSuccess = 0
+        
+        self.updateReleaseList()
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+        self.A1Setting.AnalogDetectionTextEdit.setPlainText("ValidationTest01")
+        self.A1Setting.Tabs.AnalogSettingList[0][0].AnalogOffset1TextEdit.setPlainText("ValidationTest02 / 3")
+        self.A1Setting.Tabs.AnalogSettingList[0][0].AnalogCoeficient1TextEdit.setPlainText("ValidationTest03 / 3")
+        self.A1Setting.Tabs.AnalogSettingList[0][0].AnalogOffset2TextEdit.setPlainText("ValidationTest04 / 3")
+        self.A1Setting.Tabs.AnalogSettingList[0][0].AnalogCoeficient2TextEdit.setPlainText("ValidationTest05 / 3")
+
+        
+        self.A2Setting.EnableCheck.setCheckState(QtCore.Qt.Unchecked) 
+
+        self.buildProyect()
+        
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
+            testCount += 1
+            if '#define _WIMOS_1A_DETECTION(inputValue) \t ValidationTest01(inputValue)' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#define _WIMOS_1A_OFFSET_1 \t ValidationTest02 / 3' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#define _WIMOS_1A_COEFICIENT_1 \t ValidationTest03 / 3' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#define _WIMOS_1A_OFFSET_2 \t ValidationTest04 / 3' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+                
+            testCount += 1
+            if '#define _WIMOS_1A_COEFICIENT_2 \t ValidationTest05 / 3' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            return int(float(testSuccess/testCount)*100)
+        else:
+            return 0
 
     def TestUTs(self):
         resultn7UT03 = self.n7UT03()
@@ -1315,13 +1912,97 @@ class QSettingWindows(QtGui.QWidget):
         else:
             print("[TEST] n7UT21\t[ERROR]\tn7.UT21 = "+(str(resultn7UT21))+"%")
             
+        resultn7UT22 = self.n7UT22()
+        if ( resultn7UT22 == 100):
+            print("[TEST] n7UT22\t[OK]\tn7.UT22 = 100%")
+        else:
+            print("[TEST] n7UT22\t[ERROR]\tn7.UT22 = "+(str(resultn7UT22))+"%")
+            
+        resultn7UT23 = self.n7UT23()
+        if ( resultn7UT23 == 100):
+            print("[TEST] n7UT23\t[OK]\tn7.UT23 = 100%")
+        else:
+            print("[TEST] n7UT23\t[ERROR]\tn7.UT23 = "+(str(resultn7UT23))+"%")
+            
+            
+        resultn7UT24 = self.n7UT24()
+        if ( resultn7UT24 == 100):
+            print("[TEST] n7UT24\t[OK]\tn7.UT24 = 100%")
+        else:
+            print("[TEST] n7UT24\t[ERROR]\tn7.UT24 = "+(str(resultn7UT24))+"%")
+            
     def TestVT(self):
-        print("In process...")
-        #resultn7VT01 = self.n7VT01()
-        #if ( resultn7VT01 == 100):
-        #    print("[TEST] n7VT01\t[OK]\tn7.VT01 = 100%")
-        #else:
-        #   print("[TEST] n7VT01\t[ERROR]\tn7.VT01 = "+(str(resultn7VT01))+"%")
+        resultn7VT03 = self.n7VT03()
+        if ( resultn7VT03 == 100):
+            print("[TEST] n7VT03\t[OK]\tn7.VT03 = 100%")
+        else:
+           print("[TEST] n7VT03\t[ERROR]\tn7.VT03 = "+(str(resultn7VT03))+"%")
+           
+        resultn7VT04 = self.n7VT04()
+        if ( resultn7VT04 == 100):
+            print("[TEST] n7VT04\t[OK]\tn7.VT04 = 100%")
+        else:
+           print("[TEST] n7VT04\t[ERROR]\tn7.VT04 = "+(str(resultn7VT04))+"%")
+           
+        resultn7VT05 = self.n7VT05()
+        if ( resultn7VT05 == 100):
+            print("[TEST] n7VT05\t[OK]\tn7.VT05 = 100%")
+        else:
+           print("[TEST] n7VT05\t[ERROR]\tn7.VT05 = "+(str(resultn7VT05))+"%")
+           
+        resultn7VT06 = self.n7VT06()
+        if ( resultn7VT06 == 100):
+            print("[TEST] n7VT06\t[OK]\tn7.VT06 = 100%")
+        else:
+           print("[TEST] n7VT06\t[ERROR]\tn7.VT06 = "+(str(resultn7VT06))+"%")
+           
+        resultn7VT07 = self.n7VT07()
+        if ( resultn7VT07 == 100):
+            print("[TEST] n7VT07\t[OK]\tn7.VT07 = 100%")
+        else:
+           print("[TEST] n7VT07\t[ERROR]\tn7.VT07 = "+(str(resultn7VT07))+"%")
+           
+        resultn7VT08 = self.n7VT08()
+        if ( resultn7VT08 == 100):
+            print("[TEST] n7VT08\t[OK]\tn7.VT08 = 100%")
+        else:
+           print("[TEST] n7VT08\t[ERROR]\tn7.VT08 = "+(str(resultn7VT08))+"%")
+           
+        resultn7VT09 = self.n7VT09()
+        if ( resultn7VT09 == 100):
+            print("[TEST] n7VT09\t[OK]\tn7.VT09 = 100%")
+        else:
+           print("[TEST] n7VT09\t[ERROR]\tn7.VT09 = "+(str(resultn7VT09))+"%")
+           
+        resultn7VT10 = self.n7VT10()
+        if ( resultn7VT10 == 100):
+            print("[TEST] n7VT10\t[OK]\tn7.VT10 = 100%")
+        else:
+           print("[TEST] n7VT10\t[ERROR]\tn7.VT10 = "+(str(resultn7VT10))+"%")
+           
+        resultn7VT11 = self.n7VT11()
+        if ( resultn7VT11 == 100):
+            print("[TEST] n7VT11\t[OK]\tn7.VT11 = 100%")
+        else:
+           print("[TEST] n7VT11\t[ERROR]\tn7.VT11 = "+(str(resultn7VT11))+"%")
+           
+        resultn7VT12 = self.n7VT12()
+        if ( resultn7VT12 == 100):
+            print("[TEST] n7VT12\t[OK]\tn7.VT12 = 100%")
+        else:
+           print("[TEST] n7VT12\t[ERROR]\tn7.VT12 = "+(str(resultn7VT12))+"%")
+           
+        resultn7VT13 = self.n7VT13()
+        if ( resultn7VT13 == 100):
+            print("[TEST] n7VT13\t[OK]\tn7.VT13 = 100%")
+        else:
+           print("[TEST] n7VT13\t[ERROR]\tn7.VT13 = "+(str(resultn7VT13))+"%")
+           
+        resultn7VT14 = self.n7VT14()
+        if ( resultn7VT14 == 100):
+            print("[TEST] n7VT14\t[OK]\tn7.VT14 = 100%")
+        else:
+           print("[TEST] n7VT14\t[ERROR]\tn7.VT14 = "+(str(resultn7VT14))+"%")
 
             
 
