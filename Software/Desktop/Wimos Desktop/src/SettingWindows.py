@@ -35,6 +35,7 @@ class QSettingWindows(QtGui.QWidget):
         self.SelectRelease.addItem("--- Select Release Version ---")
         # Get File list.
         self.path = "workspace/releases/"
+        self.pathProyects = "workspace/src/"
         fileList = glob.glob(self.path+"*.rar")              
         for file_ in fileList:
             self.SelectRelease.addItem(file_.split('\\')[-1])
@@ -558,7 +559,24 @@ class QSettingWindows(QtGui.QWidget):
 
     def buildProyect(self):
         if self.checkProyect():
-            print str(self.buildSettingItems())
+            settingValues = self.buildSettingItems()
+            
+            if not os.path.exists(self.pathProyects):
+                os.makedirs(self.pathProyects)
+
+            proyectFolder = os.path.join(self.pathProyects, self.ProyectNameTextEdit.toPlainText())
+            if not os.path.exists(proyectFolder):
+                os.makedirs(proyectFolder)
+
+            settingPath = os.path.join(proyectFolder, "wimos_station_main/_setting.h")
+            if os.path.exists(settingPath):
+                file = open(settingPath, 'w+')
+            else:
+                ## UNZIP PROYECT.. Testing with new Release
+                file = open(settingPath, 'w+')
+            file.write(settingValues)
+            file.close()
+            
 
 
 
@@ -1144,6 +1162,41 @@ class QSettingWindows(QtGui.QWidget):
             
         return (testSuccess/testCount)*100
                 
+    def n7UT22(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+        
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
+            testSuccess+=1
+
+        self.buildProyect()
+        
+        testCount += 1
+        if self.BuildStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
+            testSuccess+=1
+        
+        testCount += 1
+        if self.BuildStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
+            testSuccess+=1
+
+            
+        return (testSuccess/testCount)*100
                 
 
     def TestUTs(self):
