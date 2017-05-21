@@ -240,12 +240,16 @@ class QAnalogSetting(QtGui.QWidget):
                 stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_SIZE \t "+str(int(self.AverageSizeTextEdit.toPlainText()))+"\n"
                 stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_OFFSET  \t "+str(int(self.AverageOffsetTextEdit.toPlainText()))+"\n"
                 stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_OFFSET_MAX_SIZE \t "+str(int(self.AverageOffsetSizeTextEdit.toPlainText()))+"\n"
-                stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_PROCESSOR(lastValue, inputValue, currentIndex) \t MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_SIZE)\n"
+                stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_PROCESSOR_DET(lastValue, inputValue, currentIndex) \t MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_SIZE)\n"
+                stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_PROCESSOR(lastValue, inputValue, currentIndex, sizeValue) \t MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, sizeValue)\n"
+                stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_DETECTION(inputValue) \t "+self.AnalogDetectionTextEdit.toPlainText()+"(inputValue)\n"
             else:
                 stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_SIZE \t 1\n"
                 stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_OFFSET  \t 0\n"
                 stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_OFFSET_MAX_SIZE \t 0\n"
-                stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_PROCESSOR(lastValue, inputValue, currentIndex) \t (inputValue)\n"
+                stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_PROCESSOR_DET(lastValue, inputValue, currentIndex) \t MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_SIZE)\n"
+                stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_PROCESSOR(lastValue, inputValue, currentIndex) \t MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_SIZE)\n"
+                stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_DETECTION(inputValue)     detection"+self.analogValue[::-1]+"Default(inputValue)\n"
             
         else:
             stringBuild += "#undef _EN_WIMOS_PORT_"+self.analogValue+" \n"
@@ -261,7 +265,7 @@ class QAnalogSetting(QtGui.QWidget):
             stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_SIZE \t 1\n"
             stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_AVERAGE_OFFSET  \t 0\n"
             stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_OFFSET_MAX_SIZE \t 0\n"
-            stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_PROCESSOR(lastValue, inputValue, currentIndex) \t (inputValue)\n"
+            stringBuild += "#define _WIMOS_"+self.analogValue[::-1]+"_DETECTION(inputValue) \t "+str(self.AnalogDetectionTextEdit.toPlainText())+"(inputValue)\n"
 
         return stringBuild
 

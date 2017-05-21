@@ -73,8 +73,8 @@ class QUpdateWindows(QtGui.QWidget):
         for itemDownload in downloadList:                      
             
             url = itemDownload
-            fileName = url.split("/")[-1].split(".rar")[0]
-            fileName += ".rar"
+            fileName = url.split("/")[-1].split(".zip")[0]
+            fileName += ".zip"
             fileName = self.path+fileName
             
             ReleaseFile = urllib2.urlopen(url)
@@ -109,7 +109,7 @@ class QUpdateWindows(QtGui.QWidget):
             testSuccess+=1
 		
 	testCount += 1
-	if (self.ReleaseListItems[0][-1] == "https://github.com/andressanchezanillo/WIMOS_/blob/master/Releases/FW_WIMOS_v001.rar?raw=true"): 
+	if (self.ReleaseListItems[0][-1] == "https://github.com/andressanchezanillo/WIMOS_/blob/master/Releases/FW_WIMOS_v001.zip?raw=true"): 
             testSuccess+=1
 						
 	return (testSuccess/testCount)*100
@@ -122,7 +122,7 @@ class QUpdateWindows(QtGui.QWidget):
 	self.downloadRelease()
 	
         testCount += 1
-        if not os.path.exists(os.path.join(self.path, "FW_WIMOS_v001.rar")): 
+        if not os.path.exists(os.path.join(self.path, "FW_WIMOS_v001.zip")): 
             testSuccess+=1
             
         model = self.view.model()
@@ -131,7 +131,7 @@ class QUpdateWindows(QtGui.QWidget):
         self.downloadRelease()
         
         testCount += 1
-        if os.path.exists(os.path.join(self.path, "FW_WIMOS_v001.rar")): 
+        if os.path.exists(os.path.join(self.path, "FW_WIMOS_v001.zip")): 
             testSuccess+=1
 
         return (testSuccess/testCount)*100
@@ -160,8 +160,8 @@ class QUpdateWindows(QtGui.QWidget):
         testCount = 1
         testSuccess = 0
         
-        if (os.path.exists(os.path.join(self.path, "FW_WIMOS_v001.rar")) == True):
-            if(hashlib.md5(os.path.join(self.path, "FW_WIMOS_v001.rar")).hexdigest() == "fb8c8d9a0cb407fe755c1efe1322a3e4"):
+        if (os.path.exists(os.path.join(self.path, "FW_WIMOS_v001.zip")) == True):
+            if(hashlib.md5(os.path.join(self.path, "FW_WIMOS_v001.zip")).hexdigest() == "fb8c8d9a0cb407fe755c1efe1322a3e4"):
                 testSuccess+=1
         else:
             testSuccess+=1

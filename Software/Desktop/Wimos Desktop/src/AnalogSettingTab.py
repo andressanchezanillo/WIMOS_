@@ -16,6 +16,7 @@ class QAnalogSettingTab(QtGui.QWidget):
         # Create the Layout structure.
 
         self.AnalogSettingTabLayout = QtGui.QVBoxLayout(self)
+        self.size = sizeValue
 
         # Create the Selection Mode Section
         if sizeValue > 0:
@@ -47,7 +48,10 @@ class QAnalogSettingTab(QtGui.QWidget):
 
     def buildSetting(self):
         stringBuild = ""
-        for index in self.AnalogSettingList:
-            stringBuild += str(index[0].buildSetting(str(index[1][::-1]+index[2])))
+        if self.size > 1:
+            for index in self.AnalogSettingList:
+                stringBuild += str(index[0].buildSetting(str(index[1][::-1]+index[2])))
+        else:
+            stringBuild += str(self.AnalogSettingList[0][0].buildSetting(str(self.AnalogSettingList[0][1][::-1])))
         return stringBuild
 

@@ -139,30 +139,30 @@ class QNetworkThreads(QtGui.QWidget):
                 
                 
     def processGPSValues(self, datainput):
-        print datainput
+        #print datainput
         # Calculate the latitude.
         LatitudeDegree = int(datainput[11], 16)
         LatitudeMinutes = int(datainput[15]+datainput[14]+datainput[13]+datainput[12], 16)
-        print str(LatitudeDegree) + " -- " + str(LatitudeMinutes)
+        #print str(LatitudeDegree) + " -- " + str(LatitudeMinutes)
 
         if LatitudeMinutes > 2147483647:
             LatitudeMinutes -= 4294967294
             LatitudeMinutes = LatitudeMinutes * -1
             LatitudeDegree = LatitudeDegree * -1
         Latitude =  str(LatitudeDegree)+"."+str(LatitudeMinutes)
-        print str(Latitude)
+        #print str(Latitude)
 
         # Calculate the longitude.
         LongitudeDegree = int(datainput[16], 16)
         LongitudeMinutes = int(datainput[20]+datainput[19]+datainput[18]+datainput[17], 16)
-        print str(LongitudeDegree) + " -- " + str(LongitudeMinutes)
+        #print str(LongitudeDegree) + " -- " + str(LongitudeMinutes)
         
         if LongitudeMinutes > 2147483647:
             LongitudeMinutes -= 4294967294
             LongitudeMinutes = LongitudeMinutes * -1
             LongitudeDegree = LongitudeDegree * -1
         Longitude =  str(LongitudeDegree)+"."+str(LongitudeMinutes)
-        print str(Longitude)
+        #print str(Longitude)
         
 
         
@@ -239,7 +239,7 @@ class QNetworkThreads(QtGui.QWidget):
                                                                      _Memory, _Battery, _Status,
                                                                      DateTime.strftime("%Y-%m-%d %H:%M:%S")]])
                         # If the frame is a Center information. 
-                        elif(DataSplitted[0] == '[INFO001]:'):
+                        elif(DataSplitted[0] == 'INFO001:'):
                             # Process Center Info.                            
                             [_FrameName, _CenterID, _MessageRatio, _MessageTime] = self.processCenterInfo(DataSplitted)
 
@@ -277,7 +277,428 @@ class QNetworkThreads(QtGui.QWidget):
                                                     Data[-1][10],Data[-1][11])
                 
                 # If it is a Center Info.
-                elif (Data[0] == '[INFO001]:'):
+                elif (Data[0] == 'INFO001:'):
                     self.signalCenter.emit(Data[-1][0],Data[-1][1],
                                            Data[-1][4],Data[-1][2],
                                            Data[-1][3])
+
+                             
+    def processHeader(self, datainput):
+        frameID = int(re.search(r'\d+', datainput[0]).group())
+        frameName = datainput[0]
+
+        idCenter = int(datainput[4], 16)
+        idHost = int(datainput[3], 16)
+
+        return [frameID, frameName, idCenter, idHost]
+
+                    
+    def n8UT01(self):        
+        testCount = 0
+        testSuccess = 0
+                
+        strVal = self.processHeader("FRAME162: ff 06 10 00 15 05 11 06 2D 14 00 00 00 00 00 01 02 03 04 0A ACK-OK".split(' '))
+
+        testCount += 1
+        if strVal[0] == 162:
+            testSuccess += 1
+
+        testCount += 1
+        if strVal[1] == "FRAME162:":
+            testSuccess += 1
+
+        testCount += 1
+        if strVal[2] == 0:
+            testSuccess += 1
+
+        testCount += 1
+        if strVal[3] == 16:
+            testSuccess += 1
+
+
+        return (testSuccess/testCount)*100
+
+                    
+    def n8UT02(self):        
+        testCount = 0
+        testSuccess = 0
+                
+        strVal = self.processDateTime("FRAME162: ff 06 10 00 15 05 11 06 2D 14 00 00 00 00 00 01 02 03 04 0A ACK-OK".split(' '))
+
+        testCount += 1
+        if strVal[0] == "21-5-17":
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[1] == "20:45:6":
+            testSuccess += 1
+
+        return (testSuccess/testCount)*100
+                    
+
+                    
+    def n8UT03(self):        
+        testCount = 0
+        testSuccess = 0
+                
+        strVal = self.processAlertValues("FRAME162: ff 06 10 00 15 05 11 06 2D 14 00 00 00 00 00 01 02 03 04 0A ACK-OK".split(' '))
+
+        testCount += 1
+        if strVal[0] == 0:
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[1] == 1:
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[2] == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[3] == 3:
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[4] == 4:
+            testSuccess += 1
+
+        return (testSuccess/testCount)*100      
+
+                    
+    def n8UT04(self):        
+        testCount = 0
+        testSuccess = 0
+                
+        strVal = self.processGPSValues("FRAME161: ff 05 10 00 15 05 11 06 2D 14 5A 01 30 40 50 4A 02 60 70 80 ff 00 ff 23 6b 0a ACK-OK".split(' '))
+
+        
+        testCount += 1
+        if strVal[0] == "90.1346383873":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1] == "-74.2140119036":
+            testSuccess += 1
+        
+
+        return (testSuccess/testCount)*100
+                      
+        
+
+
+                    
+    def n8UT05(self):        
+        testCount = 0
+        testSuccess = 0
+                
+        strVal = self.processCenterInfo("INFO001: 20 80 OK".split(' '))
+
+        #return frameName, idCenter, messageRatio, messageTime
+        testCount += 1
+        if strVal[0] == "INFO001:":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1] == 0:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[2] == 32:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[3] == 128:
+            testSuccess += 1
+        
+
+        return (testSuccess/testCount)*100
+                    
+        
+    def n8VT01(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.SerialInput.queue.clear()
+        self.ProcessDataInput.queue.clear()
+        
+        for i in range(10):
+            self.SerialInput.put([datetime.now(),"FRAME162: ff 06 10 00 15 05 11 06 2D 14 00 00 00 00 00 01 02 03 04 0A ACK-OK"])
+
+        start = time.time()*1000
+        while((time.time()*1000) - start < 1000 and self.SerialInput.qsize() > 0):
+            pass
+
+        testCount += 1
+        if self.SerialInput.qsize() == 0:
+            testSuccess += 1
+
+        
+        start = time.time()*1000
+        while(time.time()*1000) - start < 1000 and (self.ProcessDataInput.qsize() <= 0):
+            pass
+
+        testCount += 1
+        if self.ProcessDataInput.qsize() > 0:
+            testSuccess += 1
+
+
+        
+        start = time.time()*1000
+        while((time.time()*1000) - start < 1000 and len(self.NetworkListScroll.NetworkItemArray) <= 0):
+            pass
+
+        testCount += 1
+        if len(self.NetworkListScroll.NetworkItemArray) > 0:
+            testSuccess += 1
+                
+        return (testSuccess/testCount)*100
+
+    
+    def n8VT02(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.SerialInput.queue.clear()
+        self.ProcessDataInput.queue.clear()
+        
+        for i in range(10):
+            self.SerialInput.put([datetime.now(),"FRAME162: ff 06 10 00 15 05 11 06 2D 14 00 00 00 00 00 01 02 03 04 0A ACK-OK"])
+
+        start = time.time()*1000
+        while(time.time()*1000) - start < 5000 and (self.ProcessDataInput.qsize() <= 0):
+            pass
+
+        strVal = self.ProcessDataInput.get()
+        
+        testCount += 1
+        if strVal[0] == "FRAME162:":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][0] == 162:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][1] == "FRAME162:":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][2] == 00:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][3] == 16:
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[1][4] == "21-5-17":
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[1][5] == "20:45:6":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][6] == 0:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][7] == 1:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][8] == 2:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][9] == 3:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][10] == 4:
+            testSuccess += 1
+                
+        return (testSuccess/testCount)*100
+
+    
+    def n8VT03(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.SerialInput.queue.clear()
+        self.ProcessDataInput.queue.clear()
+        
+        for i in range(10):
+            self.SerialInput.put([datetime.now(),"FRAME161: ff 05 10 00 15 05 11 06 2D 14 5A 01 30 40 50 4A 02 60 70 80 ff 00 ff 23 6b 0a ACK-OK"])
+                            
+        start = time.time()*1000
+        while(time.time()*1000) - start < 5000 and (self.ProcessDataInput.qsize() <= 0):
+            pass
+
+        strVal = self.ProcessDataInput.get()
+        
+        testCount += 1
+        if strVal[0] == "FRAME161:":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][0] == 161:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][1] == "FRAME161:":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][2] == 0:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][3] == 16:
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[1][4] == "21-5-17":
+            testSuccess += 1
+            
+        testCount += 1
+        if strVal[1][5] == "20:45:6":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][6] == "90.1346383873":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][7] == "-74.2140119036":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][8] == 255:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][9] == 0:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][10] == "236b0a":
+            testSuccess += 1
+                
+        return (testSuccess/testCount)*100
+
+    
+    def n8VT04(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.SerialInput.queue.clear()
+        self.ProcessDataInput.queue.clear()
+        
+        for i in range(10):
+            self.SerialInput.put([datetime.now(),"INFO001: 20 80 OK"])
+                            
+        start = time.time()*1000
+        while(time.time()*1000) - start < 5000 and (self.ProcessDataInput.qsize() <= 0):
+            pass
+
+        strVal = self.ProcessDataInput.get()
+        
+        testCount += 1
+        if strVal[0] == "INFO001:":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][0] == "INFO001:":
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][1] == 0:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][2] == 32:
+            testSuccess += 1
+        
+        testCount += 1
+        if strVal[1][3] == 128:
+            testSuccess += 1
+                
+        return (testSuccess/testCount)*100
+    
+    def runVT(self):
+        
+        resultn8VT01 = self.n8VT01()
+        if ( resultn8VT01 == 100):
+            print("[TEST] n8VT01\t[OK]\tn8.VT01 = 100%")
+        else:
+            print("[TEST] n8VT01\t[ERROR]\tn8.VT01 = "+(str(resultn8VT01))+"%")
+                    
+        resultn8VT02 = self.n8VT02()
+        if ( resultn8VT02 == 100):
+            print("[TEST] n8VT02\t[OK]\tn8.VT02 = 100%")
+        else:
+            print("[TEST] n8VT02\t[ERROR]\tn8.VT02 = "+(str(resultn8VT02))+"%")
+                    
+        resultn8VT03 = self.n8VT03()
+        if ( resultn8VT03 == 100):
+            print("[TEST] n8VT03\t[OK]\tn8.VT03 = 100%")
+        else:
+            print("[TEST] n8VT03\t[ERROR]\tn8.VT03 = "+(str(resultn8VT03))+"%")
+                    
+        resultn8VT04 = self.n8VT04()
+        if ( resultn8VT04 == 100):
+            print("[TEST] n8VT04\t[OK]\tn8.VT04 = 100%")
+        else:
+            print("[TEST] n8VT04\t[ERROR]\tn8.VT04 = "+(str(resultn8VT04))+"%")
+            
+    
+    def TestUTs(self):
+        
+        resultn8UT01 = self.n8UT01()
+        if ( resultn8UT01 == 100):
+            print("[TEST] n8UT01\t[OK]\tn8.UT01 = 100%")
+        else:
+            print("[TEST] n8UT01\t[ERROR]\tn8.UT01 = "+(str(resultn8UT01))+"%")
+
+        
+        resultn8UT02 = self.n8UT02()
+        if ( resultn8UT02 == 100):
+            print("[TEST] n8UT02\t[OK]\tn8.UT02 = 100%")
+        else:
+            print("[TEST] n8UT02\t[ERROR]\tn8.UT02 = "+(str(resultn8UT02))+"%")
+
+        
+        resultn8UT03 = self.n8UT03()
+        if ( resultn8UT03 == 100):
+            print("[TEST] n8UT03\t[OK]\tn8.UT03 = 100%")
+        else:
+            print("[TEST] n8UT03\t[ERROR]\tn8.UT03 = "+(str(resultn8UT03))+"%")
+
+        
+        resultn8UT04 = self.n8UT04()
+        if ( resultn8UT04 == 100):
+            print("[TEST] n8UT04\t[OK]\tn8.UT04 = 100%")
+        else:
+            print("[TEST] n8UT04\t[ERROR]\tn8.UT04 = "+(str(resultn8UT04))+"%")
+
+                    
+        resultn8UT05 = self.n8UT05()
+        if ( resultn8UT05 == 100):
+            print("[TEST] n8UT05\t[OK]\tn8.UT05 = 100%")
+        else:
+            print("[TEST] n8UT05\t[ERROR]\tn8.UT05 = "+(str(resultn8UT05))+"%")
+
+
+        self.NetworkListScroll.TestUTs()
+        
+
+    def TestVT(self):
+        
+        
+        ThreadVT = threading.Thread(target=self.runVT, args=())
+        ThreadVT.daemon = True
+        ThreadVT.start()
+        
+        #self.NetworkThread.TestVT()
