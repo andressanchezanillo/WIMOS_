@@ -193,7 +193,7 @@ void waitCommand(void){
     if(millis() - ulTimeCommandsRate >= TIME_COMMAND_RATE){
       #ifndef WIMOS_VALIDATION_TEST
         char ucDataOutput[4];
-        SERIAL_USB.print("[INFO001]:");
+        SERIAL_USB.print("INFO001:");
         
         SERIAL_USB.print(" ");
         sprintf(ucDataOutput,"%02x",(uint8_t)((float)((float)ucCommandsResponseReceived / (float)ucCommandsSent)) * 100);

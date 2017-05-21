@@ -190,10 +190,18 @@ extern void initWimos(void){
         _test_n5UT32();
         _test_n5UT33();
         _test_n5UT34();
-        _test_n5UT35();
-        _test_n5UT36();
-        _test_n5UT37();
-        _test_n5UT38();
+      #endif
+      #ifdef __SAM3X8E__
+        _test_n6UT01();
+        _test_n6UT02();
+        _test_n6UT03();
+        _test_n6UT04();
+        _test_n6UT05();
+        _test_n6UT06();
+        _test_n6UT07();
+        _test_n6UT08();
+        _test_n6UT09();
+        _test_n6UT10();
       #endif
       
       while(true);

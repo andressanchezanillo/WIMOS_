@@ -238,7 +238,7 @@
      * @brief Wimos Ports values Frame
      */
     typedef struct __attribute__((packed)) _portStatus{
-      #ifdef _WIMOS_IMU
+      #ifdef _EN_WIMOS_IMU
         uint32_t usInternalIMUAcc; /**< Internal IMU module value. */
         int8_t usInternalIMUGyrosX; /**< Internal IMU module value. */
         int8_t usInternalIMUGyrosY; /**< Internal IMU module value. */
@@ -1078,10 +1078,18 @@
           void _test_n5UT32 (void);
           void _test_n5UT33 (void);
           void _test_n5UT34 (void);
-          void _test_n5UT35 (void);
-          void _test_n5UT36 (void);
-          void _test_n5UT37 (void);
-          void _test_n5UT38 (void);
+        #endif
+        #ifdef __SAM3X8E__
+          void _test_n6UT01 (void);
+          void _test_n6UT02 (void);
+          void _test_n6UT03 (void);
+          void _test_n6UT04 (void);
+          void _test_n6UT05 (void);
+          void _test_n6UT06 (void);
+          void _test_n6UT07 (void);
+          void _test_n6UT08 (void);
+          void _test_n6UT09 (void);
+          void _test_n6UT10 (void);
         #endif
       #endif
       

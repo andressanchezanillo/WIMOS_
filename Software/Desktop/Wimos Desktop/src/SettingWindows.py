@@ -701,5 +701,574 @@ class QSettingWindows(QtGui.QWidget):
             return stringBuild
         else:
             return stringBuild
+        
+    def n7UT03(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.selectCenter()
+        testCount += 1
+        if(self.SectionCenterOptions.isHidden() == False and self.SectionHostOptions.isHidden() == True):
+            testSuccess += 1
+        
+        
+        return (testSuccess/testCount)*100
+    
+    def n7UT04(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.selectHost()
+        testCount += 1
+        if(self.SectionCenterOptions.isHidden() == True and self.SectionHostOptions.isHidden() == False):
+            testSuccess += 1
+        
+        
+        return (testSuccess/testCount)*100
+
+    
+    
+    def n7UT05(self):        
+        testCount = 0
+        testSuccess = 0
+
+        testCount += 1
+        testCounterLabel = 0
+        self.SelectHostMode.setCurrentIndex(1)
+        self.hostModeManager()
+        for row in range(self.HostModeModel.rowCount()):
+            item = self.HostModeModel.item(row)
+            if item.text() == "Debug":
+                testCounterLabel+=1
+            elif item.text() == "Debug Color":
+                testCounterLabel+=1
+            elif item.text() == "Debug Comm. Packages":
+                testCounterLabel+=1
+            elif item.text() == "Debug Comm. Status":
+                testCounterLabel+=1
+            elif item.text() == "Debug Analog A1":
+                testCounterLabel+=1
+            elif item.text() == "Debug Analog A2":
+                testCounterLabel+=1
+            elif item.text() == "Debug Analog A3":
+                testCounterLabel+=1
+            elif item.text() == "Debug Analog A4":
+                testCounterLabel+=1
+            elif item.text() == "Debug Analog A5":
+                testCounterLabel+=1
+            else:                    
+                testCounterLabel+=10
+        if testCounterLabel == 9:
+            testSuccess+=1
+            
+        return (testSuccess/testCount)*100
+
+            
+    def n7UT06(self):        
+        testCount = 0
+        testSuccess = 0
+
+        testCount += 1
+        testCounterLabel = 0
+        self.SelectHostMode.setCurrentIndex(2)
+        self.hostModeManager()
+        for row in range(self.HostModeModel.rowCount()):
+            item = self.HostModeModel.item(row)
+            if item.text() == "Unitary Test":                    
+                testCounterLabel+=1
+            elif item.text() == "Validation":                    
+                testCounterLabel+=1
+            else:                    
+                testCounterLabel+=10
+        if testCounterLabel == 2:
+            testSuccess+=1
+            
+        return (testSuccess/testCount)*100
+
+
+    
+    
+    def n7UT07(self):        
+        testCount = 0
+        testSuccess = 0
+
+        testCount += 1
+        testCounterLabel = 0
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.centerModeManager()
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            if item.text() == "Debug":
+                testCounterLabel+=1
+            elif item.text() == "Debug Comm. Packages":
+                testCounterLabel+=1
+            elif item.text() == "Debug Comm. Status":
+                testCounterLabel+=1
+            else:                    
+                testCounterLabel+=10
+        if testCounterLabel == 3:
+            testSuccess+=1
+            
+        return (testSuccess/testCount)*100
+
+            
+    def n7UT08(self):        
+        testCount = 0
+        testSuccess = 0
+
+        testCount += 1
+        testCounterLabel = 0
+        self.SelectCenterMode.setCurrentIndex(2)
+        self.centerModeManager()
+        for row in range(self.CenterModeModel.rowCount()):
+            item = self.CenterModeModel.item(row)
+            if item.text() == "Unitary Test":                    
+                testCounterLabel+=1
+            elif item.text() == "Validation":                    
+                testCounterLabel+=1
+            else:                    
+                testCounterLabel+=10
+        if testCounterLabel == 2:
+            testSuccess+=1
+            
+        return (testSuccess/testCount)*100
+
+            
+    def n7UT09(self):        
+        testCount = 0
+        testSuccess = 0
+
+        
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+        
+        testCount += 1
+        if self.MessageListModel.rowCount() == 1:
+            testSuccess+=1
+            
+        testCount += 1
+        if self.MessageListModel.item(0).text() == "Address=0x0A Command=0x0B":
+            testSuccess+=1
+
+            
+            
+        return (testSuccess/testCount)*100
+
+            
+    def n7UT10(self):        
+        testCount = 0
+        testSuccess = 0
+
+        
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        if self.MessageListModel.rowCount() == 0:
+            self.addNewCommand()
+        
+        testCount += 1
+        if self.MessageListModel.rowCount() == 1:
+            testSuccess+=1
+
+        for row in range(self.MessageListModel.rowCount()):
+            item = self.MessageListModel.item(row)
+            item.setCheckState(QtCore.Qt.Checked)
+
+        self.delNewCommand()
+            
+        testCount += 1
+        if self.MessageListModel.rowCount() == 0:
+            testSuccess+=1            
+            
+        return (testSuccess/testCount)*100
+                
+    def n7UT11(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+                
+    def n7UT12(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+        
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#90FFA1\"><b>PASS<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+
+    
+    def n7UT13(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing?")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FF0000\"><b>NOT PASS<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+                
+
+    def n7UT14(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(0)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FF0000\"><b>NOT PASS<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+                
+
+    def n7UT15(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x100")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FF0000\"><b>NOT PASS<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+                
+
+
+    def n7UT16(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.addressMessage.setPlainText("0x100")
+        self.commandMessage.setPlainText("0x0B")
+        self.addNewCommand()
+
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+    
+    def n7UT17(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectCenterMode.setCurrentIndex(1)
+        self.addressMessage.setPlainText("0x0A")
+        self.commandMessage.setPlainText("0x100")
+        self.addNewCommand()
+
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+    
+    def n7UT18(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(0)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+        
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+    
+    def n7UT19(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("256")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+        
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+    
+    def n7UT20(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("256")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
+        
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+    
+    def n7UT21(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.ProyectNameTextEdit.setPlainText("UTs_Testing")
+        self.SelectRelease.setCurrentIndex(1)
+        self.CenterDevice.setChecked(False)
+        self.HostDevice.setChecked(True)
+        self.DeviceIDTextEdit.setPlainText("0x01")
+        
+        self.SelectHostMode.setCurrentIndex(1)
+        self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
+        self.A1Setting.AverageSizeTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
+        self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("256")
+        
+        self.checkProyect()
+        
+        testCount += 1
+        if self.CheckStatusProyectLabel.text() == "<div style=\"color:#FFDD90\"><b>WARNING<><\div>":
+            testSuccess+=1        
+            
+        return (testSuccess/testCount)*100
+                
+                
+
+    def TestUTs(self):
+        resultn7UT03 = self.n7UT03()
+        if ( resultn7UT03 == 100):
+            print("[TEST] n7UT03\t[OK]\tn7.UT03 = 100%")
+        else:
+            print("[TEST] n7UT03\t[ERROR]\tn7.UT03 = "+(str(resultn7UT03))+"%")
+            
+        resultn7UT04 = self.n7UT04()
+        if ( resultn7UT04 == 100):
+            print("[TEST] n7UT04\t[OK]\tn7.UT04 = 100%")
+        else:
+            print("[TEST] n7UT04\t[ERROR]\tn7.UT04 = "+(str(resultn7UT04))+"%")
+            
+        resultn7UT05 = self.n7UT05()
+        if ( resultn7UT05 == 100):
+            print("[TEST] n7UT05\t[OK]\tn7.UT05 = 100%")
+        else:
+            print("[TEST] n7UT05\t[ERROR]\tn7.UT05 = "+(str(resultn7UT05))+"%")
+            
+        resultn7UT06 = self.n7UT06()
+        if ( resultn7UT06 == 100):
+            print("[TEST] n7UT06\t[OK]\tn7.UT06 = 100%")
+        else:
+            print("[TEST] n7UT06\t[ERROR]\tn7.UT06 = "+(str(resultn7UT06))+"%")
+            
+        resultn7UT07 = self.n7UT07()
+        if ( resultn7UT07 == 100):
+            print("[TEST] n7UT07\t[OK]\tn7.UT07 = 100%")
+        else:
+            print("[TEST] n7UT07\t[ERROR]\tn7.UT07 = "+(str(resultn7UT07))+"%")
+            
+        resultn7UT08 = self.n7UT08()
+        if ( resultn7UT08 == 100):
+            print("[TEST] n7UT08\t[OK]\tn7.UT08 = 100%")
+        else:
+            print("[TEST] n7UT08\t[ERROR]\tn7.UT08 = "+(str(resultn7UT08))+"%")
+            
+        resultn7UT09 = self.n7UT09()
+        if ( resultn7UT09 == 100):
+            print("[TEST] n7UT09\t[OK]\tn7.UT09 = 100%")
+        else:
+            print("[TEST] n7UT09\t[ERROR]\tn7.UT09 = "+(str(resultn7UT09))+"%")
+            
+        resultn7UT10 = self.n7UT10()
+        if ( resultn7UT10 == 100):
+            print("[TEST] n7UT10\t[OK]\tn7.UT10 = 100%")
+        else:
+            print("[TEST] n7UT10\t[ERROR]\tn7.UT10 = "+(str(resultn7UT10))+"%")
+            
+            
+        resultn7UT11 = self.n7UT11()
+        if ( resultn7UT11 == 100):
+            print("[TEST] n7UT11\t[OK]\tn7.UT11 = 100%")
+        else:
+            print("[TEST] n7UT11\t[ERROR]\tn7.UT11 = "+(str(resultn7UT11))+"%")
+            
+        resultn7UT12 = self.n7UT12()
+        if ( resultn7UT12 == 100):
+            print("[TEST] n7UT12\t[OK]\tn7.UT12 = 100%")
+        else:
+            print("[TEST] n7UT12\t[ERROR]\tn7.UT12 = "+(str(resultn7UT12))+"%")
+            
+        resultn7UT13 = self.n7UT13()
+        if ( resultn7UT13 == 100):
+            print("[TEST] n7UT13\t[OK]\tn7.UT13 = 100%")
+        else:
+            print("[TEST] n7UT13\t[ERROR]\tn7.UT13 = "+(str(resultn7UT13))+"%")
+            
+        resultn7UT14 = self.n7UT14()
+        if ( resultn7UT14 == 100):
+            print("[TEST] n7UT14\t[OK]\tn7.UT14 = 100%")
+        else:
+            print("[TEST] n7UT14\t[ERROR]\tn7.UT14 = "+(str(resultn7UT14))+"%")
+            
+        resultn7UT15 = self.n7UT15()
+        if ( resultn7UT15 == 100):
+            print("[TEST] n7UT15\t[OK]\tn7.UT15 = 100%")
+        else:
+            print("[TEST] n7UT15\t[ERROR]\tn7.UT15 = "+(str(resultn7UT15))+"%")
+            
+        resultn7UT16 = self.n7UT16()
+        if ( resultn7UT16 == 100):
+            print("[TEST] n7UT16\t[OK]\tn7.UT16 = 100%")
+        else:
+            print("[TEST] n7UT16\t[ERROR]\tn7.UT16 = "+(str(resultn7UT16))+"%")
+            
+        resultn7UT17 = self.n7UT17()
+        if ( resultn7UT17 == 100):
+            print("[TEST] n7UT17\t[OK]\tn7.UT17 = 100%")
+        else:
+            print("[TEST] n7UT17\t[ERROR]\tn7.UT17 = "+(str(resultn7UT17))+"%")
+            
+        resultn7UT18 = self.n7UT18()
+        if ( resultn7UT18 == 100):
+            print("[TEST] n7UT18\t[OK]\tn7.UT18 = 100%")
+        else:
+            print("[TEST] n7UT18\t[ERROR]\tn7.UT18 = "+(str(resultn7UT18))+"%")
+            
+        resultn7UT19 = self.n7UT19()
+        if ( resultn7UT19 == 100):
+            print("[TEST] n7UT19\t[OK]\tn7.UT19 = 100%")
+        else:
+            print("[TEST] n7UT19\t[ERROR]\tn7.UT19 = "+(str(resultn7UT19))+"%")
+            
+        resultn7UT20 = self.n7UT20()
+        if ( resultn7UT20 == 100):
+            print("[TEST] n7UT20\t[OK]\tn7.UT20 = 100%")
+        else:
+            print("[TEST] n7UT20\t[ERROR]\tn7.UT20 = "+(str(resultn7UT20))+"%")
+            
+        resultn7UT21 = self.n7UT21()
+        if ( resultn7UT21 == 100):
+            print("[TEST] n7UT21\t[OK]\tn7.UT21 = 100%")
+        else:
+            print("[TEST] n7UT21\t[ERROR]\tn7.UT21 = "+(str(resultn7UT21))+"%")
+            
+    def TestVT(self):
+        print("In process...")
+        #resultn7VT01 = self.n7VT01()
+        #if ( resultn7VT01 == 100):
+        #    print("[TEST] n7VT01\t[OK]\tn7.VT01 = 100%")
+        #else:
+        #   print("[TEST] n7VT01\t[ERROR]\tn7.VT01 = "+(str(resultn7VT01))+"%")
+
             
 

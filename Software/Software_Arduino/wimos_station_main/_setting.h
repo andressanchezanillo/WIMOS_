@@ -35,13 +35,13 @@
   /**
    * @brief Label Debug traces activation.
    */
-  #define WIMOS_DEBUG
-  #define DEBUG_COLOR
-  #define WIMOS_UNIT_TEST
+  //#define WIMOS_DEBUG
+  //#define DEBUG_COLOR
+  //#define WIMOS_UNIT_TEST
   //#define DEBUG_COMM_RXTX
   //#define DEBUG_COMM_STATUS
   //#define DEBUG_GPS
-  //#define DEBUG_ANALOG_A5
+  #define DEBUG_ANALOG_A5
   //#define WIMOS_VALIDATION_TEST
   
   /**
@@ -59,8 +59,6 @@
     #define CRITICAL_REFRESH_MS    100
     #define INFO_REFRESH_MS        250
 
-    
-    #define _WIMOS_IMU
     /**
      * @brief Label for GPS activation.
      */
@@ -286,8 +284,8 @@
     
     #define _WIMOS_5A_OPERATOR_JOINT(x,y,z)     MATH_VECTOR3D_LENGHT(x,y,z)
     
-    #define _WIMOS_5A_AVERAGE_SIZE              ((uint8_t)50)
-    #define _WIMOS_5A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_5A_AVERAGE_SIZE              ((uint8_t)5)
+    #define _WIMOS_5A_AVERAGE_OFFSET            ((uint8_t)42)
     #define _WIMOS_5A_OFFSET_MAX_SIZE           ((uint8_t)10)
     
     #define _WIMOS_5A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_5A_AVERAGE_SIZE)
