@@ -31,7 +31,7 @@
   #include "main_config.h"
   
 #ifdef __SAM3X8E__
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       uint32_t inputAnalogReadA1 = 0;
       int32_t outputOffset1_A1 = 0;
       int32_t outputCoeficient1_A1 = 0;
@@ -84,6 +84,19 @@
       
       float outputJoint_A5 = 0;
       float outputProcessor_A5 = 0;
+
+      
+      float outputDetectProcessA1 = 0;
+      float outputDetectProcessA2 = 0;
+      float outputDetectProcessA3 = 0;
+      float outputDetectProcessA4 = 0;
+      float outputDetectProcessA5 = 0;
+      
+      bool inputDetectProcessA1 = false;
+      bool inputDetectProcessA2 = false;
+      bool inputDetectProcessA3 = false;
+      bool inputDetectProcessA4 = false;
+      bool inputDetectProcessA5 = false;
       
     #endif
   
@@ -159,13 +172,13 @@
       static uint8_t ucPort1AIndex = 2;
       static float fAveragePort1A = 0.0f;
       static uint32_t ulTimerAlertA1 = millis();
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       stWimosPort->usPort1A = 0;
     #else
       stWimosPort->usPort1A = (uint16_t)(((float)analogRead(WIMOS_A1_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
     #endif
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputOffset1_A1 = stWimosPort->usPort1A = abs(stWimosPort->usPort1A + _WIMOS_1A_OFFSET_1); 
       outputCoeficient1_A1 = stWimosPort->usPort1A = abs(stWimosPort->usPort1A * _WIMOS_1A_COEFICIENT_1) ;
       outputOffset2_A1 = stWimosPort->usPort1A = abs(stWimosPort->usPort1A + _WIMOS_1A_OFFSET_2);
@@ -177,7 +190,7 @@
       stWimosPort->usPort1A = abs(stWimosPort->usPort1A * _WIMOS_1A_COEFICIENT_2) ; 
     #endif
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputJoint_A1 = fPort1A = stWimosPort->usPort1A;
     #else
       fPort1A = stWimosPort->usPort1A;
@@ -185,7 +198,7 @@
       
       _WIMOS_1A_PROCESSOR( fAveragePort1A, fPort1A, ucPort1AIndex, _WIMOS_1A_AVERAGE_SIZE/5 );
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputProcessor_A1 = fAveragePort1A;
     #endif
     
@@ -205,13 +218,13 @@
       static uint8_t ucPort2AIndex = 2;
       static float fAveragePort2A = 0.0f;
       static uint32_t ulTimerAlertA2 = millis();
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       stWimosPort->usPort2A = 0;
     #else
       stWimosPort->usPort2A = (uint16_t)(((float)analogRead(WIMOS_A2_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
     #endif
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputOffset1_A2 = stWimosPort->usPort2A = abs(stWimosPort->usPort2A + _WIMOS_2A_OFFSET_1); 
       outputCoeficient1_A2 = stWimosPort->usPort2A = abs(stWimosPort->usPort2A * _WIMOS_2A_COEFICIENT_1) ;
       outputOffset2_A2 = stWimosPort->usPort2A = abs(stWimosPort->usPort2A + _WIMOS_2A_OFFSET_2);
@@ -223,7 +236,7 @@
       stWimosPort->usPort2A = abs(stWimosPort->usPort2A * _WIMOS_2A_COEFICIENT_2) ; 
     #endif
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputJoint_A2 = fPort2A = stWimosPort->usPort2A;
     #else
       fPort2A = stWimosPort->usPort2A;
@@ -231,7 +244,7 @@
       
       _WIMOS_2A_PROCESSOR( fAveragePort2A, fPort2A, ucPort2AIndex, _WIMOS_2A_AVERAGE_SIZE/5 );
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputProcessor_A2 = fAveragePort2A;
     #endif
     
@@ -251,13 +264,13 @@
       static uint8_t ucPort3AIndex = 2;
       static float fAveragePort3A = 0.0f;
       static uint32_t ulTimerAlertA3 = millis();
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       stWimosPort->usPort3A = 0;
     #else
       stWimosPort->usPort3A = (uint16_t)(((float)analogRead(WIMOS_A3_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
     #endif
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputOffset1_A3 = stWimosPort->usPort3A = abs(stWimosPort->usPort3A + _WIMOS_3A_OFFSET_1); 
       outputCoeficient1_A3 = stWimosPort->usPort3A = abs(stWimosPort->usPort3A * _WIMOS_3A_COEFICIENT_1) ;
       outputOffset2_A3 = stWimosPort->usPort3A = abs(stWimosPort->usPort3A + _WIMOS_3A_OFFSET_2);
@@ -269,7 +282,7 @@
       stWimosPort->usPort3A = abs(stWimosPort->usPort3A * _WIMOS_3A_COEFICIENT_2) ; 
     #endif
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputJoint_A3 = fPort3A = stWimosPort->usPort3A;
     #else
       fPort3A = stWimosPort->usPort3A;
@@ -277,7 +290,7 @@
       
       _WIMOS_3A_PROCESSOR( fAveragePort3A, fPort3A, ucPort3AIndex, _WIMOS_3A_AVERAGE_SIZE/5 );
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputProcessor_A3 = fAveragePort3A;
     #endif
     
@@ -297,13 +310,13 @@
       static uint8_t ucPort4AIndex = 2;
       static float fAveragePort4A = 0.0f;
       static uint32_t ulTimerAlertA4 = millis();
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       stWimosPort->usPort4A = 0;
     #else
       stWimosPort->usPort4A = (uint16_t)(((float)analogRead(WIMOS_A4_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
     #endif
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputOffset1_A4 = stWimosPort->usPort4A = abs(stWimosPort->usPort4A + _WIMOS_4A_OFFSET_1); 
       outputCoeficient1_A4 = stWimosPort->usPort4A = abs(stWimosPort->usPort4A * _WIMOS_4A_COEFICIENT_1) ;
       outputOffset2_A4 = stWimosPort->usPort4A = abs(stWimosPort->usPort4A + _WIMOS_4A_OFFSET_2);
@@ -315,7 +328,7 @@
       stWimosPort->usPort4A = abs(stWimosPort->usPort4A * _WIMOS_4A_COEFICIENT_2) ; 
     #endif
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputJoint_A4 = fPort4A = stWimosPort->usPort4A;
     #else
       fPort4A = stWimosPort->usPort4A;
@@ -323,7 +336,7 @@
       
       _WIMOS_4A_PROCESSOR( fAveragePort4A, fPort4A, ucPort4AIndex, _WIMOS_4A_AVERAGE_SIZE/5 );
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputProcessor_A4 = fAveragePort4A;
     #endif
       
@@ -345,13 +358,13 @@
       static uint8_t ucPort5AIndex = 2;
       static uint32_t ulTimerAlertA5 = millis();
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       stWimosPort->usPort5A1 = inputAnalogRead5A1; 
   #else
       stWimosPort->usPort5A1 = (uint16_t)(((float)analogRead(WIMOS_A5_1_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC);  
   #endif
     
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputOffset1_5A1 = stWimosPort->usPort5A1 = abs(stWimosPort->usPort5A1 + _WIMOS_5A1_OFFSET_1); 
       outputCoeficient1_5A1 = stWimosPort->usPort5A1 = abs(stWimosPort->usPort5A1 * _WIMOS_5A1_COEFICIENT_1) ; 
       outputOffset2_5A1 = stWimosPort->usPort5A1 = abs(stWimosPort->usPort5A1 + _WIMOS_5A1_OFFSET_2); 
@@ -364,13 +377,13 @@
       
   #endif
   
-  #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+  #if defined(WIMOS_UNIT_TEST)
       stWimosPort->usPort5A2 = inputAnalogRead5A2; 
   #else
     stWimosPort->usPort5A2 = (uint16_t)(((float)analogRead(WIMOS_A5_2_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
   #endif
     
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
     
       outputOffset1_5A2 = stWimosPort->usPort5A2 = abs(stWimosPort->usPort5A2 + _WIMOS_5A2_OFFSET_1); 
       outputCoeficient1_5A2 = stWimosPort->usPort5A2 = abs(stWimosPort->usPort5A2 * _WIMOS_5A2_COEFICIENT_1) ; 
@@ -384,13 +397,13 @@
       stWimosPort->usPort5A2 = abs(stWimosPort->usPort5A2 * _WIMOS_5A2_COEFICIENT_2) ; 
   #endif
   
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       stWimosPort->usPort5A3 = inputAnalogRead5A3; 
   #else
     stWimosPort->usPort5A3 = (uint16_t)(((float)analogRead(WIMOS_A5_3_PORT)/(ADC_MAX_VALUE))*VCC_LOGIC); 
     #endif
     
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
   
       outputOffset1_5A3 = stWimosPort->usPort5A3 = abs(stWimosPort->usPort5A3 + _WIMOS_5A3_OFFSET_1); 
       outputCoeficient1_5A3 = stWimosPort->usPort5A3 = abs(stWimosPort->usPort5A3 * _WIMOS_5A3_COEFICIENT_1) ; 
@@ -406,7 +419,7 @@
     
   #endif
   
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputJoint_A5 = fPort5A = _WIMOS_5A_OPERATOR_JOINT(stWimosPort->usPort5A1,stWimosPort->usPort5A2,stWimosPort->usPort5A3);
   #else
     fPort5A = _WIMOS_5A_OPERATOR_JOINT(stWimosPort->usPort5A1,stWimosPort->usPort5A2,stWimosPort->usPort5A3);
@@ -414,11 +427,11 @@
     
       _WIMOS_5A_PROCESSOR( fAveragePort5A, fPort5A, ucPort5AIndex, _WIMOS_5A_AVERAGE_SIZE/5 );
       
-    #if defined(WIMOS_UNIT_TEST) or defined(WIMOS_VALIDATION_TEST)
+    #if defined(WIMOS_UNIT_TEST)
       outputProcessor_A5 = fAveragePort5A;
     #endif
     
-      ucAlertLevelA5 = _WIMOS_5A_DETECTION(fPort5A);
+      ucAlertLevelA5 = _WIMOS_5A_DETECTION(fAveragePort5A);
       if(ucAlertLevelA5 > 0){
         if(stGlobalWimosAlertMsg.stAlert.ucAlertA5 < ucAlertLevelA5){
             stGlobalWimosAlertMsg.stAlert.ucAlertA5 = ucAlertLevelA5;
@@ -433,21 +446,28 @@
   
   #ifdef _EN_WIMOS_PORT_A1
     uint8_t detectionA1Default(float fInputValue){
-      static float fLastValue = 0.0f;
       static float flA1Average = 0.0f;
       static uint8_t ucA1Index = 2;
       bool bDetectionPos = false;
       bool bDetectionNeg = false;
       uint8_t ucAlert = 0;
       
+      #if defined(WIMOS_UNIT_TEST)
+        if(inputDetectProcessA1){
+          inputDetectProcessA1 = false;
+          flA1Average = 0.0f;
+        }
+      #endif
+      
       _WIMOS_1A_PROCESSOR_DET(flA1Average, fInputValue, ucA1Index); 
       
+      #if defined(WIMOS_UNIT_TEST)
+        outputDetectProcessA1 = flA1Average;
+      #endif
+      
       for(uint8_t i=1; i<(_WIMOS_1A_OFFSET_MAX_SIZE+1); i++){
-        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fLastValue, flA1Average, (_WIMOS_1A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionPos &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA1Average, (_WIMOS_1A_AVERAGE_OFFSET*i)) == true);
-        
-        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fLastValue, flA1Average, -(_WIMOS_1A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionNeg &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA1Average, -(_WIMOS_1A_AVERAGE_OFFSET*i)) == true);
+        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA1Average, (_WIMOS_1A_AVERAGE_OFFSET*i)) == true);
+        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fInputValue, flA1Average, -(_WIMOS_1A_AVERAGE_OFFSET*i)) == true);
 
         #ifdef DEBUG_ANALOG_A1
           
@@ -471,7 +491,7 @@
         SERIAL_DEBUG.println((uint8_t) ucAlert);
       #endif
       
-      flA1Average  = fInputValue;
+      //flA1Average  = fInputValue;
       
       return ucAlert;
     }
@@ -483,23 +503,30 @@
 
   #endif
   
-  #ifdef _EN_WIMOS_PORT_A2
+   #ifdef _EN_WIMOS_PORT_A2
     uint8_t detectionA2Default(float fInputValue){
-      static float fLastValue = 0.0f;
       static float flA2Average = 0.0f;
       static uint8_t ucA2Index = 2;
       bool bDetectionPos = false;
       bool bDetectionNeg = false;
       uint8_t ucAlert = 0;
       
+      #if defined(WIMOS_UNIT_TEST)
+        if(inputDetectProcessA2){
+          inputDetectProcessA2 = false;
+          flA2Average = 0.0f;
+        }
+      #endif
+      
       _WIMOS_2A_PROCESSOR_DET(flA2Average, fInputValue, ucA2Index); 
       
+      #if defined(WIMOS_UNIT_TEST)
+        outputDetectProcessA2 = flA2Average;
+      #endif
+      
       for(uint8_t i=1; i<(_WIMOS_2A_OFFSET_MAX_SIZE+1); i++){
-        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fLastValue, flA2Average, (_WIMOS_2A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionPos &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA2Average, (_WIMOS_2A_AVERAGE_OFFSET*i)) == true);
-        
-        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fLastValue, flA2Average, -(_WIMOS_2A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionNeg &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA2Average, -(_WIMOS_2A_AVERAGE_OFFSET*i)) == true);
+        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA2Average, (_WIMOS_2A_AVERAGE_OFFSET*i)) == true);
+        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fInputValue, flA2Average, -(_WIMOS_2A_AVERAGE_OFFSET*i)) == true);
 
         #ifdef DEBUG_ANALOG_A2
           
@@ -523,7 +550,7 @@
         SERIAL_DEBUG.println((uint8_t) ucAlert);
       #endif
       
-      flA2Average  = fInputValue;
+      //flA2Average  = fInputValue;
       
       return ucAlert;
     }
@@ -531,7 +558,7 @@
     uint8_t detectionA2Custom(float fInputValue){
       /*TODO: Implementation Custom*/
       return 0;
-    }
+    }  
 
   #endif
   
@@ -544,14 +571,23 @@
       bool bDetectionNeg = false;
       uint8_t ucAlert = 0;
       
+      
+      #if defined(WIMOS_UNIT_TEST)
+        if(inputDetectProcessA3){
+          inputDetectProcessA3 = false;
+          flA3Average = 0.0f;
+        }
+      #endif
+      
       _WIMOS_3A_PROCESSOR_DET(flA3Average, fInputValue, ucA3Index); 
       
+      #if defined(WIMOS_UNIT_TEST)
+        outputDetectProcessA3 = flA3Average;
+      #endif
+      
       for(uint8_t i=1; i<(_WIMOS_3A_OFFSET_MAX_SIZE+1); i++){
-        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fLastValue, flA3Average, (_WIMOS_3A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionPos &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA3Average, (_WIMOS_3A_AVERAGE_OFFSET*i)) == true);
-        
-        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fLastValue, flA3Average, -(_WIMOS_3A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionNeg &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA3Average, -(_WIMOS_3A_AVERAGE_OFFSET*i)) == true);
+        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA3Average, (_WIMOS_3A_AVERAGE_OFFSET*i)) == true);
+        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fInputValue, flA3Average, -(_WIMOS_3A_AVERAGE_OFFSET*i)) == true);
 
         #ifdef DEBUG_ANALOG_A3
           
@@ -575,7 +611,7 @@
         SERIAL_DEBUG.println((uint8_t) ucAlert);
       #endif
       
-      flA3Average  = fInputValue;
+      //flA3Average  = fInputValue;
       
       return ucAlert;
     }
@@ -596,14 +632,22 @@
       bool bDetectionNeg = false;
       uint8_t ucAlert = 0;
       
+      #if defined(WIMOS_UNIT_TEST)
+        if(inputDetectProcessA4){
+          inputDetectProcessA4 = false;
+          flA4Average = 0.0f;
+        }
+      #endif
+      
       _WIMOS_4A_PROCESSOR_DET(flA4Average, fInputValue, ucA4Index); 
       
+      #if defined(WIMOS_UNIT_TEST)
+        outputDetectProcessA4 = flA4Average;
+      #endif
+      
       for(uint8_t i=1; i<(_WIMOS_4A_OFFSET_MAX_SIZE+1); i++){
-        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fLastValue, flA4Average, (_WIMOS_4A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionPos &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA4Average, (_WIMOS_4A_AVERAGE_OFFSET*i)) == true);
-        
-        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fLastValue, flA4Average, -(_WIMOS_4A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionNeg &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA4Average, -(_WIMOS_4A_AVERAGE_OFFSET*i)) == true);
+        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA4Average, (_WIMOS_4A_AVERAGE_OFFSET*i)) == true);
+        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fInputValue, flA4Average, -(_WIMOS_4A_AVERAGE_OFFSET*i)) == true);
 
         #ifdef DEBUG_ANALOG_A4
           
@@ -627,7 +671,7 @@
         SERIAL_DEBUG.println((uint8_t) ucAlert);
       #endif
       
-      flA4Average  = fInputValue;
+      //flA4Average  = fInputValue;
       
       return ucAlert;
     }
@@ -648,14 +692,22 @@
       bool bDetectionNeg = false;
       uint8_t ucAlert = 0;
       
+      #if defined(WIMOS_UNIT_TEST)
+        if(inputDetectProcessA5){
+          inputDetectProcessA5 = false;
+          flA5Average = 0.0f;
+        }
+      #endif
+      
       _WIMOS_5A_PROCESSOR_DET(flA5Average, fInputValue, ucA5Index); 
       
+      #if defined(WIMOS_UNIT_TEST)
+        outputDetectProcessA5 = flA5Average;
+      #endif
+      
       for(uint8_t i=1; i<(_WIMOS_5A_OFFSET_MAX_SIZE+1); i++){
-        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fLastValue, flA5Average, (_WIMOS_5A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionPos &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA5Average, (_WIMOS_5A_AVERAGE_OFFSET*i)) == true);
-        
-        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fLastValue, flA5Average, -(_WIMOS_5A_AVERAGE_OFFSET*i)) == false); 
-        bDetectionNeg &= (MATH_DEFAULT_THRESHOLD(fInputValue, flA5Average, -(_WIMOS_5A_AVERAGE_OFFSET*i)) == true);
+        bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA5Average, (_WIMOS_5A_AVERAGE_OFFSET*i)) == true);
+        bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fInputValue, flA5Average, -(_WIMOS_5A_AVERAGE_OFFSET*i)) == true);
 
         #ifdef DEBUG_ANALOG_A5
           
@@ -672,14 +724,14 @@
       }
       
       #ifdef DEBUG_ANALOG_A5
-      
-        
+
         SERIAL_DEBUG.print(abs(fInputValue));      
         SERIAL_DEBUG.print(" ");
         SERIAL_DEBUG.println((uint8_t) ucAlert);
+        
       #endif
       
-      flA5Average  = fInputValue;
+      //flA5Average  = fInputValue;
       
       return ucAlert;
     }
@@ -822,28 +874,7 @@
        * @return none.
        */
        extern void _test_n5UT05 (void){
-        const char* testName = "n5.UT05 = %d";
-        inputAnalogReadA1 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient2_A1 == outputJoint_A1), 
-                   (outputCoeficient2_A1 == outputJoint_A1));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT06.
-       *
-       * Unit test n5.UT06 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT06 (void){
-        const char* testName = "n5.UT06 = %f";
+        const char* testName = "n5.UT05 = %f";
         float fAverageOutput = 0.0;
         
         inputAnalogReadA1 = 0;
@@ -862,6 +893,27 @@
   
   
       /**
+       * @brief Wimos test n5.UT06.
+       *
+       * Unit test n5.UT06 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT06 (void){
+        const char* testName = "n5.UT06 = %d";
+        inputAnalogReadA2 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   (outputOffset1_A2 == _WIMOS_2A_OFFSET_1 ), 
+                   (outputOffset1_A2 == _WIMOS_2A_OFFSET_1));
+        /*End_Body_TEST:*/
+      } 
+      
+      /**
        * @brief Wimos test n5.UT07.
        *
        * Unit test n5.UT07 function.
@@ -877,8 +929,8 @@
         stWimosPortValues stTestWimosPort;
         readPortA(&stTestWimosPort);
         DEBUG_VALID(testName , 
-                   (outputOffset1_A2 == _WIMOS_2A_OFFSET_1 ), 
-                   (outputOffset1_A2 == _WIMOS_2A_OFFSET_1));
+                   (outputCoeficient1_A2 == _WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1 ), 
+                   (outputCoeficient1_A2 == _WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1));
         /*End_Body_TEST:*/
       } 
       
@@ -898,8 +950,8 @@
         stWimosPortValues stTestWimosPort;
         readPortA(&stTestWimosPort);
         DEBUG_VALID(testName , 
-                   (outputCoeficient1_A2 == _WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1 ), 
-                   (outputCoeficient1_A2 == _WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1));
+                   (outputOffset2_A2 == (_WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1) + _WIMOS_2A_OFFSET_2 ), 
+                   (outputOffset2_A2 == (_WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1) + _WIMOS_2A_OFFSET_2));
         /*End_Body_TEST:*/
       } 
       
@@ -919,8 +971,8 @@
         stWimosPortValues stTestWimosPort;
         readPortA(&stTestWimosPort);
         DEBUG_VALID(testName , 
-                   (outputOffset2_A2 == (_WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1) + _WIMOS_2A_OFFSET_2 ), 
-                   (outputOffset2_A2 == (_WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1) + _WIMOS_2A_OFFSET_2));
+                   (outputCoeficient2_A2 == ((_WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1) + _WIMOS_2A_OFFSET_2 ) * _WIMOS_2A_COEFICIENT_2), 
+                   (outputCoeficient2_A2 == ((_WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1) + _WIMOS_2A_OFFSET_2 ) * _WIMOS_2A_COEFICIENT_2));
         /*End_Body_TEST:*/
       } 
       
@@ -933,49 +985,7 @@
        * @return none.
        */
        extern void _test_n5UT10 (void){
-        const char* testName = "n5.UT10 = %d";
-        inputAnalogReadA2 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient2_A2 == ((_WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1) + _WIMOS_2A_OFFSET_2 ) * _WIMOS_2A_COEFICIENT_2), 
-                   (outputCoeficient2_A2 == ((_WIMOS_2A_OFFSET_1 * _WIMOS_2A_COEFICIENT_1) + _WIMOS_2A_OFFSET_2 ) * _WIMOS_2A_COEFICIENT_2));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT11.
-       *
-       * Unit test n5.UT11 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT11 (void){
-        const char* testName = "n5.UT11 = %d";
-        inputAnalogReadA2 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient2_A2 == outputJoint_A2), 
-                   (outputCoeficient2_A2 == outputJoint_A2));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT12.
-       *
-       * Unit test n5.UT12 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT12 (void){
-        const char* testName = "n5.UT12 = %f";
+        const char* testName = "n5.UT10 = %f";
         float fAverageOutput = 0.0;
         
         inputAnalogReadA2 = 0;
@@ -994,6 +1004,48 @@
   
   
       /**
+       * @brief Wimos test n5.UT11.
+       *
+       * Unit test n5.UT11 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT11 (void){
+        const char* testName = "n5.UT11 = %d";
+        inputAnalogReadA3 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   (outputOffset1_A3 == _WIMOS_3A_OFFSET_1 ), 
+                   (outputOffset1_A3 == _WIMOS_3A_OFFSET_1));
+        /*End_Body_TEST:*/
+      } 
+      
+      /**
+       * @brief Wimos test n5.UT12.
+       *
+       * Unit test n5.UT12 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT12 (void){
+        const char* testName = "n5.UT12 = %d";
+        inputAnalogReadA3 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   (outputCoeficient1_A3 == _WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1 ), 
+                   (outputCoeficient1_A3 == _WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1));
+        /*End_Body_TEST:*/
+      } 
+      
+      /**
        * @brief Wimos test n5.UT13.
        *
        * Unit test n5.UT13 function.
@@ -1009,8 +1061,8 @@
         stWimosPortValues stTestWimosPort;
         readPortA(&stTestWimosPort);
         DEBUG_VALID(testName , 
-                   (outputOffset1_A3 == _WIMOS_3A_OFFSET_1 ), 
-                   (outputOffset1_A3 == _WIMOS_3A_OFFSET_1));
+                   (outputOffset2_A3 == (_WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1) + _WIMOS_3A_OFFSET_2 ), 
+                   (outputOffset2_A3 == (_WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1) + _WIMOS_3A_OFFSET_2));
         /*End_Body_TEST:*/
       } 
       
@@ -1030,8 +1082,8 @@
         stWimosPortValues stTestWimosPort;
         readPortA(&stTestWimosPort);
         DEBUG_VALID(testName , 
-                   (outputCoeficient1_A3 == _WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1 ), 
-                   (outputCoeficient1_A3 == _WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1));
+                   (outputCoeficient2_A3 == ((_WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1) + _WIMOS_3A_OFFSET_2 ) * _WIMOS_3A_COEFICIENT_2), 
+                   (outputCoeficient2_A3 == ((_WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1) + _WIMOS_3A_OFFSET_2 ) * _WIMOS_3A_COEFICIENT_2));
         /*End_Body_TEST:*/
       } 
       
@@ -1044,70 +1096,7 @@
        * @return none.
        */
        extern void _test_n5UT15 (void){
-        const char* testName = "n5.UT15 = %d";
-        inputAnalogReadA3 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputOffset2_A3 == (_WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1) + _WIMOS_3A_OFFSET_2 ), 
-                   (outputOffset2_A3 == (_WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1) + _WIMOS_3A_OFFSET_2));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT16.
-       *
-       * Unit test n5.UT16 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT16 (void){
-        const char* testName = "n5.UT16 = %d";
-        inputAnalogReadA3 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient2_A3 == ((_WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1) + _WIMOS_3A_OFFSET_2 ) * _WIMOS_3A_COEFICIENT_2), 
-                   (outputCoeficient2_A3 == ((_WIMOS_3A_OFFSET_1 * _WIMOS_3A_COEFICIENT_1) + _WIMOS_3A_OFFSET_2 ) * _WIMOS_3A_COEFICIENT_2));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT17.
-       *
-       * Unit test n5.UT17 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT17 (void){
-        const char* testName = "n5.UT17 = %d";
-        inputAnalogReadA3 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient2_A3 == outputJoint_A3), 
-                   (outputCoeficient2_A3 == outputJoint_A3));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT18.
-       *
-       * Unit test n5.UT18 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT18 (void){
-        const char* testName = "n5.UT18 = %f";
+        const char* testName = "n5.UT15 = %f";
         float fAverageOutput = 0.0;
         
         inputAnalogReadA3 = 0;
@@ -1126,6 +1115,69 @@
   
   
       /**
+       * @brief Wimos test n5.UT16.
+       *
+       * Unit test n5.UT16 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT16 (void){
+        const char* testName = "n5.UT16 = %d";
+        inputAnalogReadA4 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   (outputOffset1_A4 == _WIMOS_4A_OFFSET_1 ), 
+                   (outputOffset1_A4 == _WIMOS_4A_OFFSET_1));
+        /*End_Body_TEST:*/
+      } 
+      
+      /**
+       * @brief Wimos test n5.UT17.
+       *
+       * Unit test n5.UT17 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT17 (void){
+        const char* testName = "n5.UT17 = %d";
+        inputAnalogReadA4 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   (outputCoeficient1_A4 == _WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1 ), 
+                   (outputCoeficient1_A4 == _WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1));
+        /*End_Body_TEST:*/
+      } 
+      
+      /**
+       * @brief Wimos test n5.UT18.
+       *
+       * Unit test n5.UT18 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT18 (void){
+        const char* testName = "n5.UT18 = %d";
+        inputAnalogReadA4 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   (outputOffset2_A4 == (_WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1) + _WIMOS_4A_OFFSET_2 ), 
+                   (outputOffset2_A4 == (_WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1) + _WIMOS_4A_OFFSET_2));
+        /*End_Body_TEST:*/
+      } 
+      
+      /**
        * @brief Wimos test n5.UT19.
        *
        * Unit test n5.UT19 function.
@@ -1141,8 +1193,8 @@
         stWimosPortValues stTestWimosPort;
         readPortA(&stTestWimosPort);
         DEBUG_VALID(testName , 
-                   (outputOffset1_A4 == _WIMOS_4A_OFFSET_1 ), 
-                   (outputOffset1_A4 == _WIMOS_4A_OFFSET_1));
+                   (outputCoeficient2_A4 == ((_WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1) + _WIMOS_4A_OFFSET_2 ) * _WIMOS_4A_COEFICIENT_2), 
+                   (outputCoeficient2_A4 == ((_WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1) + _WIMOS_4A_OFFSET_2 ) * _WIMOS_4A_COEFICIENT_2));
         /*End_Body_TEST:*/
       } 
       
@@ -1155,91 +1207,7 @@
        * @return none.
        */
        extern void _test_n5UT20 (void){
-        const char* testName = "n5.UT20 = %d";
-        inputAnalogReadA4 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient1_A4 == _WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1 ), 
-                   (outputCoeficient1_A4 == _WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT21.
-       *
-       * Unit test n5.UT21 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT21 (void){
-        const char* testName = "n5.UT21 = %d";
-        inputAnalogReadA4 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputOffset2_A4 == (_WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1) + _WIMOS_4A_OFFSET_2 ), 
-                   (outputOffset2_A4 == (_WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1) + _WIMOS_4A_OFFSET_2));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT22.
-       *
-       * Unit test n5.UT22 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT22 (void){
-        const char* testName = "n5.UT22 = %d";
-        inputAnalogReadA4 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient2_A4 == ((_WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1) + _WIMOS_4A_OFFSET_2 ) * _WIMOS_4A_COEFICIENT_2), 
-                   (outputCoeficient2_A4 == ((_WIMOS_4A_OFFSET_1 * _WIMOS_4A_COEFICIENT_1) + _WIMOS_4A_OFFSET_2 ) * _WIMOS_4A_COEFICIENT_2));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT23.
-       *
-       * Unit test n5.UT23 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT23 (void){
-        const char* testName = "n5.UT23 = %d";
-        inputAnalogReadA4 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient2_A4 == outputJoint_A4), 
-                   (outputCoeficient2_A4 == outputJoint_A4));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT24.
-       *
-       * Unit test n5.UT24 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT24 (void){
-        const char* testName = "n5.UT24 = %f";
+        const char* testName = "n5.UT20 = %f";
         float fAverageOutput = 0.0;
         
         inputAnalogReadA4 = 0;
@@ -1257,15 +1225,15 @@
       } 
       
       /**
-       * @brief Wimos test n5.UT25.
+       * @brief Wimos test n5.UT21.
        *
-       * Unit test n5.UT25 function.
+       * Unit test n5.UT21 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n5UT25 (void){
-        const char* testName = "n5.UT25 = %d";
+       extern void _test_n5UT21 (void){
+        const char* testName = "n5.UT21 = %d";
         inputAnalogRead5A1 = 0;
         
         /*Begin_Body_Test.*/
@@ -1278,6 +1246,90 @@
       } 
     
       /**
+       * @brief Wimos test n5.UT22.
+       *
+       * Unit test n5.UT22 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT22 (void){
+        const char* testName = "n5.UT22 = %d";
+        inputAnalogRead5A2 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   ((outputOffset1_5A2)), 
+                   ((((float)outputOffset1_5A2 - _WIMOS_5A2_OFFSET_1) < 0.001)));
+        /*End_Body_TEST:*/
+      } 
+    
+      /**
+       * @brief Wimos test n5.UT23.
+       *
+       * Unit test n5.UT23 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT23 (void){
+        const char* testName = "n5.UT23 = %d";
+        inputAnalogRead5A3 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   ((outputOffset1_5A3)), 
+                   ((((float)outputOffset1_5A3 - _WIMOS_5A3_OFFSET_1) < 0.001)));
+        /*End_Body_TEST:*/
+      } 
+      
+      /**
+       * @brief Wimos test n5.UT24.
+       *
+       * Unit test n5.UT24 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT24 (void){
+        const char* testName = "n5.UT24 = %d";
+        inputAnalogRead5A1 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   (outputCoeficient1_5A1), 
+                   (((float)outputCoeficient1_5A1 - (_WIMOS_5A1_OFFSET_1 * _WIMOS_5A1_COEFICIENT_1) < 0.001)));
+        /*End_Body_TEST:*/
+      } 
+          
+      /**
+       * @brief Wimos test n5.UT25.
+       *
+       * Unit test n5.UT25 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n5UT25 (void){
+        const char* testName = "n5.UT25 = %d";
+        inputAnalogRead5A2 = 0;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
+        DEBUG_VALID(testName , 
+                   (outputCoeficient1_5A2), 
+                   (((float)outputCoeficient1_5A2 - (_WIMOS_5A2_OFFSET_1 * _WIMOS_5A2_COEFICIENT_1) < 0.001)));
+        /*End_Body_TEST:*/
+      } 
+          
+      /**
        * @brief Wimos test n5.UT26.
        *
        * Unit test n5.UT26 function.
@@ -1287,14 +1339,14 @@
        */
        extern void _test_n5UT26 (void){
         const char* testName = "n5.UT26 = %d";
-        inputAnalogRead5A2 = 0;
+        inputAnalogRead5A3 = 0;
         
         /*Begin_Body_Test.*/
         stWimosPortValues stTestWimosPort;
         readPortA(&stTestWimosPort);
         DEBUG_VALID(testName , 
-                   ((outputOffset1_5A2)), 
-                   ((((float)outputOffset1_5A2 - _WIMOS_5A2_OFFSET_1) < 0.001)));
+                   (outputCoeficient1_5A3), 
+                   (((float)outputCoeficient1_5A3 - (_WIMOS_5A3_OFFSET_1 * _WIMOS_5A3_COEFICIENT_1) < 0.001)));
         /*End_Body_TEST:*/
       } 
     
@@ -1308,90 +1360,6 @@
        */
        extern void _test_n5UT27 (void){
         const char* testName = "n5.UT27 = %d";
-        inputAnalogRead5A3 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   ((outputOffset1_5A3)), 
-                   ((((float)outputOffset1_5A3 - _WIMOS_5A3_OFFSET_1) < 0.001)));
-        /*End_Body_TEST:*/
-      } 
-      
-      /**
-       * @brief Wimos test n5.UT28.
-       *
-       * Unit test n5.UT28 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT28 (void){
-        const char* testName = "n5.UT28 = %d";
-        inputAnalogRead5A1 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient1_5A1), 
-                   (((float)outputCoeficient1_5A1 - (_WIMOS_5A1_OFFSET_1 * _WIMOS_5A1_COEFICIENT_1) < 0.001)));
-        /*End_Body_TEST:*/
-      } 
-          
-      /**
-       * @brief Wimos test n5.UT29.
-       *
-       * Unit test n5.UT29 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT29 (void){
-        const char* testName = "n5.UT29 = %d";
-        inputAnalogRead5A2 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient1_5A2), 
-                   (((float)outputCoeficient1_5A2 - (_WIMOS_5A2_OFFSET_1 * _WIMOS_5A2_COEFICIENT_1) < 0.001)));
-        /*End_Body_TEST:*/
-      } 
-          
-      /**
-       * @brief Wimos test n5.UT30.
-       *
-       * Unit test n5.UT30 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT30 (void){
-        const char* testName = "n5.UT30 = %d";
-        inputAnalogRead5A3 = 0;
-        
-        /*Begin_Body_Test.*/
-        stWimosPortValues stTestWimosPort;
-        readPortA(&stTestWimosPort);
-        DEBUG_VALID(testName , 
-                   (outputCoeficient1_5A3), 
-                   (((float)outputCoeficient1_5A3 - (_WIMOS_5A3_OFFSET_1 * _WIMOS_5A3_COEFICIENT_1) < 0.001)));
-        /*End_Body_TEST:*/
-      } 
-    
-      /**
-       * @brief Wimos test n5.UT31.
-       *
-       * Unit test n5.UT31 function.
-       * @verbatim like this@endverbatim 
-       * @param none.
-       * @return none.
-       */
-       extern void _test_n5UT31 (void){
-        const char* testName = "n5.UT31 = %d";
         inputAnalogRead5A1 = 0;
         
         /*Begin_Body_Test.*/
@@ -1404,15 +1372,15 @@
       } 
     
       /**
-       * @brief Wimos test n5.UT32.
+       * @brief Wimos test n5.UT28.
        *
-       * Unit test n5.UT32 function.
+       * Unit test n5.UT28 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n5UT32 (void){
-        const char* testName = "n5.UT32 = %d";
+       extern void _test_n5UT28 (void){
+        const char* testName = "n5.UT28 = %d";
         inputAnalogRead5A2 = 0;
         
         /*Begin_Body_Test.*/
@@ -1425,15 +1393,15 @@
       } 
     
       /**
-       * @brief Wimos test n5.UT33.
+       * @brief Wimos test n5.UT29.
        *
-       * Unit test n5.UT33 function.
+       * Unit test n5.UT29 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n5UT33 (void){
-        const char* testName = "n5.UT33 = %d";
+       extern void _test_n5UT29 (void){
+        const char* testName = "n5.UT29 = %d";
         inputAnalogRead5A3 = 0;
         
         /*Begin_Body_Test.*/
@@ -1446,15 +1414,15 @@
       } 
     
       /**
-       * @brief Wimos test n5.UT34.
+       * @brief Wimos test n5.UT30.
        *
-       * Unit test n5.UT34 function.
+       * Unit test n5.UT30 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n5UT34 (void){
-        const char* testName = "n5.UT34 = %d";
+       extern void _test_n5UT30 (void){
+        const char* testName = "n5.UT30 = %d";
         inputAnalogRead5A1 = 0;
         
         /*Begin_Body_Test.*/
@@ -1467,15 +1435,15 @@
       } 
     
       /**
-       * @brief Wimos test n5.UT35.
+       * @brief Wimos test n5.UT31.
        *
-       * Unit test n5.UT35 function.
+       * Unit test n5.UT31 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n5UT35 (void){
-        const char* testName = "n5.UT35 = %d";
+       extern void _test_n5UT31 (void){
+        const char* testName = "n5.UT31 = %d";
         inputAnalogRead5A2 = 0;
         
         /*Begin_Body_Test.*/
@@ -1488,15 +1456,15 @@
       } 
     
       /**
-       * @brief Wimos test n5.UT36.
+       * @brief Wimos test n5.UT32.
        *
-       * Unit test n5.UT36 function.
+       * Unit test n5.UT32 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n5UT36 (void){
-        const char* testName = "n5.UT36 = %d";
+       extern void _test_n5UT32 (void){
+        const char* testName = "n5.UT32 = %d";
         inputAnalogRead5A3 = 0;
         
         /*Begin_Body_Test.*/
@@ -1509,15 +1477,15 @@
       } 
     
       /**
-       * @brief Wimos test n5.UT37.
+       * @brief Wimos test n5.UT33.
        *
-       * Unit test n5.UT37 function.
+       * Unit test n5.UT33 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n5UT37 (void){
-        const char* testName = "n5.UT37 = %d";
+       extern void _test_n5UT33 (void){
+        const char* testName = "n5.UT33 = %d";
         inputAnalogRead5A1 = 0;
         inputAnalogRead5A2 = 0;
         inputAnalogRead5A3 = 0;
@@ -1535,15 +1503,15 @@
       } 
       
       /**
-       * @brief Wimos test n5.UT38.
+       * @brief Wimos test n5.UT34.
        *
-       * Unit test n5.UT38 function.
+       * Unit test n5.UT34 function.
        * @verbatim like this@endverbatim 
        * @param none.
        * @return none.
        */
-       extern void _test_n5UT38 (void){
-        const char* testName = "n5.UT38 = %f";
+       extern void _test_n5UT34 (void){
+        const char* testName = "n5.UT34 = %f";
         float fAverageOutput = 0.0;
         
         inputAnalogRead5A1 = 0;
@@ -1562,6 +1530,284 @@
         /*End_Body_TEST:*/
       } 
   
+      /**
+       * @brief Wimos test n6.UT01.
+       *
+       * Unit test n6.UT01 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT01 (void){
+        const char* testName = "n6.UT01 = %f";
+        float fAverageOutput = 0.0;
+        
+        inputDetectProcessA1 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_1A_AVERAGE_SIZE*100; i++){
+          detectionA1Default((float)100.0f);
+          fAverageOutput += (float) ((float) 100.0f / (_WIMOS_1A_AVERAGE_SIZE*100));
+        }        
+        DEBUG_VALID( testName , 
+                   ( fAverageOutput - outputDetectProcessA1), 
+                   ( abs((float)fAverageOutput - (float)outputDetectProcessA1) < 0.01));
+        /*End_Body_TEST:*/
+      } 
+      /**
+       * @brief Wimos test n6.UT02.
+       *
+       * Unit test n6.UT02 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT02 (void){
+        const char* testName = "n6.UT02 = %f";
+        float fAverageOutput = 0.0;
+        
+        inputDetectProcessA2 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_2A_AVERAGE_SIZE*100; i++){
+          detectionA2Default((float)100.0f);
+          fAverageOutput += (float) ((float) 100.0f / (_WIMOS_2A_AVERAGE_SIZE*100));
+        }        
+        DEBUG_VALID( testName , 
+                   ( fAverageOutput - outputDetectProcessA2), 
+                   ( abs((float)fAverageOutput - (float)outputDetectProcessA2) < 0.01));
+        /*End_Body_TEST:*/
+      } 
+  
+      /**
+       * @brief Wimos test n6.UT03.
+       *
+       * Unit test n6.UT03 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT03 (void){
+        const char* testName = "n6.UT03 = %f";
+        float fAverageOutput = 0.0;
+        
+        inputDetectProcessA3 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_3A_AVERAGE_SIZE*100; i++){
+          detectionA3Default((float)100.0f);
+          fAverageOutput += (float) ((float) 100.0f / (_WIMOS_3A_AVERAGE_SIZE*100));
+        }        
+        DEBUG_VALID( testName , 
+                   ( fAverageOutput - outputDetectProcessA3), 
+                   ( abs((float)fAverageOutput - (float)outputDetectProcessA3) < 0.01));
+        /*End_Body_TEST:*/
+      } 
+  
+      /**
+       * @brief Wimos test n6.UT04.
+       *
+       * Unit test n6.UT04 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT04 (void){
+        const char* testName = "n6.UT04 = %f";
+        float fAverageOutput = 0.0;
+        
+        inputDetectProcessA4 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_4A_AVERAGE_SIZE*100; i++){
+          detectionA4Default((float)100.0f);
+          fAverageOutput += (float) ((float) 100.0f / (_WIMOS_4A_AVERAGE_SIZE*100));
+        }        
+        DEBUG_VALID( testName , 
+                   ( fAverageOutput - outputDetectProcessA4), 
+                   ( abs((float)fAverageOutput - (float)outputDetectProcessA4) < 0.01));
+        /*End_Body_TEST:*/
+      } 
+  
+      /**
+       * @brief Wimos test n6.UT05.
+       *
+       * Unit test n6.UT05 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT05 (void){
+        const char* testName = "n6.UT05 = %f";
+        float fAverageOutput = 0.0;
+        
+        inputDetectProcessA5 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_5A_AVERAGE_SIZE*100; i++){
+          detectionA5Default((float)100.0f);
+          fAverageOutput += (float) ((float) 100.0f / (_WIMOS_5A_AVERAGE_SIZE*100));
+        }        
+        DEBUG_VALID( testName , 
+                   ( fAverageOutput - outputDetectProcessA5), 
+                   ( abs((float)fAverageOutput - (float)outputDetectProcessA5) < 0.01));
+        /*End_Body_TEST:*/
+      } 
+     
+  
+      /**
+       * @brief Wimos test n6.UT06.
+       *
+       * Unit test n6.UT06 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT06 (void){
+        const char* testName = "n6.UT06 = %d";
+        float fAverageOutput = 0.0;
+        uint8_t ucAlertValue = 0;
+        
+        inputDetectProcessA1 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_1A_AVERAGE_SIZE*100; i++){
+          detectionA1Default((float)0.f);
+        }  
+        ucAlertValue = detectionA1Default((float)_WIMOS_1A_AVERAGE_SIZE * _WIMOS_1A_AVERAGE_OFFSET );
+             
+        
+        DEBUG_VALID( testName , 
+                   ( ucAlertValue), 
+                   ( ucAlertValue > 0));
+        /*End_Body_TEST:*/
+      } 
+     
+  
+      /**
+       * @brief Wimos test n6.UT07.
+       *
+       * Unit test n6.UT07 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT07 (void){
+        const char* testName = "n6.UT07 = %d";
+        float fAverageOutput = 0.0;
+        uint8_t ucAlertValue = 0;
+        
+        inputDetectProcessA2 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_2A_AVERAGE_SIZE*100; i++){
+          detectionA2Default((float)0.f);
+        }  
+        ucAlertValue = detectionA2Default((float)_WIMOS_2A_AVERAGE_SIZE * _WIMOS_2A_AVERAGE_OFFSET );
+             
+        
+        DEBUG_VALID( testName , 
+                   ( ucAlertValue), 
+                   ( ucAlertValue > 0));
+        /*End_Body_TEST:*/
+      } 
+     
+  
+      /**
+       * @brief Wimos test n6.UT08.
+       *
+       * Unit test n6.UT08 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT08 (void){
+        const char* testName = "n6.UT08 = %d";
+        float fAverageOutput = 0.0;
+        uint8_t ucAlertValue = 0;
+        
+        inputDetectProcessA3 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_3A_AVERAGE_SIZE*100; i++){
+          detectionA3Default((float)0.f);
+        }  
+        ucAlertValue = detectionA3Default((float)_WIMOS_3A_AVERAGE_SIZE * _WIMOS_3A_AVERAGE_OFFSET );
+             
+        
+        DEBUG_VALID( testName , 
+                   ( ucAlertValue), 
+                   ( ucAlertValue > 0));
+        /*End_Body_TEST:*/
+      } 
+     
+  
+      /**
+       * @brief Wimos test n6.UT09.
+       *
+       * Unit test n6.UT09 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT09 (void){
+        const char* testName = "n6.UT09 = %d";
+        float fAverageOutput = 0.0;
+        uint8_t ucAlertValue = 0;
+        
+        inputDetectProcessA4 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_4A_AVERAGE_SIZE*100; i++){
+          detectionA4Default((float)0.f);
+        }  
+        ucAlertValue = detectionA4Default((float)_WIMOS_4A_AVERAGE_SIZE * _WIMOS_4A_AVERAGE_OFFSET );
+             
+        
+        DEBUG_VALID( testName , 
+                   ( ucAlertValue), 
+                   ( ucAlertValue > 0));
+        /*End_Body_TEST:*/
+      } 
+     
+  
+      /**
+       * @brief Wimos test n6.UT10.
+       *
+       * Unit test n6.UT10 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       extern void _test_n6UT10 (void){
+        const char* testName = "n6.UT10 = %d";
+        float fAverageOutput = 0.0;
+        uint8_t ucAlertValue = 0;
+        
+        inputDetectProcessA5 = true;
+        
+        /*Begin_Body_Test.*/
+        stWimosPortValues stTestWimosPort;
+        for (int i=0; i<_WIMOS_5A_AVERAGE_SIZE*100; i++){
+          detectionA5Default((float)0.f);
+        }  
+        ucAlertValue = detectionA5Default((uint32_t)_WIMOS_5A_AVERAGE_OFFSET * _WIMOS_4A_AVERAGE_SIZE);
+             
+        
+        DEBUG_VALID( testName , 
+                   ( ucAlertValue), 
+                   ( ucAlertValue > 0));
+        /*End_Body_TEST:*/
+      } 
      
     #endif
     
@@ -1578,10 +1824,14 @@
        */
       extern void _test_n3VT09 (void){
         const char* testName = "n3.VT09 = %ld microseconds";
+        uint32_t ulTime = micros();
+        
+        stWimosPortValues stTestWimosPort;
+        readPortA(&stTestWimosPort);
         /*TODO: do a general validation.*/            
         DEBUG_VALID(testName , 
-                   (true), 
-                   (true));
+                   (micros() - ulTime), 
+                   (micros() - ulTime < 600));
       }
     #endif
   #endif
