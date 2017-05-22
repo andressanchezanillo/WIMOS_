@@ -208,15 +208,207 @@ class QNetworkItem (QtGui.QWidget):
 
     def getStatus(self):
         return self.enable
+        
+
+    def n8UT12(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.addCenter(1, "2017-05-22 21:00:34")
+        
+        testCount += 1
+        if self.myID == 1:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DeviceID.text() == "<b>ID:</b> 1":
+            testSuccess += 1
+            
+        testCount += 1
+        if self.enable == True:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DType == "Center":
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DeviceType.text() == "<b>Type:</b> Center":
+            testSuccess += 1
+            
+        testCount += 1
+        if "<b>Timestamp:</b> 2017-05-22 21:00:34" in self.LastPackageTimestap.text():
+            testSuccess += 1    
+                
+        return (testSuccess/testCount)*100
+
+        
+
+    def n8UT13(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.addCenter(1, "2017-05-22 21:00:34", 0, 0, True)
+        
+        testCount += 1
+        if self.myID == 1:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DeviceID.text() == "<b>ID:</b> 1":
+            testSuccess += 1
+            
+        testCount += 1
+        if self.enable == False:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DType == "Center":
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DeviceType.text() == "<b>Type:</b> Center (Disconnected)":
+            testSuccess += 1
+            
+        testCount += 1
+        if "<b>Timestamp:</b> 2017-05-22 21:00:34" in self.LastPackageTimestap.text():
+            testSuccess += 1    
+                
+        return (testSuccess/testCount)*100
+
+        
+
+    def n8UT14(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.addInfo(1, "Center", 0)
+        
+        testCount += 1
+        if self.myID == 1:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DeviceID.text() == "<b>ID:</b> 1":
+            testSuccess += 1
+            
+        testCount += 1
+        if self.enable == True:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DType == "Center":
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DeviceType.text() == "<b>Type:</b> Center":
+            testSuccess += 1  
+                
+        return (testSuccess/testCount)*100
+
+        
+
+    def n8UT15(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.addInfo(5, "Host", 0)
+        
+        testCount += 1
+        if self.myID == 5:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DeviceID.text() == "<b>ID:</b> 5":
+            testSuccess += 1
+            
+        testCount += 1
+        if self.enable == True:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DType == "Host":
+            testSuccess += 1
+            
+        testCount += 1
+        if self.DeviceType.text() == "<b>Type:</b> Host":
+            testSuccess += 1  
+                
+        return (testSuccess/testCount)*100
+
+        
+
+    def n8UT16(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.DType is 'Center'
+        self.disconnect()
+        
+        testCount += 1
+        if "<b>Type:</b> "+self.DType+" <b>(Disconnected)</b>" in self.DeviceType.text():
+            testSuccess += 1
+                
+        return (testSuccess/testCount)*100
+
+        
+
+    def n8UT17(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.DType is 'Host'
+        self.disconnect()
+        
+        testCount += 1
+        if "<b>Type:</b> "+self.DType+" <b>(Disconnected)</b>" in self.DeviceType.text():
+            testSuccess += 1
+                
+        return (testSuccess/testCount)*100
+    
+
+    
+
+    
 
     def TestUTs(self):
+        
+        resultn8UT12 = self.n8UT12()
+        if ( resultn8UT12 == 100):
+            print("[TEST] n8UT12\t[OK]\tn8.UT12 = 100%")
+        else:
+            print("[TEST] n8UT12\t[ERROR]\tn8.UT12 = "+(str(resultn8UT12))+"%")
 
-##        resultn8UT01 = self.n8UT01()
-##        if ( resultn8UT01 == 100):
-##            print("[TEST] n8UT01\t[OK]\tn8.UT01 = 100%")
-##        else:
-##            print("[TEST] n8UT01\t[ERROR]\tn8.UT01 = "+(str(resultn8UT01))+"%")
-        print("In progress..")
+        resultn8UT13 = self.n8UT13()
+        if ( resultn8UT13 == 100):
+            print("[TEST] n8UT13\t[OK]\tn8.UT13 = 100%")
+        else:
+            print("[TEST] n8UT13\t[ERROR]\tn8.UT13 = "+(str(resultn8UT13))+"%")
+        
+        resultn8UT14 = self.n8UT14()
+        if ( resultn8UT14 == 100):
+            print("[TEST] n8UT14\t[OK]\tn8.UT14 = 100%")
+        else:
+            print("[TEST] n8UT14\t[ERROR]\tn8.UT14 = "+(str(resultn8UT14))+"%")
+
+        resultn8UT15 = self.n8UT15()
+        if ( resultn8UT15 == 100):
+            print("[TEST] n8UT15\t[OK]\tn8.UT15 = 100%")
+        else:
+            print("[TEST] n8UT15\t[ERROR]\tn8.UT15 = "+(str(resultn8UT15))+"%")
+            
+        resultn8UT16 = self.n8UT16()
+        if ( resultn8UT16 == 100):
+            print("[TEST] n8UT16\t[OK]\tn8.UT16 = 100%")
+        else:
+            print("[TEST] n8UT16\t[ERROR]\tn8.UT16 = "+(str(resultn8UT16))+"%")
+
+        resultn8UT17 = self.n8UT17()
+        if ( resultn8UT17 == 100):
+            print("[TEST] n8UT17\t[OK]\tn8.UT17 = 100%")
+        else:
+            print("[TEST] n8UT17\t[ERROR]\tn8.UT17 = "+(str(resultn8UT17))+"%")
+
         
 
     def TestVT(self):
