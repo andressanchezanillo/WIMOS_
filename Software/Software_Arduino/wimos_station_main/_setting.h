@@ -212,7 +212,7 @@
     #define _WIMOS_1A_COEFICIENT_2             0x01
       
     #define _WIMOS_1A_AVERAGE_SIZE              ((uint8_t)50)
-    #define _WIMOS_1A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_1A_AVERAGE_OFFSET            ((uint32_t)83)
     #define _WIMOS_1A_OFFSET_MAX_SIZE           ((uint8_t)10)
         
     #define _WIMOS_1A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_1A_AVERAGE_SIZE)
@@ -227,7 +227,7 @@
     #define _WIMOS_2A_COEFICIENT_2             0x01
       
     #define _WIMOS_2A_AVERAGE_SIZE              ((uint8_t)50)
-    #define _WIMOS_2A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_2A_AVERAGE_OFFSET            ((uint32_t)83)
     #define _WIMOS_2A_OFFSET_MAX_SIZE           ((uint8_t)10)
     
     #define _WIMOS_2A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_2A_AVERAGE_SIZE)
@@ -242,7 +242,7 @@
     #define _WIMOS_3A_COEFICIENT_2             0x01
       
     #define _WIMOS_3A_AVERAGE_SIZE              ((uint8_t)50)
-    #define _WIMOS_3A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_3A_AVERAGE_OFFSET            ((uint32_t)83)
     #define _WIMOS_3A_OFFSET_MAX_SIZE           ((uint8_t)10)
     
     #define _WIMOS_3A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_3A_AVERAGE_SIZE)
@@ -257,7 +257,7 @@
     #define _WIMOS_4A_COEFICIENT_2             0x01
       
     #define _WIMOS_4A_AVERAGE_SIZE              ((uint8_t)50)
-    #define _WIMOS_4A_AVERAGE_OFFSET            ((uint8_t)83)
+    #define _WIMOS_4A_AVERAGE_OFFSET            ((uint32_t)83)
     #define _WIMOS_4A_OFFSET_MAX_SIZE           ((uint8_t)10)
     
     #define _WIMOS_4A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_4A_AVERAGE_SIZE)
@@ -285,7 +285,7 @@
     #define _WIMOS_5A_OPERATOR_JOINT(x,y,z)     MATH_VECTOR3D_LENGHT(x,y,z)
     
     #define _WIMOS_5A_AVERAGE_SIZE              ((uint8_t)5)
-    #define _WIMOS_5A_AVERAGE_OFFSET            ((uint8_t)42)
+    #define _WIMOS_5A_AVERAGE_OFFSET            ((uint32_t)42)
     #define _WIMOS_5A_OFFSET_MAX_SIZE           ((uint8_t)10)
     
     #define _WIMOS_5A_PROCESSOR_DET(lastValue, inputValue, currentIndex)                 MATH_MOVING_AVERAGE(lastValue, inputValue, currentIndex, _WIMOS_5A_AVERAGE_SIZE)

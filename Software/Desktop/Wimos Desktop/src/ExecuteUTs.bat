@@ -11,6 +11,6 @@ copy *.py %path%%pathUTs%
 start xcopy %imagesPath% %path%%pathUTs%%imagesPath% /E /C /I /Q /G /H /R /K /Y /Z /J
 cd %path%%pathUTs%
 
-MainWimosWindows.py UTs > %result%ResultUTs.log
+MainWimosWindows.py UTs > %result%ResultUTs.log && %result%ResultUTs.log
 
 
