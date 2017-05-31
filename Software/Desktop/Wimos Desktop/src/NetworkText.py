@@ -181,16 +181,189 @@ class QNetworkText(QtGui.QWidget):
         CurrentBuffer = self.NetworkInfo.toPlainText().split("Frame End")
         if len(CurrentBuffer) >= maxSize:
             self.NetworkInfo.clear()
+        
+
+    def n8UT17(self):        
+        testCount = 0
+        testSuccess = 0
+
+        self.NetworkInfo.setHtml("")
+        self.NetworkLogger.setCheckState(QtCore.Qt.Unchecked)
+        self.addCenter("INFO001:", 4, "2017-05-22 21:00:34", 100, 200 )
+        
+        testCount += 1
+        if "Frame: INFO001: - 2017-05-22 21:00:34" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Center] Station ID: 4" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Center] Data Ratio: 100% " in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Center] Data Time: 200 ms" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Center] End" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "Frame End" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+                
+        return (testSuccess/testCount)*100
+        
+
+    def n8UT18(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.NetworkInfo.setHtml("")
+        self.NetworkLogger.setCheckState(QtCore.Qt.Unchecked)
+        self.addInfo(161,"Frame161:",0,18,"21-5-17","20:45:6","90.1346383873","-74.2140119036",50,0,"236b0a","2017-05-22 21:00:34")       
+        
+        testCount += 1
+        if "Frame: Frame161:(161) - 2017-05-22 21:00:34" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Center] Station ID: 0" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Station ID: 18" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Date: 21-5-17" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Time: 20:45:6" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Latitude: 90.1346383873" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Longitude: -74.2140119036" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Memory Status: 50" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Battery Status: 0" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Mode Status: 236b0a" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] End" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "Frame End" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+                
+        return (testSuccess/testCount)*100
+        
+
+    def n8UT19(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        self.NetworkInfo.setHtml("")
+        self.NetworkLogger.setCheckState(QtCore.Qt.Unchecked)
+        self.addAlert(162,"Frame162:",0,16,"21-5-17","20:45:6",0,1,2,3,4,"2017-05-22 21:00:34")    
+        
+        testCount += 1
+        if "[Frame] Frame ID: Frame162:(162) - 2017-05-22 21:00:34" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Center] Station ID: 0" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Station ID: 16" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Date: 21-5-17" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] Time: 20:45:6" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host-Alert] A1: 0" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host-Alert] A2: 1" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host-Alert] A3: 2" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host-Alert] A4: 3" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host-Alert] A5: 4" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host-Alert] End" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "[Host] End" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+        testCount += 1
+        if "Frame End" in self.NetworkInfo.toPlainText():
+            testSuccess += 1
+        
+                
+        return (testSuccess/testCount)*100
 
 
     def TestUTs(self):
 
-##        resultn8UT01 = self.n8UT01()
-##        if ( resultn8UT01 == 100):
-##            print("[TEST] n8UT01\t[OK]\tn8.UT01 = 100%")
-##        else:
-##            print("[TEST] n8UT01\t[ERROR]\tn8.UT01 = "+(str(resultn8UT01))+"%")
-        print("In progress..")
+        resultn8UT17 = self.n8UT17()
+        if ( resultn8UT17 == 100):
+            print("[TEST] n8UT17\t[OK]\tn8.UT17 = 100%")
+        else:
+            print("[TEST] n8UT17\t[ERROR]\tn8.UT17 = "+(str(resultn8UT17))+"%")
+
+
+        resultn8UT18 = self.n8UT18()
+        if ( resultn8UT18 == 100):
+            print("[TEST] n8UT18\t[OK]\tn8.UT18 = 100%")
+        else:
+            print("[TEST] n8UT18\t[ERROR]\tn8.UT18 = "+(str(resultn8UT18))+"%")
+
+
+        resultn8UT19 = self.n8UT19()
+        if ( resultn8UT19 == 100):
+            print("[TEST] n8UT19\t[OK]\tn8.UT19 = 100%")
+        else:
+            print("[TEST] n8UT19\t[ERROR]\tn8.UT19 = "+(str(resultn8UT19))+"%")
+
         
 
     def TestVT(self):

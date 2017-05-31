@@ -1194,7 +1194,7 @@ class QSettingWindows(QtGui.QWidget):
         self.A1Setting.EnableCheck.setCheckState(QtCore.Qt.Checked) 
         self.A1Setting.AnalogAverageCheck.setCheckState(QtCore.Qt.Checked) 
         self.A1Setting.AverageSizeTextEdit.setPlainText("10")
-        self.A1Setting.AverageOffsetTextEdit.setPlainText("256")
+        self.A1Setting.AverageOffsetTextEdit.setPlainText("4294967296")
         self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
         
         self.checkProyect()
@@ -1710,6 +1710,7 @@ class QSettingWindows(QtGui.QWidget):
         self.A1Setting.AverageSizeTextEdit.setPlainText("20")
         self.A1Setting.AverageOffsetTextEdit.setPlainText("25")
         self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("35")
+        self.A1Setting.AnalogDetectionTextEdit.setPlainText("ValidationTest01")
 
         
         self.A2Setting.EnableCheck.setCheckState(QtCore.Qt.Unchecked) 
@@ -1731,6 +1732,10 @@ class QSettingWindows(QtGui.QWidget):
                 
             testCount += 1
             if '#define _WIMOS_1A_OFFSET_MAX_SIZE 	 35' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
+                testSuccess+=1
+
+            testCount += 1
+            if '#define _WIMOS_1A_DETECTION(inputValue) \t ValidationTest01(inputValue)' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
                 testSuccess+=1
 
             return (testSuccess/testCount)*100
@@ -1756,7 +1761,6 @@ class QSettingWindows(QtGui.QWidget):
         self.A1Setting.AverageSizeTextEdit.setPlainText("10")
         self.A1Setting.AverageOffsetTextEdit.setPlainText("10")
         self.A1Setting.AverageOffsetSizeTextEdit.setPlainText("10")
-        self.A1Setting.AnalogDetectionTextEdit.setPlainText("ValidationTest01")
         self.A1Setting.Tabs.AnalogSettingList[0][0].AnalogOffset1TextEdit.setPlainText("ValidationTest02 / 3")
         self.A1Setting.Tabs.AnalogSettingList[0][0].AnalogCoeficient1TextEdit.setPlainText("ValidationTest03 / 3")
         self.A1Setting.Tabs.AnalogSettingList[0][0].AnalogOffset2TextEdit.setPlainText("ValidationTest04 / 3")
@@ -1770,11 +1774,6 @@ class QSettingWindows(QtGui.QWidget):
         for row in range(self.CenterModeModel.rowCount()):
             item = self.CenterModeModel.item(row)
             item.setCheckState(QtCore.Qt.Unchecked)
-
-        if os.path.exists(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")):
-            testCount += 1
-            if '#define _WIMOS_1A_DETECTION(inputValue) \t ValidationTest01(inputValue)' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():
-                testSuccess+=1
                 
             testCount += 1
             if '#define _WIMOS_1A_OFFSET_1 \t ValidationTest02 / 3' in open(os.path.join(os.path.join(self.pathProyects, str(self.ProyectNameTextEdit.toPlainText())), "wimos_station_main/_setting.h")).read():

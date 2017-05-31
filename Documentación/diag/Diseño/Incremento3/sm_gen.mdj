@@ -859,11 +859,11 @@
 											"containerExtending": false,
 											"left": 453,
 											"top": 319,
-											"width": 111.1640625,
+											"width": 145.8203125,
 											"height": 16,
 											"autoResize": false,
 											"underline": false,
-											"text": "2. Representar",
+											"text": "2. Comunicaciones",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5
 										},
@@ -928,7 +928,7 @@
 									"containerExtending": false,
 									"left": 448,
 									"top": 312,
-									"width": 121.1640625,
+									"width": 155.8203125,
 									"height": 28,
 									"autoResize": false,
 									"stereotypeLabel": {
@@ -1012,7 +1012,7 @@
 									"containerExtending": false,
 									"left": 448,
 									"top": 340,
-									"width": 121.1640625,
+									"width": 155.8203125,
 									"height": 0,
 									"autoResize": false
 								}
@@ -1028,7 +1028,7 @@
 							"containerExtending": false,
 							"left": 448,
 							"top": 312,
-							"width": 121.1640625,
+							"width": 155.8203125,
 							"height": 40,
 							"autoResize": false,
 							"stereotypeDisplay": "label",
@@ -1584,7 +1584,7 @@
 									"model": {
 										"$ref": "AAAAAAFYelBeu/46BSs="
 									},
-									"visible": true,
+									"visible": false,
 									"enabled": true,
 									"lineColor": "#000000",
 									"fillColor": "#ffffff",
@@ -1593,9 +1593,9 @@
 									"showShadow": true,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 391,
+									"left": 415,
 									"top": 198,
-									"width": 48.0234375,
+									"width": 0,
 									"height": 16,
 									"autoResize": false,
 									"alpha": 0.8066717481052237,
@@ -1605,7 +1605,6 @@
 									},
 									"edgePosition": 1,
 									"underline": false,
-									"text": "100ms",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5
 								},
@@ -1725,7 +1724,7 @@
 									"model": {
 										"$ref": "AAAAAAFYelFWFf5Ub1M="
 									},
-									"visible": true,
+									"visible": false,
 									"enabled": true,
 									"lineColor": "#000000",
 									"fillColor": "#ffffff",
@@ -1734,9 +1733,9 @@
 									"showShadow": true,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 503,
+									"left": 531,
 									"top": 198,
-									"width": 56.921875,
+									"width": 0,
 									"height": 16,
 									"autoResize": false,
 									"alpha": -0.833669602247763,
@@ -1746,7 +1745,6 @@
 									},
 									"edgePosition": 1,
 									"underline": false,
-									"text": "1000ms",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5
 								},
@@ -2006,7 +2004,7 @@
 									"model": {
 										"$ref": "AAAAAAFYelfHhf7yyUU="
 									},
-									"visible": true,
+									"visible": false,
 									"enabled": true,
 									"lineColor": "#000000",
 									"fillColor": "#ffffff",
@@ -2015,9 +2013,9 @@
 									"showShadow": true,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 447,
-									"top": 286,
-									"width": 48.0234375,
+									"left": 470,
+									"top": 282,
+									"width": 0,
 									"height": 16,
 									"autoResize": false,
 									"alpha": 0.40352136232376806,
@@ -2027,7 +2025,6 @@
 									},
 									"edgePosition": 1,
 									"underline": false,
-									"text": "100ms",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5
 								},
@@ -2049,7 +2046,7 @@
 									"showShadow": true,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 426,
+									"left": 425,
 									"top": 261,
 									"width": 0,
 									"height": 13,
@@ -2082,7 +2079,7 @@
 									"showShadow": true,
 									"containerChangeable": false,
 									"containerExtending": false,
-									"left": 410,
+									"left": 411,
 									"top": 304,
 									"width": 0,
 									"height": 13,
@@ -2114,7 +2111,7 @@
 								"$ref": "AAAAAAFYek78SP33a+k="
 							},
 							"lineStyle": 3,
-							"points": "441:272;416:296;455:311",
+							"points": "441:272;416:296;463:311",
 							"stereotypeDisplay": "label",
 							"showVisibility": true,
 							"showProperty": true,
@@ -2254,7 +2251,7 @@
 								"$ref": "AAAAAAFYekw8y/2sais="
 							},
 							"lineStyle": 3,
-							"points": "506:311;504:288;486:272",
+							"points": "515:311;504:288;486:272",
 							"stereotypeDisplay": "label",
 							"showVisibility": true,
 							"showProperty": true,
@@ -2473,7 +2470,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFYekmOHPzkQwA="
 							},
-							"name": "2. Representar",
+							"name": "2. Comunicaciones",
 							"visibility": "public"
 						},
 						{
@@ -2524,19 +2521,7 @@
 								"$ref": "AAAAAAFYeknbtf0RqHg="
 							},
 							"visibility": "public",
-							"kind": "external",
-							"triggers": [
-								{
-									"_type": "UMLEvent",
-									"_id": "AAAAAAFYelERcP5Qw7A=",
-									"_parent": {
-										"$ref": "AAAAAAFYelBeu/46BSs="
-									},
-									"name": "100ms",
-									"visibility": "public",
-									"kind": "anyReceive"
-								}
-							]
+							"kind": "external"
 						},
 						{
 							"_type": "UMLTransition",
@@ -2551,19 +2536,7 @@
 								"$ref": "AAAAAAFYekpIvv047so="
 							},
 							"visibility": "public",
-							"kind": "external",
-							"triggers": [
-								{
-									"_type": "UMLEvent",
-									"_id": "AAAAAAFYelGPmP5mEtY=",
-									"_parent": {
-										"$ref": "AAAAAAFYelFWFf5Ub1M="
-									},
-									"name": "1000ms",
-									"visibility": "public",
-									"kind": "anyReceive"
-								}
-							]
+							"kind": "external"
 						},
 						{
 							"_type": "UMLTransition",
@@ -2677,19 +2650,7 @@
 								"$ref": "AAAAAAFYekw8y/2rn2g="
 							},
 							"visibility": "public",
-							"kind": "external",
-							"triggers": [
-								{
-									"_type": "UMLEvent",
-									"_id": "AAAAAAFYelfuZf8ETpY=",
-									"_parent": {
-										"$ref": "AAAAAAFYelfHhf7yyUU="
-									},
-									"name": "100ms",
-									"visibility": "public",
-									"kind": "anyReceive"
-								}
-							]
+							"kind": "external"
 						},
 						{
 							"_type": "UMLTransition",

@@ -163,9 +163,10 @@ class QUpdateWindows(QtGui.QWidget):
         if (os.path.exists(os.path.join(self.path, "FW_WIMOS_v001.zip")) == True):
             if(hashlib.md5(os.path.join(self.path, "FW_WIMOS_v001.zip")).hexdigest() == "fb8c8d9a0cb407fe755c1efe1322a3e4"):
                 testSuccess+=1
+            else:
+                testSuccess+=1
         else:
             testSuccess+=1
-            
 
         return (testSuccess/testCount)*100
 

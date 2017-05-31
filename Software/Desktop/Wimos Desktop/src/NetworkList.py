@@ -3,6 +3,7 @@ from PyQt4 import QtCore, QtGui
 from NetworkItem import QNetworkItem
 from NetworkGraph import QNetworkGraph
 from random import randint
+from datetime import datetime
 import time, threading
 
 class QNetworkList (QtGui.QWidget):
@@ -190,17 +191,312 @@ class QNetworkList (QtGui.QWidget):
                     item.disconnect()
                     self.NetworkGraph.disconnect(item.getID())
 
+    def n8UT06(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        for index in reversed(range(self.myform.count())): 
+            self.myform.itemAt(index).widget().setParent(None)
+        
+        del self.NetworkItemArray[:]
+        self.addCenter("Frame161:", 0, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 1:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 2:
+            testSuccess += 1
+            
+        self.addCenter("Frame161:", 1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+            
+        self.addCenter("Frame161:", 0, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+        
+                
+        return (testSuccess/testCount)*100
+
+    def n8UT07(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        for index in reversed(range(self.myform.count())): 
+            self.myform.itemAt(index).widget().setParent(None)
+        
+        del self.NetworkItemArray[:]
+        self.addCenter("INFO001:", 0, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 1:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 2:
+            testSuccess += 1
+            
+        self.addCenter("INFO001:", 1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+            
+        self.addCenter("INFO001:", 1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+        
+                
+        return (testSuccess/testCount)*100
+        
+
+    def n8UT08(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        for index in reversed(range(self.myform.count())): 
+            self.myform.itemAt(index).widget().setParent(None)
+        
+        del self.NetworkItemArray[:]
+        self.addInfo(161,"Frame161:",0,16,"21-5-17","20:45:6","90.1346383873","-74.2140119036",50,0,"236b0a",datetime.now().strftime("%Y-%m-%d %H:%M:%S"))       
+
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+            
+        self.addInfo(161,"Frame161:",0,18,"21-5-17","20:45:6","90.1346383873","-74.2140119036",50,0,"236b0a",datetime.now().strftime("%Y-%m-%d %H:%M:%S"))       
+
+        testCount += 1
+        if len(self.NetworkItemArray) == 3:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 6:
+            testSuccess += 1
+            
+        self.addInfo(161,"Frame161:",0,18,"21-5-17","20:45:6","90.1346383873","-74.2140119036",50,0,"236b0a",datetime.now().strftime("%Y-%m-%d %H:%M:%S"))       
+
+        testCount += 1
+        if len(self.NetworkItemArray) == 3:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 6:
+            testSuccess += 1
+        
+                
+        return (testSuccess/testCount)*100
+        
+
+    def n8UT09(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        for index in reversed(range(self.myform.count())): 
+            self.myform.itemAt(index).widget().setParent(None)
+        
+        del self.NetworkItemArray[:]
+        self.addInfo(161,"Frame161:",0,18,"21-5-17","20:45:6","90.1346383873","-74.2140119036",50,0,"236b0a",datetime.now().strftime("%Y-%m-%d %H:%M:%S"))       
+
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+            
+        self.addAlert(162,"Frame162:",0,18,"21-5-17","20:45:6",0,1,2,3,4,datetime.now().strftime("%Y-%m-%d %H:%M:%S"))       
+
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+            
+        self.addAlert(162,"Frame162:",0,16,"21-5-17","20:45:6",0,1,2,3,4,datetime.now().strftime("%Y-%m-%d %H:%M:%S"))    
+
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+        
+                
+        return (testSuccess/testCount)*100
+        
+
+    def n8UT10(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        for index in reversed(range(self.myform.count())): 
+            self.myform.itemAt(index).widget().setParent(None)
+        
+        del self.NetworkItemArray[:]
+        self.addCenter("INFO001:", 1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))      
+        self.refresh()
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 1:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.NetworkItemArray[-1].getStatus() == True:
+            testSuccess += 1
+
+        time.sleep(6)
+        
+        self.refresh()
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 1:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.NetworkItemArray[-1].getStatus() == False:
+            testSuccess += 1
+
+                
+        return (testSuccess/testCount)*100
+        
+
+    def n8UT11(self):        
+        testCount = 0
+        testSuccess = 0
+        
+        for index in reversed(range(self.myform.count())): 
+            self.myform.itemAt(index).widget().setParent(None)
+        
+        del self.NetworkItemArray[:]
+        self.addInfo(161,"Frame161:",0,18,"21-5-17","20:45:6","90.1346383873","-74.2140119036",50,0,"236b0a",datetime.now().strftime("%Y-%m-%d %H:%M:%S"))       
+        self.addAlert(162,"Frame162:",0,18,"21-5-17","20:45:6",0,1,2,3,4,datetime.now().strftime("%Y-%m-%d %H:%M:%S"))       
+
+        self.refresh()
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.NetworkItemArray[-1].data == True:
+            testSuccess += 1
+
+        time.sleep(1)
+        
+        self.refresh()
+        
+        testCount += 1
+        if len(self.NetworkItemArray) == 2:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.myform.count() == 4:
+            testSuccess += 1
+            
+        testCount += 1
+        if self.NetworkItemArray[-1].data == False:
+            testSuccess += 1
+
+                
+        return (testSuccess/testCount)*100
+
+    
+
     def TestUTs(self):
 
-##        resultn8UT01 = self.n8UT01()
-##        if ( resultn8UT01 == 100):
-##            print("[TEST] n8UT01\t[OK]\tn8.UT01 = 100%")
-##        else:
-##            print("[TEST] n8UT01\t[ERROR]\tn8.UT01 = "+(str(resultn8UT01))+"%")
-        print("In progress..")
-        NewtorkItem = QNetworkItem()
+        resultn8UT06 = self.n8UT06()
+        if ( resultn8UT06 == 100):
+            print("[TEST] n8UT06\t[OK]\tn8.UT06 = 100%")
+        else:
+            print("[TEST] n8UT06\t[ERROR]\tn8.UT06 = "+(str(resultn8UT06))+"%")
         
-        NewtorkItem.TestUTs()
+        resultn8UT07 = self.n8UT07()
+        if ( resultn8UT07 == 100):
+            print("[TEST] n8UT07\t[OK]\tn8.UT07 = 100%")
+        else:
+            print("[TEST] n8UT07\t[ERROR]\tn8.UT07 = "+(str(resultn8UT07))+"%")
+        
+        
+        resultn8UT08 = self.n8UT08()
+        if ( resultn8UT08 == 100):
+            print("[TEST] n8UT08\t[OK]\tn8.UT08 = 100%")
+        else:
+            print("[TEST] n8UT08\t[ERROR]\tn8.UT08 = "+(str(resultn8UT08))+"%")
+        
+        
+        resultn8UT09 = self.n8UT09()
+        if ( resultn8UT09 == 100):
+            print("[TEST] n8UT09\t[OK]\tn8.UT09 = 100%")
+        else:
+            print("[TEST] n8UT09\t[ERROR]\tn8.UT09 = "+(str(resultn8UT09))+"%")
+        
+        
+        resultn8UT10 = self.n8UT10()
+        if ( resultn8UT10 == 100):
+            print("[TEST] n8UT10\t[OK]\tn8.UT10 = 100%")
+        else:
+            print("[TEST] n8UT10\t[ERROR]\tn8.UT10 = "+(str(resultn8UT10))+"%")
+        
+        resultn8UT11 = self.n8UT11()
+        if ( resultn8UT11 == 100):
+            print("[TEST] n8UT11\t[OK]\tn8.UT11 = 100%")
+        else:
+            print("[TEST] n8UT11\t[ERROR]\tn8.UT11 = "+(str(resultn8UT11))+"%")
+
+        for index in reversed(range(self.myform.count())): 
+            self.myform.itemAt(index).widget().setParent(None)
+        
+        del self.NetworkItemArray[:]
+        self.addCenter("INFO001:", 1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+        self.NetworkItemArray[-1].TestUTs()
+        
+        
         self.NetworkGraph.TestUTs()
         
 

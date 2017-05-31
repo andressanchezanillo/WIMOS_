@@ -837,6 +837,11 @@
      * @brief GPS Serial interface.
      */
     #define SERIAL_GPS Serial3
+        
+    /**
+     * @brief GPS Serial interface.
+     */
+    #define GPS_CONFIG_RMC "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29"
     /**
      * @brief GPS Serial baudrate.
      */
@@ -1012,8 +1017,6 @@
         void _test_n3UT37 (void);
         void _test_n3UT38 (void);
         void _test_n3UT39 (void);
-        void _test_n3UT40 (void);
-        void _test_n3UT41 (void);
         void _test_n3UT42 (void);
         void _test_n4UT01 (void);
         void _test_n4UT02 (void);
@@ -1103,7 +1106,6 @@
         void _test_n3VT08 (void);
         void _test_n3VT09 (void);
         void _test_n3VT10 (void);
-        void _test_n3VT11 (void);
         #ifdef __AVR_ATmega32U4__    
           void _test_n4VT01 (void);
         #endif

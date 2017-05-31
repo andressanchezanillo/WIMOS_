@@ -176,7 +176,8 @@ class QNetworkGPS(QWidget):
         self.setLayout(self.layout)
 
     def addInfo(self, idDevice, latitudeDevice, longitudeDevice, infoDevice):
-        self.FrameGPS.evaluateJavaScript("addInfo("+str(idDevice)+","+str(latitudeDevice)+","+str(longitudeDevice)+",\""+infoDevice+"\")")
+        #self.FrameGPS.evaluateJavaScript("addInfo("+str(idDevice)+","+str(float(latitudeDevice)+0.18878)+","+str(float(longitudeDevice)-0.072221)+",\""+infoDevice+"\")")
+        self.FrameGPS.evaluateJavaScript("addInfo("+str(idDevice)+","+str(float(latitudeDevice))+","+str(float(longitudeDevice))+",\""+infoDevice+"\")")
         
     def addAlert(self, idDevice, alertLevel):        
         if (alertLevel is 'none'):
@@ -198,15 +199,4 @@ class QNetworkGPS(QWidget):
     def eraseAlert(self, idDevice):        
         self.FrameGPS.evaluateJavaScript("eraseAlert("+str(idDevice)+")")
 
-    def TestUTs(self):
-
-##        resultn8UT01 = self.n8UT01()
-##        if ( resultn8UT01 == 100):
-##            print("[TEST] n8UT01\t[OK]\tn8.UT01 = 100%")
-##        else:
-##            print("[TEST] n8UT01\t[ERROR]\tn8.UT01 = "+(str(resultn8UT01))+"%")
-        print("In progress..")
-
-    def TestVT(self):
-        print("In progress..")
         

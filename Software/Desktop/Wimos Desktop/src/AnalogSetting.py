@@ -199,7 +199,7 @@ class QAnalogSetting(QtGui.QWidget):
             if not re.match("^[0-9_]*$", self.AverageOffsetTextEdit.toPlainText()):
                 itemFail = itemFail + 1
                 self.AnalogAverageOffsetLabel.setText("<div style=\"color:#FF0000\">Offset:<\div>")
-            elif int(self.AverageOffsetTextEdit.toPlainText()) > 255 or int(self.AverageOffsetTextEdit.toPlainText()) < 0:
+            elif int(self.AverageOffsetTextEdit.toPlainText()) > 4294967295 or int(self.AverageOffsetTextEdit.toPlainText()) < 0:
                 itemFail = itemFail + 1
                 self.AnalogAverageOffsetLabel.setText("<div style=\"color:#FF0000\">Offset:<\div>")
             else:
