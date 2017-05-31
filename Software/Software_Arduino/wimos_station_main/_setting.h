@@ -35,13 +35,13 @@
   /**
    * @brief Label Debug traces activation.
    */
-  //#define WIMOS_DEBUG
-  //#define DEBUG_COLOR
+  #define WIMOS_DEBUG
+  //#define DEBUG_COLOR 
   //#define WIMOS_UNIT_TEST
   //#define DEBUG_COMM_RXTX
   //#define DEBUG_COMM_STATUS
   //#define DEBUG_GPS
-  #define DEBUG_ANALOG_A5
+  //#define DEBUG_ANALOG_A5
   //#define WIMOS_VALIDATION_TEST
   
   /**

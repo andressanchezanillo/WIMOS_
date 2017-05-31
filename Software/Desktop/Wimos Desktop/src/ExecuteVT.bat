@@ -13,4 +13,4 @@ echo %imagesPath%
 start xcopy %imagesPath% %path%%pathValidation%%imagesPath% /E /C /I /Q /G /H /R /K /Y /Z /J
 cd %path%%pathValidation%
 
-MainWimosWindows.py VT > %result%ResultVT.log && %result%ResultUTs.log
+MainWimosWindows.py VT > %result%ResultVT.log && %result%ResultVT.log

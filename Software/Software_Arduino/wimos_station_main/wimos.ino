@@ -124,8 +124,6 @@ extern void initWimos(void){
       _test_n3UT37();
       _test_n3UT38();
       _test_n3UT39();
-      _test_n3UT40();
-      _test_n3UT41();
     #endif
       _test_n4UT01();
       _test_n4UT02();
@@ -219,7 +217,6 @@ extern void initWimos(void){
         _test_n3VT08();
         _test_n3VT09();
         _test_n3VT10();
-        _test_n3VT11();
       #endif
       #ifdef __AVR_ATmega32U4__  
         _test_n4VT01();
