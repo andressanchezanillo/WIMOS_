@@ -176,7 +176,8 @@ class QNetworkGPS(QWidget):
         self.setLayout(self.layout)
 
     def addInfo(self, idDevice, latitudeDevice, longitudeDevice, infoDevice):
-        self.FrameGPS.evaluateJavaScript("addInfo("+str(idDevice)+","+str(latitudeDevice)+","+str(longitudeDevice)+",\""+infoDevice+"\")")
+        #self.FrameGPS.evaluateJavaScript("addInfo("+str(idDevice)+","+str(float(latitudeDevice)+0.18878)+","+str(float(longitudeDevice)-0.072221)+",\""+infoDevice+"\")")
+        self.FrameGPS.evaluateJavaScript("addInfo("+str(idDevice)+","+str(float(latitudeDevice))+","+str(float(longitudeDevice))+",\""+infoDevice+"\")")
         
     def addAlert(self, idDevice, alertLevel):        
         if (alertLevel is 'none'):

@@ -147,9 +147,8 @@ class QNetworkThreads(QtGui.QWidget):
 
         if LatitudeMinutes > 2147483647:
             LatitudeMinutes -= 4294967294
-            LatitudeMinutes = LatitudeMinutes * -1
             LatitudeDegree = LatitudeDegree * -1
-        Latitude =  str(LatitudeDegree)+"."+str(LatitudeMinutes)
+        Latitude =  str("%.5f" % (float(LatitudeDegree) + float(float(LatitudeMinutes)/600000)))
         #print str(Latitude)
 
         # Calculate the longitude.
@@ -159,9 +158,8 @@ class QNetworkThreads(QtGui.QWidget):
         
         if LongitudeMinutes > 2147483647:
             LongitudeMinutes -= 4294967294
-            LongitudeMinutes = LongitudeMinutes * -1
             LongitudeDegree = LongitudeDegree * -1
-        Longitude =  str(LongitudeDegree)+"."+str(LongitudeMinutes)
+        Longitude =  str("%.5f" % (float(LongitudeDegree) + float(float(LongitudeMinutes)/600000)))
         #print str(Longitude)
         
 

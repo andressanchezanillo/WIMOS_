@@ -58,6 +58,8 @@
       SERIAL_GPS.begin(BAUDRATE_GPS);      
       stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus |= WIMOS_DEVICE_GPS_MASK;
       DEBUG_OK("GPS initialized.");
+      SERIAL_GPS.println(GPS_CONFIG_RMC);     
+      
     #else  
       stGlobalWimosInfoMsg.stInfo.stStatus.ucDeviceStatus &= ~WIMOS_DEVICE_GPS_MASK;
       DEBUG_INFO("GPS not initialized.");
@@ -236,7 +238,7 @@
         ulData = atoi(pcGPSAuxBuffer);
         stAuxGpsPosition.stLatitude.slMinute = atoi(&pcGPSAuxBuffer[5]);
         pcGPSAuxBuffer[4] = '\0';
-        stAuxGpsPosition.stLatitude.slMinute += atoi(&pcGPSAuxBuffer[2])*1000;
+        stAuxGpsPosition.stLatitude.slMinute += atoi(&pcGPSAuxBuffer[2])*10000;
         pcGPSAuxBuffer[2] = '\0';
         stAuxGpsPosition.stLatitude.ucDegree = atoi(pcGPSAuxBuffer);
         
@@ -279,7 +281,7 @@
         ulData = atoi(pcGPSAuxBuffer);
         stAuxGpsPosition.stLongitude.slMinute = atoi(&pcGPSAuxBuffer[6]);
         pcGPSAuxBuffer[5] = '\0';
-        stAuxGpsPosition.stLongitude.slMinute += atoi(&pcGPSAuxBuffer[3])*1000;
+        stAuxGpsPosition.stLongitude.slMinute += atoi(&pcGPSAuxBuffer[3])*10000;
         pcGPSAuxBuffer[3] = '\0';
         stAuxGpsPosition.stLongitude.ucDegree = atoi(pcGPSAuxBuffer);
         
