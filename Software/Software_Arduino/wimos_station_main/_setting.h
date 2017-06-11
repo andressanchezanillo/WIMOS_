@@ -35,7 +35,7 @@
   /**
    * @brief Label Debug traces activation.
    */
-  #define WIMOS_DEBUG
+  //#define WIMOS_DEBUG
   //#define DEBUG_COLOR 
   //#define WIMOS_UNIT_TEST
   //#define DEBUG_COMM_RXTX
