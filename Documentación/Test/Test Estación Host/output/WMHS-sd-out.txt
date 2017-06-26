@@ -1,6 +1,0 @@
-Initializing SD card...initialization done.
-SYSTEM~1/
-	INDEXE~1		76
-DATALOG.TXT		26831
-WIMOST~1.TXT		0
-done!

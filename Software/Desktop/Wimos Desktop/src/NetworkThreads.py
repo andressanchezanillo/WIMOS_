@@ -2,6 +2,7 @@ from random import randint
 from datetime import datetime
 from PyQt4 import QtCore, QtGui
 from NetworkList import QNetworkList
+from serial.tools import list_ports
 import numpy
 import threading, Queue
 import serial
@@ -48,6 +49,12 @@ class QNetworkThreads(QtGui.QWidget):
 
         # Serial Thread.
         #t1.isAlive()
+        items = []
+        for comPort in list(list_ports.comports()):
+            items.append(comPort[0])
+        item, ok = QtGui.QInputDialog.getItem(self, "select input dialog", 
+   "COM Ports available", items , 0, False)
+        
         self.SerialPort = 'COM6'
         self.SerialThreadRunning = True
         
