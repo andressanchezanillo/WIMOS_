@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.3.0">
+<eagle version="7.7.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -15063,21 +15063,71 @@ Connect the GND pin
 <text x="265.43" y="218.44" size="3.81" layer="94">Conversores Digital a Analógico</text>
 <text x="275.59" y="168.91" size="3.81" layer="94">Puerto de comunicación</text>
 <text x="383.54" y="220.98" size="3.81" layer="94">Puertos digitales</text>
-<text x="492.76" y="105.41" size="3.81" layer="94">Estado de Bateria</text>
+<text x="492.76" y="105.41" size="3.81" layer="94">Lector de batería</text>
 <wire x1="490.22" y1="111.76" x2="542.29" y2="111.76" width="0.1524" layer="105"/>
 <wire x1="542.29" y1="111.76" x2="542.29" y2="62.23" width="0.1524" layer="105"/>
 <wire x1="542.29" y1="62.23" x2="490.22" y2="62.23" width="0.1524" layer="105"/>
 <wire x1="490.22" y1="62.23" x2="490.22" y2="111.76" width="0.1524" layer="105"/>
-<text x="556.26" y="124.46" size="3.81" layer="94">LED ON</text>
+<text x="556.26" y="124.46" size="3.81" layer="94">LED de estado</text>
 <wire x1="544.83" y1="129.54" x2="605.79" y2="129.54" width="0.1524" layer="105"/>
-<wire x1="605.79" y1="129.54" x2="605.79" y2="105.41" width="0.1524" layer="105"/>
-<wire x1="605.79" y1="105.41" x2="544.83" y2="105.41" width="0.1524" layer="105"/>
-<wire x1="544.83" y1="105.41" x2="544.83" y2="129.54" width="0.1524" layer="105"/>
-<text x="548.64" y="109.22" size="1.778" layer="96">Connect to 5V </text>
+<wire x1="605.79" y1="129.54" x2="605.79" y2="62.23" width="0.1524" layer="105"/>
+<wire x1="605.79" y1="62.23" x2="544.83" y2="62.23" width="0.1524" layer="105"/>
+<wire x1="544.83" y1="62.23" x2="544.83" y2="129.54" width="0.1524" layer="105"/>
+<text x="548.64" y="106.68" size="1.778" layer="96">Connect to 5V </text>
 <text x="494.03" y="63.5" size="1.778" layer="96">Connect VIN to Battery directly.
 Connect the A8 to analog pin to read the 
 batery state.
 Connect D9 to control the Led.</text>
+<text x="548.64" y="73.66" size="1.778" layer="96">Connect to digital pinout.</text>
+<text x="805.18" y="78.74" size="2.54" layer="97">n1.IM01</text>
+<wire x1="800.1" y1="101.6" x2="800.1" y2="76.2" width="0.1524" layer="97"/>
+<wire x1="800.1" y1="76.2" x2="835.66" y2="76.2" width="0.1524" layer="97"/>
+<wire x1="203.2" y1="215.9" x2="254" y2="215.9" width="0.1524" layer="97" style="longdash"/>
+<wire x1="254" y1="215.9" x2="254" y2="198.12" width="0.1524" layer="97" style="longdash"/>
+<wire x1="203.2" y1="198.12" x2="203.2" y2="215.9" width="0.1524" layer="97" style="longdash"/>
+<wire x1="203.2" y1="198.12" x2="254" y2="198.12" width="0.1524" layer="97" style="longdash"/>
+<wire x1="254" y1="198.12" x2="254" y2="180.34" width="0.1524" layer="97" style="longdash"/>
+<wire x1="254" y1="180.34" x2="203.2" y2="180.34" width="0.1524" layer="97" style="longdash"/>
+<wire x1="203.2" y1="180.34" x2="203.2" y2="198.12" width="0.1524" layer="97" style="longdash"/>
+<wire x1="203.2" y1="180.34" x2="203.2" y2="162.56" width="0.1524" layer="97" style="longdash"/>
+<wire x1="203.2" y1="162.56" x2="203.2" y2="142.24" width="0.1524" layer="97" style="longdash"/>
+<wire x1="203.2" y1="142.24" x2="203.2" y2="119.38" width="0.1524" layer="97" style="longdash"/>
+<wire x1="203.2" y1="119.38" x2="254" y2="119.38" width="0.1524" layer="97" style="longdash"/>
+<wire x1="254" y1="119.38" x2="254" y2="142.24" width="0.1524" layer="97" style="longdash"/>
+<wire x1="254" y1="142.24" x2="254" y2="162.56" width="0.1524" layer="97" style="longdash"/>
+<wire x1="254" y1="162.56" x2="254" y2="180.34" width="0.1524" layer="97" style="longdash"/>
+<wire x1="254" y1="162.56" x2="203.2" y2="162.56" width="0.1524" layer="97" style="longdash"/>
+<wire x1="203.2" y1="142.24" x2="254" y2="142.24" width="0.1524" layer="97" style="longdash"/>
+<text x="205.74" y="198.12" size="2.54" layer="97">n1.IM02</text>
+<text x="205.74" y="180.34" size="2.54" layer="97">n1.IM03</text>
+<text x="205.74" y="162.56" size="2.54" layer="97">n1.IM04</text>
+<text x="205.74" y="142.24" size="2.54" layer="97">n1.IM05</text>
+<text x="205.74" y="119.38" size="2.54" layer="97">n1.IM06</text>
+<wire x1="266.7" y1="144.78" x2="337.82" y2="144.78" width="0.1524" layer="97" style="longdash"/>
+<wire x1="337.82" y1="144.78" x2="337.82" y2="124.46" width="0.1524" layer="97" style="longdash"/>
+<wire x1="337.82" y1="124.46" x2="266.7" y2="124.46" width="0.1524" layer="97" style="longdash"/>
+<wire x1="266.7" y1="124.46" x2="266.7" y2="144.78" width="0.1524" layer="97" style="longdash"/>
+<wire x1="398.78" y1="210.82" x2="398.78" y2="190.5" width="0.1524" layer="97" style="longdash"/>
+<wire x1="398.78" y1="190.5" x2="398.78" y2="167.64" width="0.1524" layer="97" style="longdash"/>
+<wire x1="398.78" y1="167.64" x2="398.78" y2="142.24" width="0.1524" layer="97" style="longdash"/>
+<wire x1="398.78" y1="167.64" x2="436.88" y2="167.64" width="0.1524" layer="97" style="longdash"/>
+<wire x1="436.88" y1="167.64" x2="436.88" y2="190.5" width="0.1524" layer="97" style="longdash"/>
+<wire x1="436.88" y1="190.5" x2="398.78" y2="190.5" width="0.1524" layer="97" style="longdash"/>
+<wire x1="436.88" y1="190.5" x2="436.88" y2="210.82" width="0.1524" layer="97" style="longdash"/>
+<wire x1="436.88" y1="210.82" x2="398.78" y2="210.82" width="0.1524" layer="97" style="longdash"/>
+<wire x1="436.88" y1="167.64" x2="436.88" y2="142.24" width="0.1524" layer="97" style="longdash"/>
+<wire x1="436.88" y1="142.24" x2="398.78" y2="142.24" width="0.1524" layer="97" style="longdash"/>
+<wire x1="398.78" y1="167.64" x2="358.14" y2="167.64" width="0.1524" layer="97" style="longdash"/>
+<wire x1="358.14" y1="167.64" x2="358.14" y2="190.5" width="0.1524" layer="97" style="longdash"/>
+<wire x1="358.14" y1="190.5" x2="398.78" y2="190.5" width="0.1524" layer="97" style="longdash"/>
+<wire x1="358.14" y1="190.5" x2="358.14" y2="210.82" width="0.1524" layer="97" style="longdash"/>
+<wire x1="358.14" y1="210.82" x2="398.78" y2="210.82" width="0.1524" layer="97" style="longdash"/>
+<text x="401.32" y="142.24" size="2.54" layer="97">n1.IM07</text>
+<text x="401.32" y="167.64" size="2.54" layer="97">n1.IM08</text>
+<text x="401.32" y="190.5" size="2.54" layer="97">n1.IM09</text>
+<text x="360.68" y="190.5" size="2.54" layer="97">n1.IM10</text>
+<text x="360.68" y="167.64" size="2.54" layer="97">n1.IM11</text>
+<text x="269.24" y="124.46" size="2.54" layer="97">n1.IM12</text>
 </plain>
 <instances>
 <instance part="SCREEN_MODULO" gate="B" x="494.03" y="167.64"/>
@@ -15087,12 +15137,12 @@ Connect D9 to control the Led.</text>
 <instance part="A2" gate="A" x="241.3" y="187.96"/>
 <instance part="A3" gate="A" x="241.3" y="170.18"/>
 <instance part="A4" gate="A" x="241.3" y="152.4"/>
-<instance part="A5" gate="A" x="242.57" y="135.89"/>
+<instance part="A5" gate="A" x="242.57" y="130.81"/>
 <instance part="DAC1" gate="A" x="311.15" y="204.47"/>
 <instance part="DAC0" gate="A" x="311.15" y="189.23"/>
-<instance part="D5" gate="A" x="392.43" y="158.75"/>
-<instance part="D4" gate="A" x="392.43" y="137.16"/>
-<instance part="D3" gate="A" x="430.53" y="196.85"/>
+<instance part="D5" gate="A" x="389.89" y="176.53"/>
+<instance part="D4" gate="A" x="389.89" y="198.12"/>
+<instance part="D3" gate="A" x="430.53" y="199.39"/>
 <instance part="D2" gate="A" x="430.53" y="177.8"/>
 <instance part="D1" gate="A" x="430.53" y="152.4"/>
 <instance part="POWER_MODULE" gate="G$1" x="497.84" y="200.66"/>
@@ -15112,19 +15162,19 @@ Connect D9 to control the Led.</text>
 <instance part="C2" gate="G$1" x="508" y="157.48"/>
 <instance part="LED1" gate="G$1" x="588.01" y="118.11" rot="R90"/>
 <instance part="GND3" gate="1" x="599.44" y="110.49"/>
-<instance part="LED2" gate="G$1" x="519.43" y="96.52" rot="R90"/>
-<instance part="GND4" gate="1" x="533.4" y="93.98"/>
-<instance part="GND5" gate="1" x="533.4" y="81.28"/>
+<instance part="LED2" gate="G$1" x="585.47" y="83.82" rot="R90"/>
+<instance part="GND4" gate="1" x="599.44" y="81.28"/>
+<instance part="GND5" gate="1" x="535.94" y="91.44"/>
 <instance part="R11" gate="G$1" x="523.24" y="170.18"/>
 <instance part="R12" gate="G$1" x="523.24" y="162.56"/>
 <instance part="R13" gate="G$1" x="523.24" y="154.94"/>
 <instance part="R14" gate="G$1" x="523.24" y="147.32"/>
 <instance part="R15" gate="G$1" x="523.24" y="139.7"/>
 <instance part="R16" gate="G$1" x="523.24" y="132.08"/>
-<instance part="R17" gate="G$1" x="508" y="96.52"/>
-<instance part="R18" gate="G$1" x="510.54" y="83.82"/>
+<instance part="R17" gate="G$1" x="574.04" y="83.82"/>
+<instance part="R18" gate="G$1" x="513.08" y="93.98"/>
 <instance part="R19" gate="G$1" x="576.58" y="118.11"/>
-<instance part="R1" gate="G$1" x="525.78" y="83.82"/>
+<instance part="R1" gate="G$1" x="528.32" y="93.98"/>
 <instance part="U$2" gate="G$1" x="624.84" y="193.04"/>
 <instance part="GND6" gate="1" x="505.46" y="190.5"/>
 <instance part="JP1" gate="G$1" x="515.62" y="215.9" rot="R90"/>
@@ -15186,8 +15236,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="A5" gate="A" pin="1"/>
-<wire x1="240.03" y1="140.97" x2="215.9" y2="140.97" width="0.1524" layer="91"/>
-<label x="215.9" y="140.97" size="1.778" layer="95"/>
+<wire x1="240.03" y1="135.89" x2="215.9" y2="135.89" width="0.1524" layer="91"/>
+<label x="215.9" y="135.89" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="DAC0" gate="A" pin="1"/>
@@ -15201,18 +15251,18 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="D5" gate="A" pin="1"/>
-<wire x1="389.89" y1="161.29" x2="367.03" y2="161.29" width="0.1524" layer="91"/>
-<label x="367.03" y="161.29" size="1.778" layer="95"/>
+<wire x1="387.35" y1="179.07" x2="364.49" y2="179.07" width="0.1524" layer="91"/>
+<label x="364.49" y="179.07" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="D4" gate="A" pin="1"/>
-<wire x1="389.89" y1="142.24" x2="365.76" y2="142.24" width="0.1524" layer="91"/>
-<label x="365.76" y="142.24" size="1.778" layer="95"/>
+<wire x1="387.35" y1="203.2" x2="363.22" y2="203.2" width="0.1524" layer="91"/>
+<label x="363.22" y="203.2" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="D3" gate="A" pin="1"/>
-<wire x1="427.99" y1="201.93" x2="406.4" y2="201.93" width="0.1524" layer="91"/>
-<label x="406.4" y="201.93" size="1.778" layer="95"/>
+<wire x1="427.99" y1="204.47" x2="406.4" y2="204.47" width="0.1524" layer="91"/>
+<label x="406.4" y="204.47" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="D1" gate="A" pin="1"/>
@@ -15289,15 +15339,15 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="LED2" gate="G$1" pin="C"/>
-<wire x1="524.51" y1="96.52" x2="533.4" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="590.55" y1="83.82" x2="599.44" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="GND5" gate="1" pin="GND"/>
-<wire x1="533.4" y1="83.82" x2="530.86" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="535.94" y1="93.98" x2="533.4" y2="93.98" width="0.1524" layer="91"/>
 <pinref part="R1" gate="G$1" pin="2"/>
-<wire x1="530.86" y1="83.82" x2="529.59" y2="83.82" width="0.1524" layer="91"/>
-<junction x="530.86" y="83.82"/>
+<wire x1="533.4" y1="93.98" x2="532.13" y2="93.98" width="0.1524" layer="91"/>
+<junction x="533.4" y="93.98"/>
 </segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="GND"/>
@@ -15415,8 +15465,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="D3" gate="A" pin="4"/>
-<wire x1="427.99" y1="194.31" x2="406.4" y2="194.31" width="0.1524" layer="91"/>
-<label x="406.4" y="194.31" size="1.778" layer="95"/>
+<wire x1="427.99" y1="196.85" x2="406.4" y2="196.85" width="0.1524" layer="91"/>
+<label x="406.4" y="196.85" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="D3" class="0">
@@ -15427,8 +15477,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="D3" gate="A" pin="3"/>
-<wire x1="427.99" y1="196.85" x2="406.4" y2="196.85" width="0.1524" layer="91"/>
-<label x="406.4" y="196.85" size="1.778" layer="95"/>
+<wire x1="427.99" y1="199.39" x2="406.4" y2="199.39" width="0.1524" layer="91"/>
+<label x="406.4" y="199.39" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="D4" class="0">
@@ -15439,8 +15489,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="D4" gate="A" pin="4"/>
-<wire x1="389.89" y1="134.62" x2="365.76" y2="134.62" width="0.1524" layer="91"/>
-<label x="365.76" y="134.62" size="1.778" layer="95"/>
+<wire x1="387.35" y1="195.58" x2="363.22" y2="195.58" width="0.1524" layer="91"/>
+<label x="363.22" y="195.58" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="D5" class="0">
@@ -15451,8 +15501,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="D4" gate="A" pin="3"/>
-<wire x1="389.89" y1="137.16" x2="365.76" y2="137.16" width="0.1524" layer="91"/>
-<label x="365.76" y="137.16" size="1.778" layer="95"/>
+<wire x1="387.35" y1="198.12" x2="363.22" y2="198.12" width="0.1524" layer="91"/>
+<label x="363.22" y="198.12" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="D6" class="0">
@@ -15463,8 +15513,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="D5" gate="A" pin="3"/>
-<wire x1="389.89" y1="156.21" x2="367.03" y2="156.21" width="0.1524" layer="91"/>
-<label x="367.03" y="156.21" size="1.778" layer="95"/>
+<wire x1="387.35" y1="173.99" x2="364.49" y2="173.99" width="0.1524" layer="91"/>
+<label x="364.49" y="173.99" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="D7" class="0">
@@ -15481,8 +15531,8 @@ Connect D9 to control the Led.</text>
 <pinref part="U$1" gate="G$1" pin="D9"/>
 </segment>
 <segment>
-<wire x1="497.84" y1="96.52" x2="502.92" y2="96.52" width="0.1524" layer="91"/>
-<label x="494.03" y="96.52" size="1.778" layer="95"/>
+<wire x1="563.88" y1="83.82" x2="568.96" y2="83.82" width="0.1524" layer="91"/>
+<label x="560.07" y="83.82" size="1.778" layer="95"/>
 <pinref part="R17" gate="G$1" pin="1"/>
 </segment>
 </net>
@@ -15635,8 +15685,8 @@ Connect D9 to control the Led.</text>
 <junction x="525.78" y="203.2"/>
 </segment>
 <segment>
-<wire x1="500.38" y1="83.82" x2="505.46" y2="83.82" width="0.1524" layer="91"/>
-<label x="494.03" y="82.55" size="1.778" layer="95"/>
+<wire x1="502.92" y1="93.98" x2="508" y2="93.98" width="0.1524" layer="91"/>
+<label x="496.57" y="92.71" size="1.778" layer="95"/>
 <pinref part="R18" gate="G$1" pin="1"/>
 </segment>
 </net>
@@ -15696,8 +15746,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="A5" gate="A" pin="5"/>
-<wire x1="240.03" y1="130.81" x2="215.9" y2="130.81" width="0.1524" layer="91"/>
-<label x="215.9" y="130.81" size="1.778" layer="95"/>
+<wire x1="240.03" y1="125.73" x2="215.9" y2="125.73" width="0.1524" layer="91"/>
+<label x="215.9" y="125.73" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="A5" class="0">
@@ -15708,8 +15758,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="A5" gate="A" pin="4"/>
-<wire x1="240.03" y1="133.35" x2="215.9" y2="133.35" width="0.1524" layer="91"/>
-<label x="215.9" y="133.35" size="1.778" layer="95"/>
+<wire x1="240.03" y1="128.27" x2="215.9" y2="128.27" width="0.1524" layer="91"/>
+<label x="215.9" y="128.27" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="A6" class="0">
@@ -15720,8 +15770,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="A5" gate="A" pin="3"/>
-<wire x1="240.03" y1="135.89" x2="215.9" y2="135.89" width="0.1524" layer="91"/>
-<label x="215.9" y="135.89" size="1.778" layer="95"/>
+<wire x1="240.03" y1="130.81" x2="215.9" y2="130.81" width="0.1524" layer="91"/>
+<label x="215.9" y="130.81" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="A7" class="0">
@@ -15738,13 +15788,13 @@ Connect D9 to control the Led.</text>
 <pinref part="U$1" gate="G$1" pin="A8"/>
 </segment>
 <segment>
-<wire x1="519.43" y1="83.82" x2="519.43" y2="76.2" width="0.1524" layer="91"/>
-<label x="516.89" y="74.93" size="1.778" layer="95"/>
-<wire x1="519.43" y1="83.82" x2="520.7" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="521.97" y1="93.98" x2="521.97" y2="86.36" width="0.1524" layer="91"/>
+<label x="519.43" y="85.09" size="1.778" layer="95"/>
+<wire x1="521.97" y1="93.98" x2="523.24" y2="93.98" width="0.1524" layer="91"/>
 <pinref part="R18" gate="G$1" pin="2"/>
 <pinref part="R1" gate="G$1" pin="1"/>
-<wire x1="520.7" y1="83.82" x2="515.62" y2="83.82" width="0.1524" layer="91"/>
-<junction x="520.7" y="83.82"/>
+<wire x1="523.24" y1="93.98" x2="518.16" y2="93.98" width="0.1524" layer="91"/>
+<junction x="523.24" y="93.98"/>
 </segment>
 </net>
 <net name="A9" class="0">
@@ -16191,8 +16241,8 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="A5" gate="A" pin="2"/>
-<wire x1="240.03" y1="138.43" x2="215.9" y2="138.43" width="0.1524" layer="91"/>
-<label x="215.9" y="138.43" size="1.778" layer="95"/>
+<wire x1="240.03" y1="133.35" x2="215.9" y2="133.35" width="0.1524" layer="91"/>
+<label x="215.9" y="133.35" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="DAC0" gate="A" pin="2"/>
@@ -16206,18 +16256,18 @@ Connect D9 to control the Led.</text>
 </segment>
 <segment>
 <pinref part="D5" gate="A" pin="2"/>
-<wire x1="389.89" y1="158.75" x2="367.03" y2="158.75" width="0.1524" layer="91"/>
-<label x="367.03" y="158.75" size="1.778" layer="95"/>
+<wire x1="387.35" y1="176.53" x2="364.49" y2="176.53" width="0.1524" layer="91"/>
+<label x="364.49" y="176.53" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="D4" gate="A" pin="2"/>
-<wire x1="389.89" y1="139.7" x2="365.76" y2="139.7" width="0.1524" layer="91"/>
-<label x="365.76" y="139.7" size="1.778" layer="95"/>
+<wire x1="387.35" y1="200.66" x2="363.22" y2="200.66" width="0.1524" layer="91"/>
+<label x="363.22" y="200.66" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="D3" gate="A" pin="2"/>
-<wire x1="427.99" y1="199.39" x2="406.4" y2="199.39" width="0.1524" layer="91"/>
-<label x="406.4" y="199.39" size="1.778" layer="95"/>
+<wire x1="427.99" y1="201.93" x2="406.4" y2="201.93" width="0.1524" layer="91"/>
+<label x="406.4" y="201.93" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="D1" gate="A" pin="2"/>
@@ -16405,7 +16455,7 @@ Connect D9 to control the Led.</text>
 <net name="N$4" class="0">
 <segment>
 <pinref part="LED2" gate="G$1" pin="A"/>
-<wire x1="513.08" y1="96.52" x2="516.89" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="579.12" y1="83.82" x2="582.93" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="R17" gate="G$1" pin="2"/>
 </segment>
 </net>
