@@ -609,8 +609,8 @@ void runFunction(void){
           /*Build a general info message.*/
           stGlobalWimosInfoMsg.ucBegin = 0xFF;
           stGlobalWimosInfoMsg.ucFrameID = 0x05;
-          stGlobalWimosInfoMsg.ucMessageTo = 0x00;
-          stGlobalWimosInfoMsg.ucMessageFrom = 0x10; 
+          stGlobalWimosInfoMsg.ucMessageTo = stGlobalWimosInfoMsg.ucMessageTo;
+          stGlobalWimosInfoMsg.ucMessageFrom = WIMOS_ID; 
           stGlobalWimosInfoMsg.ucChecksum  = getChecksum(&stGlobalWimosInfoMsg, (sizeof(stGlobalWimosInfoMsg)-1));
   
           /*Calculate the checksum.*/
@@ -630,8 +630,8 @@ void runFunction(void){
           /*Build a general info message.*/
           stGlobalWimosAlertMsg.ucBegin = 0xFF;
           stGlobalWimosAlertMsg.ucFrameID = 0x06;
-          stGlobalWimosAlertMsg.ucMessageTo = 0x00;
-          stGlobalWimosAlertMsg.ucMessageFrom = 0x10; 
+          stGlobalWimosAlertMsg.ucMessageTo = stGlobalWimosInfoMsg.ucMessageTo;
+          stGlobalWimosAlertMsg.ucMessageFrom = WIMOS_ID; 
           stGlobalWimosAlertMsg.ucChecksum  = getChecksum(&stGlobalWimosAlertMsg, (sizeof(stGlobalWimosAlertMsg)-1));
   
           /*Calculate the checksum.*/
@@ -854,7 +854,6 @@ void noOperation(void){
  * @return none.
  */
 uint8_t getChecksum(void* ptrDataInput, uint8_t ucDataInputSize){
-  return 10;
   uint8_t ucRetValue = 0;
   if(ucDataInputSize > 0){
     ucRetValue = ((uint8_t*)ptrDataInput)[0];
@@ -864,7 +863,7 @@ uint8_t getChecksum(void* ptrDataInput, uint8_t ucDataInputSize){
       ucRetValue ^= ((uint8_t*)ptrDataInput)[i];
     }
   }
-  return ucRetValue;
+  return ucRetValue << 1;
 }
 
 
