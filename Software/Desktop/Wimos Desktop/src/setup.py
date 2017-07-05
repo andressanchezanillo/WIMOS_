@@ -1,11 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+from distutils.core import setup
+import py2exe
  
-from cx_Freeze import setup, Executable
- 
-setup(
- name="Wimos Desktop",
- version="1.0",
- descriptiom="Wimos Desktop v1.0",
- executables = [Executable("MainWimosWindows.py")],
- )
+setup(windows=['MainWimosWindows.py'],
+      options={"py2exe": {
+          "includes": ["sip", "PyQt4.QtGui", "PyQt4.QtNetwork"],
+          "dll_excludes": ["MSVCP90.dll"]
+          }
+        }
+      )

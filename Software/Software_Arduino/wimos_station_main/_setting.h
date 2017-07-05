@@ -320,7 +320,7 @@
   
     #define WIMOS_ID 0x00
     
-    #define TIME_COMMAND_RATE 60000
+    #define TIME_COMMAND_RATE 10000
     
       #if defined(WIMOS_UNIT_TEST) && defined(WIMOS_DEBUG)
         #define _WIMOS_COMMAND_LIST_SIZE 0x01 

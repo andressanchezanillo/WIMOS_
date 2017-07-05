@@ -1,4 +1,3 @@
-import folium
 import sys
 
 from AnalogSetting import QAnalogSetting
