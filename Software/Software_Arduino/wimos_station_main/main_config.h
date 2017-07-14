@@ -203,9 +203,36 @@
      * @brief System Signature data struct.
      */
     typedef struct __attribute__((packed)) _signature{
-      uint8_t ucWimosID; /**< Status of System Ports. */
+      stWimosDateTime stDateTime;/**< DateTime Device. */  
       stWimosStatus stStatus;/**< Status of System Devices. */  
-    }stWimosSignature;
+      float usPort1A; /**< portA1 Processed. */ 
+      float usOffset1A; /**< portA1 Offset calculated. */ 
+      uint8_t usAlert1A; /**< portA1 Alert detected */ 
+      float usPort2A; /**< portA2 Processed. */ 
+      float usOffset2A; /**< portA2 Offset calculated. */ 
+      uint8_t usAlert2A; /**< portA2 Alert detected */ 
+      float usPort3A; /**< portA3 Processed. */ 
+      float usOffset3A; /**< portA3 Offset calculated. */ 
+      uint8_t usAlert3A; /**< portA3 Alert detected */ 
+      float usPort4A; /**< portA4 Processed. */       
+      float usOffset4A; /**< portA4 Offset calculated. */ 
+      uint8_t usAlert4A; /**< portA4 Alert detected */ 
+      float usPort5A1; /**< portA5 Processed. */ 
+      float usPort5A2; /**< portA5 Processed. */ 
+      float usPort5A3; /**< portA5 Processed. */ 
+      float usPort5A; /**< portA5 Processed. */ 
+      float usOffset5A; /**< portA5 Offset calculated. */ 
+      uint8_t usAlert5A; /**< portA5 Alert detected */ 
+      uint8_t usPortD1; /**< portD1 Alert detected */ 
+      uint8_t usPortD2; /**< portD2 Alert detected */ 
+      uint8_t usPortD3; /**< portD3 Alert detected */ 
+      uint8_t usPortD4; /**< portD4 Alert detected */ 
+      uint8_t usPortD5; /**< portD5 Alert detected */ 
+      uint8_t ucPortI2C[_WIMOS_PORT_I2C_DATA_SIZE];
+      uint32_t ulImuAcc; /**< IMU X axe */ 
+      uint32_t ulImuGx; /**< IMU Y axe */ 
+      uint32_t ulImuGy; /**< IMU Z axe */ 
+    }stWimosStorage;
     
     
     /**
@@ -233,69 +260,6 @@
       
       uint8_t ucChecksum;  /**< checksum value. */
     } stWimosInfoMessage;
-    
-    /**
-     * @brief Wimos Ports values Frame
-     */
-    typedef struct __attribute__((packed)) _portStatus{
-      #ifdef _EN_WIMOS_IMU
-        uint32_t usInternalIMUAcc; /**< Internal IMU module value. */
-        int8_t usInternalIMUGyrosX; /**< Internal IMU module value. */
-        int8_t usInternalIMUGyrosY; /**< Internal IMU module value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_A1
-        int16_t usPort1A; /**< Analog port 1 value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_A2
-        int16_t usPort2A; /**< Analog port 2 value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_A3
-        int16_t usPort3A; /**< Analog port 3 value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_A4
-        int16_t usPort4A; /**< Analog port 4 value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_A5
-        int16_t usPort5A1; /**< Analog port 5 pin 1 value. */
-        int16_t usPort5A2; /**< Analog port 5 pin 2 value. */
-        int16_t usPort5A3; /**< Analog port 5 pin 3 value. */
-      #endif
-      
-      #ifdef _EN_WIMOS_PORT_D1
-        uint8_t usPortD1; /**< Digital port 1 value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_D2
-        uint8_t usPortD2; /**< Digital port 2 value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_D3
-        uint8_t usPortD3; /**< Digital port 3 value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_D4
-        uint8_t usPortD4; /**< Digital port 4 value. */
-      #endif
-      #ifdef _EN_WIMOS_PORT_D5
-        uint8_t usPortD5; /**< Digital port 5 value. */
-      #endif  
-      #if (_WIMOS_PORT_I2C_DATA_SIZE > 0)
-        uint8_t ucPortI2C [ _WIMOS_PORT_I2C_DATA_SIZE ]; /**< I2C devices values. */
-      #endif
-    } stWimosPortValues;
-    
-    
-    /**
-     * @brief Wimos Ports values Frame
-     */
-    typedef struct __attribute__((packed)) _portStatusMsg{
-      uint8_t ucBegin; /**< Constant value for . */
-      uint8_t usFrameSize; /**< Frame size value. */
-    
-      uint8_t ucMessageFrom;/**< Address of system what send the message . */
-      uint8_t ucMessageTo;/**< The message is for this address . */
-    
-      stWimosPortValues stPortValues; /**< Wimos sensors values . */
-      
-      uint8_t ucChecksum; /**< checksum value. */
-    } stWimosPortValuesMessage;
     
     /**
      * @brief ACK message frame.
@@ -912,6 +876,10 @@
      */
     int32_t initSD(void);
     /**
+     * @brief Write Frame in SD.
+     */
+     uint32_t writeFrameSD (const stWimosStorage* stWimosPort);
+    /**
      * @brief Initialize Battery Reader.
      */
     void initBattery(void);
@@ -934,7 +902,7 @@
     /**
      * @brief Update IMU value.
      */
-    void readIMU(stWimosPortValues* stWimosPort);
+    void readIMU(stWimosStorage* stWimosPort);
     /**
      * @brief Initialize Analog Ports.
      */
@@ -942,7 +910,7 @@
     /**
      * @brief Update Analog Ports values.
      */
-    void readPortA(stWimosPortValues* stWimosPort);
+    void readPortA(stWimosStorage* stWimosPort);
     
     /**
      * @brief Initialize Digital Port.
@@ -951,7 +919,7 @@
     /**
      * @brief Update Digital Ports values.
      */
-    void readPortD(stWimosPortValues* stWimosPort);
+    void readPortD(stWimosStorage* stWimosPort);
     /**
      * @brief Initialize I2C Port.
      */
@@ -959,7 +927,7 @@
     /**
      * @brief Update I2C Ports values.
      */
-    void readPortI2C(stWimosPortValues* stWimosPort);
+    void readPortI2C(stWimosStorage* stWimosPort);
     /**
      * @brief No operation function.
      */

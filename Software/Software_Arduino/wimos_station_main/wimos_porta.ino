@@ -165,7 +165,7 @@
    * @param none.
    * @return _stWimosInfo It returns Analog ports values updated into stWimosInfo struct.
    */
-  extern void readPortA(stWimosPortValues* stWimosPort){
+  extern void readPortA(stWimosStorage* stWimosPort){
   #ifdef _EN_WIMOS_PORT_A1    
       float fPort1A = 0.0f;
       uint8_t ucAlertLevelA1 = 0;
@@ -201,7 +201,6 @@
     #if defined(WIMOS_UNIT_TEST)
       outputProcessor_A1 = fAveragePort1A;
     #endif
-    
       ucAlertLevelA1 = _WIMOS_1A_DETECTION(fAveragePort1A);
       if(ucAlertLevelA1 > 0){
         if(stGlobalWimosAlertMsg.stAlert.ucAlertA1 < ucAlertLevelA1){
@@ -210,7 +209,10 @@
         }
       }else if (millis() - ulTimerAlertA1 >= _WIMOS_ALERT_TIMEOUT){
         stGlobalWimosAlertMsg.stAlert.ucAlertA1 = 0;          
-      }
+      }      
+      
+      stGlobalWimosStorage.usPort1A = fAveragePort1A;
+      stGlobalWimosStorage.usAlert1A = stGlobalWimosAlertMsg.stAlert.ucAlertA1;
   #endif
   #ifdef _EN_WIMOS_PORT_A2    
       float fPort2A = 0.0f;
@@ -257,6 +259,9 @@
       }else if (millis() - ulTimerAlertA2 >= _WIMOS_ALERT_TIMEOUT){
         stGlobalWimosAlertMsg.stAlert.ucAlertA2 = 0;          
       }
+      
+      stGlobalWimosStorage.usPort2A = fAveragePort2A;
+      stGlobalWimosStorage.usAlert2A = stGlobalWimosAlertMsg.stAlert.ucAlertA2;
   #endif
   #ifdef _EN_WIMOS_PORT_A3    
       float fPort3A = 0.0f;
@@ -303,6 +308,9 @@
       }else if (millis() - ulTimerAlertA3 >= _WIMOS_ALERT_TIMEOUT){
         stGlobalWimosAlertMsg.stAlert.ucAlertA3 = 0;          
       }
+      
+      stGlobalWimosStorage.usPort3A = fAveragePort3A;
+      stGlobalWimosStorage.usAlert3A = stGlobalWimosAlertMsg.stAlert.ucAlertA3;
   #endif
   #ifdef _EN_WIMOS_PORT_A4    
       float fPort4A = 0.0f;
@@ -349,6 +357,9 @@
       }else if (millis() - ulTimerAlertA4 >= _WIMOS_ALERT_TIMEOUT){
         stGlobalWimosAlertMsg.stAlert.ucAlertA4 = 0;          
       }
+      
+      stGlobalWimosStorage.usPort4A = fAveragePort4A;
+      stGlobalWimosStorage.usAlert4A = stGlobalWimosAlertMsg.stAlert.ucAlertA4;
   #endif
 #ifdef _EN_WIMOS_PORT_A5
     
@@ -440,6 +451,9 @@
       }else if (millis() - ulTimerAlertA5 >= _WIMOS_ALERT_TIMEOUT){
         stGlobalWimosAlertMsg.stAlert.ucAlertA5 = 0;          
       }
+      
+      stGlobalWimosStorage.usPort5A = fAveragePort5A;
+      stGlobalWimosStorage.usAlert5A = stGlobalWimosAlertMsg.stAlert.ucAlertA5;
   #endif
   }
 
@@ -464,6 +478,8 @@
       #if defined(WIMOS_UNIT_TEST)
         outputDetectProcessA1 = flA1Average;
       #endif
+      
+      stGlobalWimosStorage.usOffset1A = flA1Average + _WIMOS_1A_AVERAGE_OFFSET;
       
       for(uint8_t i=1; i<(_WIMOS_1A_OFFSET_MAX_SIZE+1); i++){
         bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA1Average, (_WIMOS_1A_AVERAGE_OFFSET*i)) == true);
@@ -523,6 +539,8 @@
       #if defined(WIMOS_UNIT_TEST)
         outputDetectProcessA2 = flA2Average;
       #endif
+      
+      stGlobalWimosStorage.usOffset2A = flA2Average + _WIMOS_2A_AVERAGE_OFFSET;
       
       for(uint8_t i=1; i<(_WIMOS_2A_OFFSET_MAX_SIZE+1); i++){
         bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA2Average, (_WIMOS_2A_AVERAGE_OFFSET*i)) == true);
@@ -585,6 +603,8 @@
         outputDetectProcessA3 = flA3Average;
       #endif
       
+      stGlobalWimosStorage.usOffset3A = flA3Average + _WIMOS_3A_AVERAGE_OFFSET;
+      
       for(uint8_t i=1; i<(_WIMOS_3A_OFFSET_MAX_SIZE+1); i++){
         bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA3Average, (_WIMOS_3A_AVERAGE_OFFSET*i)) == true);
         bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fInputValue, flA3Average, -(_WIMOS_3A_AVERAGE_OFFSET*i)) == true);
@@ -645,6 +665,8 @@
         outputDetectProcessA4 = flA4Average;
       #endif
       
+      stGlobalWimosStorage.usOffset4A = flA4Average + _WIMOS_4A_AVERAGE_OFFSET;
+      
       for(uint8_t i=1; i<(_WIMOS_4A_OFFSET_MAX_SIZE+1); i++){
         bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA4Average, (_WIMOS_4A_AVERAGE_OFFSET*i)) == true);
         bDetectionNeg = (MATH_DEFAULT_THRESHOLD(fInputValue, flA4Average, -(_WIMOS_4A_AVERAGE_OFFSET*i)) == true);
@@ -704,6 +726,8 @@
       #if defined(WIMOS_UNIT_TEST)
         outputDetectProcessA5 = flA5Average;
       #endif
+      
+      stGlobalWimosStorage.usOffset5A = flA5Average + _WIMOS_5A_AVERAGE_OFFSET;
       
       for(uint8_t i=1; i<(_WIMOS_5A_OFFSET_MAX_SIZE+1); i++){
         bDetectionPos = (MATH_DEFAULT_THRESHOLD(fInputValue, flA5Average, (_WIMOS_5A_AVERAGE_OFFSET*i)) == true);

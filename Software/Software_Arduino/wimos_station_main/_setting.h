@@ -56,7 +56,7 @@
     /*
     * @brief time to refresh setting.
     */
-    #define CRITICAL_REFRESH_MS    100
+    #define CRITICAL_REFRESH_MS    25
     #define INFO_REFRESH_MS        250
 
     /**
