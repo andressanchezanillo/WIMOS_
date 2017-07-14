@@ -76,7 +76,7 @@
    * @param none.
    * @return _stWimosInfo It returns the I2C devices values updated into stWimosInfo struct .
    */
-  extern void readPortI2C(stWimosPortValues* stWimosPort){
+  extern void readPortI2C(stWimosStorage* stWimosPort){
     #ifdef _EN_WIMOS_PORT_I2C
       for(uint8_t i=0; i<_WIMOS_PORT_I2C_DATA_SIZE; i++){
         stWimosPort->ucPortI2C[i] = I2CRead(stWimosI2CData[i].ucDeviceAddress, stWimosI2CData[i].ucRegisterAddress);

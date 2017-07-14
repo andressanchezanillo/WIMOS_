@@ -70,6 +70,8 @@ void initWimosService(void){
         coreWimosInfoTimer = millis();
       #endif 
       coreWimosCriticalTimer = millis();
+      
+      stGlobalWimosStorage.stStatus = stGlobalWimosInfoMsg.stInfo.stStatus;
 }
 
 /**
@@ -260,6 +262,7 @@ void updateInfoWimos(){
   #ifdef __SAM3X8E__
     #ifdef _EN_WIMOS_GPS
       updateGPS(&stGlobalWimosInfoMsg.stInfo);
+      stGlobalWimosStorage.stDateTime = stGlobalWimosInfoMsg.stInfo.stDateTime;
     #endif
     #ifdef _EN_WIMOS_BAT
       updateStatusBattery(&stGlobalWimosInfoMsg.stInfo);
@@ -270,10 +273,10 @@ void updateInfoWimos(){
 
 void readSensorsWimos(){
   #ifdef __SAM3X8E__
-    readIMU(&stGlobalWimosPortMsg.stPortValues);
-    readPortI2C(&stGlobalWimosPortMsg.stPortValues);
-    readPortA(&stGlobalWimosPortMsg.stPortValues);
-    readPortD(&stGlobalWimosPortMsg.stPortValues);
+    readIMU(&stGlobalWimosStorage);
+    readPortI2C(&stGlobalWimosStorage);
+    readPortA(&stGlobalWimosStorage);
+    readPortD(&stGlobalWimosStorage);
   #endif
 }
 
@@ -296,6 +299,7 @@ extern void coreWimos(void){
     if((millis() - coreWimosCriticalTimer) > CRITICAL_REFRESH_MS){
       coreWimosCriticalTimer = millis();
       readSensorsWimos();
+      stGlobalWimosInfoMsg.stInfo.ucPercentMemory = writeFrameSD(&stGlobalWimosStorage);
     }
     communicationThread();
     if((millis() - coreWimosInfoTimer) > INFO_REFRESH_MS){

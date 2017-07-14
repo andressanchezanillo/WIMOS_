@@ -34,7 +34,7 @@
 /**
  * @brief Global variable for Wimos Port Values.
  */
-stWimosPortValuesMessage stGlobalWimosPortMsg;
+stWimosStorage stGlobalWimosStorage;
 
 /**
  * @brief Global variable for Wimos System Information.

@@ -118,7 +118,7 @@
    * @param none.
    * @return _stWimosInfo It returns the IMU updated into stWimosInfo struct .
    */
-  extern void readIMU(stWimosPortValues* stWimosPort){
+  extern void readIMU(stWimosStorage* stWimosPort){
     #ifdef _EN_WIMOS_IMU
       DEBUG_INFO("Reading IMU values.");
   
@@ -163,9 +163,9 @@
               DEBUG_DATA("IMU GyrY = %f",ypr[2] * 180/M_PI);
               DEBUG_DATA("IMU GyrZ = %f",ypr[0] * 180/M_PI);
               
-              stWimosPort->usInternalIMUAcc = (uint32_t) sqrt((aaWorld.x*aaWorld.x)+(aaWorld.y*aaWorld.y)+(aaWorld.z*aaWorld.z)/4);
-              stWimosPort->usInternalIMUGyrosX = (int8_t) (ypr[1] * 180/M_PI);
-              stWimosPort->usInternalIMUGyrosY = (int8_t) (ypr[2] * 180/M_PI);
+              stWimosPort->ulImuAcc = (uint32_t) sqrt((aaWorld.x*aaWorld.x)+(aaWorld.y*aaWorld.y)+(aaWorld.z*aaWorld.z)/4);
+              stWimosPort->ulImuGx = (int8_t) (ypr[1] * 180/M_PI);
+              stWimosPort->ulImuGy = (int8_t) (ypr[2] * 180/M_PI);
           }
       }
     #endif

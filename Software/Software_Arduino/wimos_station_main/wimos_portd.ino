@@ -117,7 +117,7 @@
    * @param none.
    * @return _stWimosInfo It returns Digital ports values updated into stWimosInfo struct.
    */
-  extern void readPortD(stWimosPortValues* stWimosPort){
+  extern void readPortD(stWimosStorage* stWimosPort){
     #ifdef _EN_WIMOS_PORT_D1
     stWimosPort->usPortD1 = (digitalRead(WIMOS_D1_1_PORT) | digitalRead(WIMOS_D1_2_PORT) << 1 | digitalRead(WIMOS_D1_3_PORT) << 2 | digitalRead(WIMOS_D1_4_PORT) << 3);
     #endif
