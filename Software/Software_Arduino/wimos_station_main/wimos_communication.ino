@@ -914,15 +914,15 @@ bool updateBufferRF(uint8_t ucSize){
   static bool bFound = false;
   uint8_t ucValueRF = 0x00;
   uint16_t usCurrentBufferStatus = 0x00;
-
+  
   if(ucSize == 0){
     bFound = false;
     return false;
-    
+  
   }else{
-    
+  
     if(bFound == false){
-      
+    
       #ifndef WIMOS_UNIT_TEST
         /*Wait the data entering.*/
         do{
@@ -930,49 +930,47 @@ bool updateBufferRF(uint8_t ucSize){
           delay(5);
         }while(usCurrentBufferStatus != SERIAL_RF.available());
       #endif
-
+      
       #ifdef WIMOS_UNIT_TEST
         /*Read RF buffer until buffer empty or receive the 0xFF token.*/
         while(ucUnitTestInputIndex < ucUnitTestInputSize &&  ucValueRF != 0xFF ){
           ucValueRF = ucUnitTestInput[ucUnitTestInputIndex++];
         }
       #else
-        /*Read RF buffer until buffer empty or receive the 0xFF token.*/
-        while(SERIAL_RF.available() &&  ucValueRF != 0xFF ){
-          ucValueRF = SERIAL_RF.read();
-        }
+      /*Read RF buffer until buffer empty or receive the 0xFF token.*/
+      while(SERIAL_RF.available() &&  ucValueRF != 0xFF ){
+        ucValueRF = SERIAL_RF.read();
+      }
       #endif
-          
+      
       /*The token was not received.*/
       if(ucValueRF != 0xFF){
         bFound = false;
         return false;
       /*The token was received.*/
       }else{
-        bFound = true;   
-        return false;   
+        bFound = true;
       }    
-    }else{    
-      /*If Serial buffer available equal than ucSize.*/
-      /* (ucSize - 1) =  Data without token.*/
-      #ifdef WIMOS_UNIT_TEST
-        if( (ucUnitTestInputSize - (ucUnitTestInputIndex - 1)) >= (ucSize - 1) ){
-      #else
-        if( SERIAL_RF.available() >= (ucSize - 1) ){
-      #endif
-          /* Set as not found, for the next iteration. */
-          bFound = false;
-          /* Returns found.*/
-          return true;
+    }   
+    /*If Serial buffer available equal than ucSize.*/
+    /* (ucSize - 1) =  Data without token.*/
+    #ifdef WIMOS_UNIT_TEST
+      if( (ucUnitTestInputSize - (ucUnitTestInputIndex - 1)) >= (ucSize - 1) ){
+    #else
+      if( SERIAL_RF.available() >= (ucSize - 1) ){
+    #endif
+        /* Set as not found, for the next iteration. */
+        bFound = false;
+        /* Returns found.*/
+        return true;
         
-      /*If Serial buffer available lower than ucSize.*/
-        }else{
-          /*Set as found.*/
-          bFound = true;
-          /*Returns not found.*/
-          return false;        
-        }    
-      }
+        /*If Serial buffer available lower than ucSize.*/
+      }else{
+        /*Set as found.*/
+        bFound = true;
+        /*Returns not found.*/
+        return false;        
+      }    
   }
 }
 
@@ -1000,7 +998,12 @@ bool receiveFrame( void* pData, uint8_t ucSize, uint8_t ucFrameSize){
     #else
       ((uint8_t*)pData)[1] =   SERIAL_RF.read();
     #endif
-    if( ((uint8_t*)pData)[1] != ucFrameSize  || SERIAL_RF.available() < (ucSize - 2)){
+    
+    #ifdef WIMOS_UNIT_TEST
+      if( ((uint8_t*)pData)[1] != ucFrameSize  || (ucUnitTestInputSize - (ucUnitTestInputIndex - 1)) < (ucSize - 2) ){
+    #else
+      if( ((uint8_t*)pData)[1] != ucFrameSize  || SERIAL_RF.available() < (ucSize - 2)){
+    #endif
       return false;
     }else{
       #ifdef DEBUG_COMM_RXTX
@@ -1054,7 +1057,7 @@ void sendFrame(const void* pData, uint8_t ucSize){
       for(uint8_t j=0; j<PACKAGE_SIZE_RF; j++){
       DEBUG_DATA("Send Byte = %d.", ((uint8_t*)pData)[i]);
       #ifdef WIMOS_UNIT_TEST
-        ucUnitTestOutput[i] = ((uint8_t*)pData)[(i*PACKAGE_SIZE_RF)+j];
+        ucUnitTestOutput[(i*PACKAGE_SIZE_RF)+j] = ((uint8_t*)pData)[(i*PACKAGE_SIZE_RF)+j];
       #else
         #ifdef DEBUG_COMM_RXTX
           SERIAL_DEBUG.print(((uint8_t*)pData)[(i*PACKAGE_SIZE_RF)+j],HEX);
@@ -1068,11 +1071,16 @@ void sendFrame(const void* pData, uint8_t ucSize){
         #ifdef __SAM3X8E__
           delayMicroseconds(250);
         #endif 
+      #endif
       }
       delay(10);
     }
     if(ucSize % PACKAGE_SIZE_RF > 0){
-      for(i=0; i< (ucSize % PACKAGE_SIZE_RF); i++){
+      for(i=0; i<(ucSize % PACKAGE_SIZE_RF); i++){
+        
+      #ifdef WIMOS_UNIT_TEST
+        ucUnitTestOutput[((ucSize / PACKAGE_SIZE_RF)*PACKAGE_SIZE_RF)+i] = ((uint8_t*)pData)[((ucSize / PACKAGE_SIZE_RF)*PACKAGE_SIZE_RF)+i];
+      #else
         #ifdef DEBUG_COMM_RXTX
           SERIAL_DEBUG.print(((uint8_t*)pData)[((ucSize / PACKAGE_SIZE_RF)*PACKAGE_SIZE_RF)+i],HEX);
           SERIAL_DEBUG.print(" ");
@@ -1085,24 +1093,25 @@ void sendFrame(const void* pData, uint8_t ucSize){
         #ifdef __SAM3X8E__
           delayMicroseconds(250);
         #endif   
+      #endif
       }
-      for(i=0; i< PACKAGE_SIZE_RF - (ucSize % PACKAGE_SIZE_RF); i++){
-        #ifdef DEBUG_COMM_RXTX
-          SERIAL_DEBUG.print(0x00 ,HEX);
-          SERIAL_DEBUG.print(" ");
-        #endif
-        SERIAL_RF.write((uint8_t)0x00);
-        /*Go to the first state.*/
-        #ifdef __AVR_ATmega32U4__
-          delayMicroseconds(250);        
-        #endif
-        #ifdef __SAM3X8E__
-          delayMicroseconds(250);
-        #endif 
+      #ifndef WIMOS_UNIT_TEST
+        for(i=0; i< PACKAGE_SIZE_RF - (ucSize % PACKAGE_SIZE_RF); i++){
+          #ifdef DEBUG_COMM_RXTX
+            SERIAL_DEBUG.print(0x00 ,HEX);
+            SERIAL_DEBUG.print(" ");
+          #endif
+          SERIAL_RF.write((uint8_t)0x00);
+          /*Go to the first state.*/
+          #ifdef __AVR_ATmega32U4__
+            delayMicroseconds(250);        
+          #endif
+          #ifdef __SAM3X8E__
+            delayMicroseconds(250);
+          #endif 
+        }
       #endif  
-      }
       delay(10);
-      
     }
     
     #ifdef DEBUG_COMM_RXTX
@@ -1126,16 +1135,18 @@ void sendFrame(const void* pData, uint8_t ucSize){
    */
   extern void _test_n3UT20 (void){
     const char* testName = "n3.UT20 = %ld";
+    /*Body_TEST:*/    
     stCommandMessage stTestCommand = (stCommandMessage) { .ucBegin = 0xAA,
                                                            .ucFrameID = 0xAB, 
                                                            .ucMessageFrom = 0xAC, 
                                                            .ucMessageTo = 0xAE, 
                                                            .ucCommand = 0xAF, 
                                                            .ucChecksum = 0xB0 };
+                                                           
+    stTestCommand.ucChecksum = getChecksum(&stTestCommand,sizeof(stTestCommand)-1);
 
-    
-    /*Body_TEST:*/     
     sendFrame(&stTestCommand,sizeof(stTestCommand));
+
     DEBUG_VALID(testName , 
                (memcmp(&stTestCommand,ucUnitTestOutput,sizeof(stTestCommand))), 
                (memcmp(&stTestCommand,ucUnitTestOutput,sizeof(stTestCommand)) == 0));
@@ -1257,7 +1268,9 @@ void sendFrame(const void* pData, uint8_t ucSize){
    */
   extern void _test_n4UT04 (void){
     const char* testName = "n4.UT04 = %ld";
-    bool bReturnValue = true;
+    bool bReturnValue = true;    
+    bReturnValue = updateBufferRF(0);
+    
     stCommandMessage stTestCommand = (stCommandMessage) { .ucBegin = 0xFF,
                                                            .ucFrameID = 0x04, 
                                                            .ucMessageFrom = 0xAC, 
@@ -1272,6 +1285,7 @@ void sendFrame(const void* pData, uint8_t ucSize){
             
     /*Body_TEST:*/     
     bReturnValue = receiveFrame(&stTestCommandAux,sizeof(stTestCommandAux),0x04);
+    
     DEBUG_VALID(testName , 
                (bReturnValue), 
                (bReturnValue == true && memcmp(&stTestCommand, &stTestCommandAux, sizeof(stTestCommand)) == 0));
@@ -1336,6 +1350,7 @@ void sendFrame(const void* pData, uint8_t ucSize){
   extern void _test_n4UT06 (void){
     const char* testName = "n4.UT06 = %ld";
     bool bReturnValue = true;
+    bReturnValue = updateBufferRF(0);
     stCommandMessage stTestCommand = (stCommandMessage) { .ucBegin = 0xFF,
                                                            .ucFrameID = 0x04, 
                                                            .ucMessageFrom = 0xAC, 
@@ -1559,6 +1574,7 @@ void sendFrame(const void* pData, uint8_t ucSize){
   extern void _test_n4UT12 (void){
     const char* testName = "n4.UT12 = %ld";
     bool bReturnValue = true;    
+    bReturnValue = updateBufferRF(0);
     stWimosACK stTestACK = (stWimosACK) {  .ucBegin = 0xFF,
                                            .ucFrameID = 0x03, 
                                            .ucMessageFrom = WIMOS_ID, 
@@ -1648,6 +1664,7 @@ void sendFrame(const void* pData, uint8_t ucSize){
   extern void _test_n4UT14 (void){
     const char* testName = "n4.UT14 = %ld";
     bool bReturnValue = true;    
+    bReturnValue = updateBufferRF(0);
                                            
     #ifdef __AVR_ATmega32U4__
     stWimosACK stTestACK_OK = (stWimosACK) {  .ucBegin = 0xFF,
@@ -1710,6 +1727,7 @@ void sendFrame(const void* pData, uint8_t ucSize){
   extern void _test_n4UT15 (void){
     const char* testName = "n4.UT14 = %ld";
     bool bReturnValue = true;    
+    bReturnValue = updateBufferRF(0);
                                            
     #ifdef __AVR_ATmega32U4__
     stWimosACK stTestACK_OK = (stWimosACK) {  .ucBegin = 0xFF,
@@ -1799,6 +1817,7 @@ void sendFrame(const void* pData, uint8_t ucSize){
   extern void _test_n4UT16 (void){
     const char* testName = "n4.UT16 = %ld";
     bool bReturnValue = true;    
+    bReturnValue = updateBufferRF(0);
     #ifdef __AVR_ATmega32U4__
                                            
     stWimosACK stTestACK_OK = (stWimosACK) {  .ucBegin = 0xFF,
@@ -1877,6 +1896,7 @@ void sendFrame(const void* pData, uint8_t ucSize){
   extern void _test_n4UT17 (void){
     const char* testName = "n4.UT17 = %ld";
     bool bReturnValue = true;    
+    bReturnValue = updateBufferRF(0);
     #ifdef __AVR_ATmega32U4__
                                            
     stWimosACK stTestACK_OK = (stWimosACK) {  .ucBegin = 0xFF,
@@ -2071,8 +2091,66 @@ void sendFrame(const void* pData, uint8_t ucSize){
   #endif
 
   #ifdef WIMOS_VALIDATION_TEST
+      /**
+       * @brief Wimos test n1.VT03.
+       *
+       * Unit test n1.VT03 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       void _test_n1VT03 (void){
+        const char* testName = "n1.VT03 = %s";
+        /*Body_TEST:*/
+        char ucResult[20];
+        const char* testFrame = "OK";
+        uint8_t index = 0;
+        initRF();
+        SERIAL_RF.print("+++");
+        delay(3000);      
+        while(SERIAL_RF.available()){
+            ucResult[index] = SERIAL_RF.read();
+            index++;
+        }
+        
+        DEBUG_VALID(testName , 
+                   (ucResult), 
+                   (strcmp(ucResult,testFrame)==0));
+        /*End_Body_TEST:*/
+        
+      }
   
       #ifdef __AVR_ATmega32U4__
+      
+      
+      /**
+       * @brief Wimos test n2.VT02.
+       *
+       * Unit test n2.VT02 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       void _test_n2VT02 (void){
+        const char* testName = "n2.VT02 = %s";
+        /*Body_TEST:*/
+        char ucResult[20];
+        const char* testFrame = "OK";
+        uint8_t index = 0;
+        initRF();
+        SERIAL_RF.print("+++");
+        delay(3000);      
+        while(SERIAL_RF.available()){
+            ucResult[index] = SERIAL_RF.read();
+            index++;
+        }
+        
+        DEBUG_VALID(testName , 
+                   (ucResult), 
+                   (strcmp(ucResult,testFrame)==0));
+        /*End_Body_TEST:*/
+        
+      }
         /**
          * @brief Wimos test n3.VT03.
          *

@@ -216,19 +216,19 @@
        extern void _test_n3UT26 (void){
         const char* testName = "n3.UT26 = %d";
         /*Body_TEST:*/     
-          
-        stGlobalWimosPortMsg.stPortValues.usInternalIMUAcc = 0;
-        readIMU(&stGlobalWimosPortMsg.stPortValues);
+        
+        stGlobalWimosStorage.ulImuAcc = 0;
+        readIMU(&stGlobalWimosStorage);   
         
         #ifdef _EN_WIMOS_IMU
           DEBUG_VALID(testName , 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUAcc), 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUAcc != 0));
+                     (stGlobalWimosStorage.ulImuAcc), 
+                     (stGlobalWimosStorage.ulImuAcc != 0));
         #else      
           
           DEBUG_VALID(testName , 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUAcc), 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUAcc == 0));
+                     (stGlobalWimosStorage.ulImuAcc), 
+                     (stGlobalWimosStorage.ulImuAcc == 0));
         #endif
         delay(10);
         /*End_Body_TEST:*/
@@ -246,13 +246,13 @@
         const char* testName = "n3.UT27 = %d";
         /*Body_TEST:*/     
         
-        stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosX = 0;
-        readIMU(&stGlobalWimosPortMsg.stPortValues);
+        stGlobalWimosStorage.ulImuGx = 0;
+        readIMU(&stGlobalWimosStorage);   
         
         #ifdef _EN_WIMOS_IMU
           DEBUG_VALID(testName , 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosX), 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosX != 0));
+                     (stGlobalWimosStorage.ulImuGx ), 
+                     (stGlobalWimosStorage.ulImuGx != 0));
         #else      
           
           DEBUG_VALID(testName , 
@@ -275,18 +275,18 @@
         const char* testName = "n3.UT28 = %d";
         /*Body_TEST:*/     
         
-        stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosY = 0;
-        readIMU(&stGlobalWimosPortMsg.stPortValues);
+        stGlobalWimosStorage.ulImuGy = 0;
+        readIMU(&stGlobalWimosStorage);   
         
         #ifdef _EN_WIMOS_IMU
           DEBUG_VALID(testName , 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosY), 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosY != 0));
+                     (stGlobalWimosStorage.ulImuGy), 
+                     (stGlobalWimosStorage.ulImuGy != 0));
         #else      
           
           DEBUG_VALID(testName , 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosY), 
-                     (stGlobalWimosPortMsg.stPortValues.usInternalIMUGyrosY == 0));
+                     (stGlobalWimosStorage.ulImuGy), 
+                     (stGlobalWimosStorage.ulImuGy == 0));
         #endif
         delay(10);
         /*End_Body_TEST:*/
@@ -312,7 +312,7 @@
         /*Body_TEST:*/     
         initIMU();
         uint32_t ulTimerVT = micros();
-        readIMU(&stGlobalWimosPortMsg.stPortValues);
+        readIMU(&stGlobalWimosStorage);
         DEBUG_VALID(testName , 
                    (micros() - ulTimerVT), 
                    (micros() - ulTimerVT < 1000));

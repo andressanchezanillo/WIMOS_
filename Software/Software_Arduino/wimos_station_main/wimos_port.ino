@@ -162,6 +162,24 @@
     
     #ifdef WIMOS_VALIDATION_TEST
     
+      /**
+       * @brief Wimos test n1.VT03.
+       *
+       * Unit test n1.VT03 function.
+       * @verbatim like this@endverbatim 
+       * @param none.
+       * @return none.
+       */
+       void _test_n1VT04 (void){
+        const char* testName = "n1.VT03 = %s";
+        /*Body_TEST:*/
+        
+        DEBUG_VALID(testName , 
+                   (true), 
+                   (true));
+        /*End_Body_TEST:*/
+        
+      }
       
       /**
        * @brief Wimos test n3.VT08.

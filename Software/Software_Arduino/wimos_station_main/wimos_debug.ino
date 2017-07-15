@@ -44,14 +44,15 @@ extern void initDebug(void){
   #endif
 }
 
-#ifdef WIMOS_DEBUG  //~(eINFO | eDATA);
+#ifdef WIMOS_DEBUG  
 #ifndef __AVR_ATmega32U4__      
     /**
      * @brief Debug buffer.
      */
     extern char pDebug[150];
     
-    
+    /*Default:*/
+    /*~(eINFO | eDATA);*/
     static uint8_t ucCurrentDebugMode = ~(eINFO | eDATA);
 
     

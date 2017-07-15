@@ -119,7 +119,7 @@
       #define _WIMOS_4A_COEFICIENT_2             0x04
 
       #undef _WIMOS_5A1_OFFSET_1
-      #define _WIMOS_5A1_OFFSET_1                 (- VCC_LOGIC / 2)
+      #define _WIMOS_5A1_OFFSET_1                 ((int32_t)(- VCC_LOGIC / 2))
       #undef _WIMOS_5A1_COEFICIENT_1
       #define _WIMOS_5A1_COEFICIENT_1             (float)(GRAVITY_MM_S2/(VCC_LOGIC/5))
       #undef _WIMOS_5A1_OFFSET_2
@@ -128,7 +128,7 @@
       #define _WIMOS_5A1_COEFICIENT_2             0x01
 
       #undef _WIMOS_5A2_OFFSET_1
-      #define _WIMOS_5A2_OFFSET_1                 (- VCC_LOGIC / 2)
+      #define _WIMOS_5A2_OFFSET_1                 ((int32_t)(- VCC_LOGIC / 2))
       #undef _WIMOS_5A2_COEFICIENT_1
       #define _WIMOS_5A2_COEFICIENT_1             (float)(GRAVITY_MM_S2/(VCC_LOGIC/5))
       #undef _WIMOS_5A2_OFFSET_2
@@ -137,7 +137,7 @@
       #define _WIMOS_5A2_COEFICIENT_2             0x01
 
       #undef _WIMOS_5A3_OFFSET_1
-      #define _WIMOS_5A3_OFFSET_1                 (- VCC_LOGIC / 2)
+      #define _WIMOS_5A3_OFFSET_1                 ((int32_t)(- VCC_LOGIC / 2))
       #undef _WIMOS_5A3_COEFICIENT_1
       #define _WIMOS_5A3_COEFICIENT_1             (float)(GRAVITY_MM_S2/(VCC_LOGIC/5))
       #undef _WIMOS_5A3_OFFSET_2
@@ -729,13 +729,13 @@
      * Math Constants definition:
      ***************************************************************/
     
-     #define VCC_LOGIC                          (3300U)
-     #define ADC_MAX_VALUE                      (65535U)
+     #define VCC_LOGIC                          (int32_t)(3300)
+     #define ADC_MAX_VALUE                      (4095U)
      #define ADC_VOLTAGE_TO_BAT_VOLTAGE         (4U)
      #define VCC_MAX_BATTERY                    (13000U)       
      #define VCC_MIN_BATTERY                    (7150U)    
      #define GRAVITY_MM_S2                      ((float)9806.65f)
-     #define MATH_VECTOR3D_LENGHT(x,y,z)        (float)(sqrt((x*x)+(y*y)+(z*z)));
+     #define MATH_VECTOR3D_LENGHT(x,y,z)        (float)(sqrt((float)((float)x*(float)x)+(float)((float)y*(float)y)+(float)((float)z*(float)z)));
      #define MATH_AVERAGE3D(x,y,z)              (float)((x+y+z)/3U);
      #define MATH_VECTOR2D_LENGHT(x,y)          (float)sqrt((x*x)+(y*y));
      #define MATH_AVERAGE2D(x,y)                (float)((x+y)/2U);
@@ -1065,6 +1065,16 @@
       #endif
       
       #ifdef WIMOS_VALIDATION_TEST
+        #ifdef __AVR_ATmega32U4__  
+          void _test_n2VT01 (void);
+          void _test_n2VT02 (void);
+        #endif
+        void _test_n1VT01 (void);
+        void _test_n1VT02 (void);
+        void _test_n1VT03 (void);
+        void _test_n1VT05 (void);
+        void _test_n1VT06 (void);
+        
         void _test_n3VT01 (void);
         void _test_n3VT02 (void);
         void _test_n3VT03 (void);
@@ -1077,6 +1087,9 @@
         #ifdef __AVR_ATmega32U4__    
           void _test_n4VT01 (void);
         #endif
+          void _test_n5VT01 (void);
+          void _test_n6VT01 (void);
+        
       #endif
     #endif
   #endif
