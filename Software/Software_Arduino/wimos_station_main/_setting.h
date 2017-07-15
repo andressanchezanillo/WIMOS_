@@ -35,14 +35,18 @@
   /**
    * @brief Label Debug traces activation.
    */
-  //#define WIMOS_DEBUG
+  #define WIMOS_DEBUG
   //#define DEBUG_COLOR 
-  //#define WIMOS_UNIT_TEST
   //#define DEBUG_COMM_RXTX
   //#define DEBUG_COMM_STATUS
-  //#define DEBUG_GPS
+  //#define DEBUG_ANALOG_A1
+  //#define DEBUG_ANALOG_A2
+  //#define DEBUG_ANALOG_A3
+  //#define DEBUG_ANALOG_A4
   //#define DEBUG_ANALOG_A5
-  //#define WIMOS_VALIDATION_TEST
+  #define WIMOS_UNIT_TEST
+  #define WIMOS_VALIDATION_TEST
+  //#define DEBUG_GPS
   
   /**
    * @brief Label for RF activation.

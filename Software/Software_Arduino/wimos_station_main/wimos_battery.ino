@@ -33,7 +33,7 @@
   #include "main_config.h"
   
   #ifdef WIMOS_UNIT_TEST
-    int16_t ssUnitTestInput = 0;
+    int32_t ssUnitTestInput = 0;
   #endif
   
   /**
@@ -66,9 +66,9 @@
       #ifdef _EN_WIMOS_BAT
         int32_t slVoltage = 0;
         #ifndef WIMOS_UNIT_TEST
-          slVoltage  = (analogRead(WIMOS_BATT_PIN) * VCC_LOGIC)/ADC_MAX_VALUE;
+          slVoltage  = (uint32_t)(((float)analogRead(WIMOS_BATT_PIN)/(ADC_MAX_VALUE))*VCC_LOGIC);
         #else
-          slVoltage  = (ssUnitTestInput * VCC_LOGIC)/ADC_MAX_VALUE;
+          slVoltage  = (uint32_t)(((float)ssUnitTestInput/(ADC_MAX_VALUE))*VCC_LOGIC);
         #endif
         slVoltage  *= ADC_VOLTAGE_TO_BAT_VOLTAGE;
         slVoltage = (float)((float)((float)slVoltage - (float)VCC_MIN_BATTERY) / ((float)VCC_MAX_BATTERY - (float)VCC_MIN_BATTERY))*100;
@@ -131,7 +131,7 @@
         
         #ifdef _EN_WIMOS_BAT
           stGlobalWimosInfoMsg.stInfo.ucPercentBattery = 0;
-          ssUnitTestInput = 2048;
+          ssUnitTestInput = ADC_MAX_VALUE+1000;
           updateStatusBattery(&stGlobalWimosInfoMsg.stInfo);
           DEBUG_VALID(testName , 
                      (stGlobalWimosInfoMsg.stInfo.ucPercentBattery), 
@@ -194,7 +194,7 @@
         
         #ifdef _EN_WIMOS_BAT
           stGlobalWimosInfoMsg.stInfo.ucPercentBattery = 0;
-          ssUnitTestInput = 788;
+          ssUnitTestInput = ADC_MAX_VALUE-(ADC_MAX_VALUE/5);
           updateStatusBattery(&stGlobalWimosInfoMsg.stInfo);
           DEBUG_VALID(testName , 
                      (stGlobalWimosInfoMsg.stInfo.ucPercentBattery), 

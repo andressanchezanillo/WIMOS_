@@ -55,15 +55,8 @@ extern uint32_t coreWimosInfoTimer = 0;
  * @see https://github.com/andressanchezanillo/WIMOS_
  */
 void initWimosService(void){
-      
-      #ifdef __AVR_ATmega32U4__
-        initDebug();
-      #endif
-      
-      #ifdef __SAM3X8E__
-        initDebug();
-      #endif
-      
+      initDebug();
+            
       initInterPeriph();
       #ifdef __SAM3X8E__
         initExterPeriph(); 
@@ -85,8 +78,7 @@ void initWimosService(void){
  */
 extern void initWimos(void){  
 #if defined(WIMOS_UNIT_TEST) and defined(WIMOS_DEBUG)
-    
-    initDebug();
+    initDebug();    
     #ifdef __SAM3X8E__
       _test_n3UT00();
       _test_n3UT01();
@@ -118,7 +110,7 @@ extern void initWimos(void){
       _test_n3UT29();
       _test_n3UT30();
       _test_n3UT31();
-      _test_n3UT32();
+      //_test_n3UT32();
       _test_n3UT33();
       _test_n3UT34();
       _test_n3UT35();
@@ -209,7 +201,17 @@ extern void initWimos(void){
     #if defined(WIMOS_VALIDATION_TEST) and defined(WIMOS_DEBUG)
       initDebug();
       
+      #ifdef __AVR_ATmega32U4__
+        _test_n2VT01();
+        _test_n2VT02();
+      #endif
       #ifdef __SAM3X8E__
+        _test_n1VT01();
+        _test_n1VT02();
+        _test_n1VT03();
+        _test_n1VT04();
+        _test_n1VT05();
+        _test_n1VT06();
         _test_n3VT01();
         _test_n3VT02();
         _test_n3VT03();
@@ -219,6 +221,8 @@ extern void initWimos(void){
         _test_n3VT08();
         _test_n3VT09();
         _test_n3VT10();
+        _test_n5VT01();
+        _test_n6VT01();
       #endif
       #ifdef __AVR_ATmega32U4__  
         _test_n4VT01();
@@ -365,6 +369,45 @@ extern void coreWimos(void){
 
   #ifdef WIMOS_VALIDATION_TEST
   
+    /**
+     * @brief Wimos test n1.VT01.
+     *
+     * Unit test n1.VT01 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     void _test_n1VT01 (void){
+      const char* testName = "n1.VT01";
+      /*Body_TEST:*/
+      /* None*/
+      
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+      /*End_Body_TEST:*/
+      
+    }
+  
+    /**
+     * @brief Wimos test n2.VT01.
+     *
+     * Unit test n2.VT01 function.
+     * @verbatim like this@endverbatim 
+     * @param none.
+     * @return none.
+     */
+     void _test_n2VT01 (void){
+      const char* testName = "n2.VT01";
+      /*Body_TEST:*/
+      /*None*/
+      
+      DEBUG_VALID(testName , 
+                 (true), 
+                 (true));
+      /*End_Body_TEST:*/
+      
+    }
     
     /**
      * @brief Wimos test n3.VT01.
