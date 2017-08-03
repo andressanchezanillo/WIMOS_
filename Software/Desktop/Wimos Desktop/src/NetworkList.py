@@ -37,7 +37,7 @@ class QNetworkList (QtGui.QWidget):
 
         # Settings for threshold.
         self.startThreshold = 0
-        self.noThreshold = 0
+        self.noThreshold = 1
         self.lowThreshold = 4
         self.mediumThreshold = 8
         self.highThreshold = 10
